@@ -1,0 +1,3 @@
+The aim of this project is to analyze stock and cryptocurrency data before COVID and during COVID using multiple machine learning models. The resulting analysis will look at how market volatility has been affected by the pandemic in both markets and how that volatility can affect price predictions. 
+
+So far in the project, the libraries for stock data extraction, data storage and data handling have been created, as well as a Jupyter notebook that acts as the main file which downloads the data, stores them in an SQLite database and adds them in dataframes through the use of queries. Next step is to create the same methods for cryptocurrency data and then start the analysis for both. 
