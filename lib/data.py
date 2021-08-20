@@ -20,7 +20,7 @@ class stock_data:
     def stocks(self, today = True, year = "", month = "", day = ""):
         """Get stock data from Yahoo and add them into an SQLite database.
         
-        If `today = True`, the stocks data will start from the given date taken from the initialization of the class and end in today's date.
+        If `today = True`, the stocks data will start from the given date taken from the initialization of the class, and end in today's date.
         
         Otherwise, an exact date will need to be given through the `year`, `month` and `day` parameters"""""  
         
