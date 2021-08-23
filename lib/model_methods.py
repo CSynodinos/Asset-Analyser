@@ -52,7 +52,7 @@ def CNN_model(x, y, units, closing_value, optimize, loss_function, epoch, batch)
     
     `closing_value` is the number of prediction days i.e. if it is equal to 1 then just the next day will be predicted.
     
-    `optimize` is the optimization algorithm
+    `optimize` is the optimization algorithm.
     
     `loss_function` is the loss function of the NN which is used to calculate the prediction error.
     
