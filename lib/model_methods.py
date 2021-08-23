@@ -106,4 +106,4 @@ def next_day_prediction(input, name, type, prediction_days, model, scaler):
     next_day = np.asarray(next_day).astype(np.float)
     prediction = model.predict(next_day)
     prediction = scaler.inverse_transform(prediction)
-    print("%s %s Prediction: %f" %(name, type, prediction))
+    print("%s %s Prediction: $%f" %(name, type, prediction))
