@@ -88,6 +88,21 @@ def plot_data(name, type, actual, predicted, colour_actual, colour_predicted,):
     plt.ylabel('%s %s Price' %(name, type))
     plt.legend()
     plt.show()
+
+def plot_volatility(dataframe, str_vol, name):
+    """Plot the volatility histogram.
+    
+    `dataframe` is the dataframe to be plotted.
+    
+    `str_vol` is the string of the volatility result.
+    
+    `name` is the name of the stock/cryptocurrency."""
+    
+    fig, ax = plt.subplots()    # fig is placeholder, ax is used to set axis on graph.
+    dataframe.hist(ax=ax, bins=50, alpha=0.6, color="blue")
+    ax.set_xlabel("Log return")
+    ax.set_ylabel("Freq of log return")
+    ax.set_title("%s volatility: " %name + str_vol + "%")
     
 def next_day_prediction(input, name, type, prediction_days, model, scaler):
     """Predict the closing value that the array will have on the next day.
