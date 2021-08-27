@@ -17,7 +17,7 @@ def preprocessing(data, prediction_days):
     x_train = []
     y_train = []
     
-    for i in range(prediction_days, len(scaled_data)):
+    for i in range(prediction_days, len(scaled_data)):  # Loop over data according to the prediction days integer.
         x_train.append(scaled_data[i - prediction_days:i, 0])
         y_train.append(scaled_data[i, 0])
     
