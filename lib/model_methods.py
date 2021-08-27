@@ -103,8 +103,8 @@ def plot_volatility(dataframe, str_vol, name):
     ax.set_xlabel("Log return")
     ax.set_ylabel("Freq of log return")
     ax.set_title("%s volatility: " %name + str_vol + "%")
-    
-def next_day_prediction(input, name, type, prediction_days, model, scaler):
+        
+def next_day_prediction(input, name, type, prediction_days, model, scaler, today = True, year = "", month = "", day = ""):
     """Predict the closing value that the array will have on the next day.
     
     `input` is the input array. `prediction_days` are the number of days used for the prediction.
@@ -113,7 +113,11 @@ def next_day_prediction(input, name, type, prediction_days, model, scaler):
     
     `model` is the model used for the prediction.
     
-    `scaler` is the scaler for the array."""
+    `scaler` is the scaler for the array.
+    
+    `today` = True by default. If today = True and `year`, `month`, `day` are empty, the next day will be the day after today,
+    
+    otherwise, it will be the day specified by the `year`, `month` and `day` parameters."""
     
     next_day = [input[len(input) + 1 - prediction_days:len(input + 1), 0]]
     next_day = np.array(next_day, dtype=object)
@@ -121,4 +125,13 @@ def next_day_prediction(input, name, type, prediction_days, model, scaler):
     next_day = np.asarray(next_day).astype(np.float)
     prediction = model.predict(next_day)
     prediction = scaler.inverse_transform(prediction)
-    print("%s %s Prediction: $%f" %(name, type, prediction))
+    tomorrow = dt.date.today() + dt.timedelta(days=1)
+    if today == True:
+        print("%s %s close price prediction for %s: $%f" %(name, type, tomorrow, prediction))
+    elif today == False and year != "" and month != "" and day != "":
+        print("%s %s close price prediction (%d/%d/%d): $%f" %(name, type, day, month, year, prediction))
+    elif today == True and year != "" and month != "" and day != "":
+        print("%s %s close price prediction (%d/%d/%d): $%f" %(name, type, day, month, year, prediction))
+    else:
+        print("Error: Please insert a specific date or today = True if you want today's date")
+        exit()
