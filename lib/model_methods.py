@@ -119,9 +119,9 @@ def next_day_prediction(input, name, type, prediction_days, model, scaler, today
     
     otherwise, it will be the day specified by the `year`, `month` and `day` parameters."""
     
-    next_day = [input[len(input) + 1 - prediction_days:len(input + 1), 0]]
-    next_day = np.array(next_day, dtype=object)
-    next_day = np.reshape(next_day, (next_day.shape[0], next_day.shape[1], 1))
+    next_day = [input[len(input) + 1 - prediction_days:len(input + 1), 0]]  # Calculate the next day.
+    next_day = np.array(next_day, dtype=object) # Hold result in an array.
+    next_day = np.reshape(next_day, (next_day.shape[0], next_day.shape[1], 1))  # Reshape array into a single column.
     next_day = np.asarray(next_day).astype(np.float)
     prediction = model.predict(next_day)
     prediction = scaler.inverse_transform(prediction)
