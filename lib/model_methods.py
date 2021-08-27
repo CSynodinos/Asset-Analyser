@@ -125,7 +125,9 @@ def next_day_prediction(input, name, type, prediction_days, model, scaler, today
     next_day = np.asarray(next_day).astype(np.float)
     prediction = model.predict(next_day)
     prediction = scaler.inverse_transform(prediction)
-    tomorrow = dt.date.today() + dt.timedelta(days=1)
+    
+    # Print the result and the prediction date. 
+    tomorrow = dt.date.today() + dt.timedelta(days=1)   # Today.
     if today == True:
         print("%s %s close price prediction for %s: $%f" %(name, type, tomorrow, prediction))
     elif today == False and year != "" and month != "" and day != "":
