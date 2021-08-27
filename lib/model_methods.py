@@ -133,5 +133,4 @@ def next_day_prediction(input, name, type, prediction_days, model, scaler, today
     elif today == True and year != "" and month != "" and day != "":
         print("%s %s close price prediction (%d/%d/%d): $%f" %(name, type, day, month, year, prediction))
     else:
-        print("Error: Please insert a specific date or today = True if you want today's date")
-        exit()
+        print("%s %s close price prediction: $%f" %(name, type, prediction))
