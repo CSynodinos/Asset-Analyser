@@ -75,7 +75,7 @@ def CNN_model(x, y, units, closing_value, optimize, loss_function, epoch, batch)
     
     return model
 
-def plot_data(name, type, actual, predicted, colour_actual, colour_predicted,):
+def plot_data(name, type, actual, predicted, colour_actual, colour_predicted):
     """Plot two arrays. `actual` and `predicted` are the two arrays being plotted.
     
     `name` and `type` are the name of the data and type of data, respectively.
