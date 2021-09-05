@@ -10,7 +10,15 @@ def preprocessing(data, prediction_days):
     
     `data` is the dataframe holding the data.
     
-    `prediction_days` are the number of days that the prediction will be based on."""
+    `prediction_days` are the number of days that the prediction will be based on.
+    
+    Returns 3 variables: 
+    
+    * `x_train`
+    
+    * `y_train`
+    
+    * `scaler`"""
     
     scaler = MinMaxScaler(feature_range = (0, 1))
     scaled_data = scaler.fit_transform(data['Close'].values.reshape(-1, 1))
