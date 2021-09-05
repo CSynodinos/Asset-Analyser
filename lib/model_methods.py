@@ -40,7 +40,9 @@ def test_preprocessing(prediction_days, inputs):
     
     `prediction_days` are the number of days that the prediction will be based on.
     
-    `inputs` is the dataset being tested."""
+    `inputs` is the dataset being tested.
+    
+    Returns `x_test`"""
     
     x_test = []
     
