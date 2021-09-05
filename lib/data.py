@@ -130,7 +130,16 @@ def data_fetch(db, type, currency, begin, stop):
    
             df = df.reset_index()   # Numerical integer index instead of date index.
             tables = ('%s' %i)
-            df.to_sql(tables, con = engine, if_exists='replace', index = True)
+                    
+            str_to_replace = "-"
+            str_check = any(tables in str_to_replace for tables in tables)
+            
+            if str_check == True:  # Checks if the "-" character exists. If yes, then it gets replaced with "_" (Needed for crypto in SQL database).
+                crypto_table = tables.replace("-", "_")
+                df.to_sql(crypto_table, con = engine, if_exists='replace', index = True)
+            else:
+                df.to_sql(tables, con = engine, if_exists='replace', index = True)
+                
             print('%s %s data saved!\n' %(i, type))
 
     # close db session.
