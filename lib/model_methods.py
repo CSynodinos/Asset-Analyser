@@ -1,6 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import datetime as dt
+
+import seaborn as sns
+sns.set()   # Set seaborn graphs as default.
+
+import logging
+logging.getLogger('tensorflow').disabled = True     # Disable Tensorflow warning messages.
+
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM
