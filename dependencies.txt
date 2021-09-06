@@ -1,0 +1,8 @@
+tensorflow
+sklearn
+matplotlib
+seaborn
+yfinance
+sqlite3
+pandas
+numpy
