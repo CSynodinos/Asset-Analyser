@@ -61,8 +61,8 @@ def test_preprocessing(prediction_days, inputs):
     
     return x_test
 
-def CNN_model(x, y, units, closing_value, optimize, loss_function, epoch, batch):
-    """Build and train a Convolutional Neural Network (CNN) using the Keras Sequential API.
+def RNN_model(x, y, units, closing_value, optimize, loss_function, epoch, batch):
+    """Build and train a Long Short-Term Memory Reccurent Neural Network (LSTM-RNN) using the Keras Sequential API.
     
     `x` and `y` are the training sets respectively.
     
