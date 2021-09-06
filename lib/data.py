@@ -11,8 +11,8 @@ class data:
     def __init__(self, start):
         """Access data through the Yahoo API and store them in an SQLite local database.
         Example:
-        >>> import lib.data as data
-        >>> stocks = data.stock_data(start = a_start_date)
+        >>> from lib import data as dat
+        >>> stocks = dat.data(start = a_start_date)
         >>> stocks.stocks(database = 'a_database.db', stck = list_of_stocks, today = True)"""
         
         self.start = start 
