@@ -107,7 +107,7 @@ def plot_data(name, type, actual, predicted, colour_actual, colour_predicted):
     plt.legend()
     plt.show()
 
-def plot_volatility(dataframe, str_vol, name):
+def plot_volatility(dataframe, name):
     """Plot the volatility histogram.
     
     `dataframe` is the dataframe to be plotted.
