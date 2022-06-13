@@ -8,7 +8,10 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 
-class asset_constructor:
+class financial_assets:
+    """Financial asset class for price predictions.
+    """
+
     def __init__(self, pred_days: int, asset_type: str) -> None:
         self.pred_days = pred_days
         self.asset_type = asset_type
