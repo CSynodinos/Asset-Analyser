@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from sklearn.preprocessing import MinMaxScaler
+
 from lib.model_methods import RNN_model, test_preprocessing, plot_data, next_day_prediction, plot_volatility
 import yfinance as yf
 import datetime as dt
@@ -11,10 +13,21 @@ class asset_constructor:
         self.pred_days = pred_days
         self.asset_type = asset_type
 
-    def predictor(self, prepro, tick, query_asset) -> bool:
-        x_train = prepro[0]
-        y_train = prepro[1]
-        asset_scaler = prepro[2]
+    def predictor(self, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
+                tick: str, query_asset: pd.DataFrame) -> bool:
+
+        """Financial asset predictor.
+
+        Args:
+            * `x_train` (np.ndarray): Numpy array with x axis training set.
+            * `y_train` (np.ndarray): Numpy array with y axis training set.
+            * `asset_scaler` (MinMaxScaler): Feature scaler array containing numbers scaled to dataset range.
+            * `tick` (str): Asset name to download data for.
+            * `query_asset` (pd.DataFrame): Asset pandas dataframe.
+
+        Returns:
+            Boolean: True when operation finishes successfully.
+        """
 
         # Training starts.
         print('Training the model...')
