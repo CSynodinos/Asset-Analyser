@@ -2,6 +2,7 @@ import sqlite3, os, datetime, time
 import pandas as pd
 import yfinance as yf
 from lib.exceptions import DateError
+from inspect import getfullargspec
 
 class data:
     """Access data through the Yahoo API and store them in an SQLite local database.
@@ -9,6 +10,29 @@ class data:
 
     def __init__(self, start: datetime) -> None:
         self.start = start 
+
+    @classmethod
+    def __repr__(cls) -> str:
+        params = getfullargspec(__class__).args
+        params.remove("self")
+        return params
+
+    @classmethod
+    def __dir__(cls, only_added = False) -> list:
+        """Display function attributes.
+        Args:
+            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
+        Returns:
+            list: List of attributes.
+        """
+
+        all_att = list(cls.__dict__.keys())
+        if not only_added:
+            return all_att
+        else:
+            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
+            all_att = [x for x in all_att if x not in default_atts]
+            return all_att
 
     @staticmethod
     def SQLite_Query(database: str, table: str) -> pd.DataFrame:
