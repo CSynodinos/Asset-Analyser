@@ -3,6 +3,7 @@ from __future__ import annotations
 from sklearn.preprocessing import MinMaxScaler
 
 from lib.model_methods import RNN_model, test_preprocessing, plot_data, next_day_prediction, plot_volatility
+from inspect import getfullargspec
 import yfinance as yf
 import datetime as dt
 import pandas as pd
@@ -15,6 +16,29 @@ class financial_assets:
     def __init__(self, pred_days: int, asset_type: str) -> None:
         self.pred_days = pred_days
         self.asset_type = asset_type
+
+    @classmethod
+    def __repr__(cls) -> str:
+        params = getfullargspec(__class__).args
+        params.remove("self")
+        return params
+
+    @classmethod
+    def __dir__(cls, only_added = False) -> list:
+        """Display function attributes.
+        Args:
+            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
+        Returns:
+            list: List of attributes.
+        """
+
+        all_att = list(cls.__dict__.keys())
+        if not only_added:
+            return all_att
+        else:
+            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
+            all_att = [x for x in all_att if x not in default_atts]
+            return all_att
 
     def predictor(self, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
                 tick: str, query_asset: pd.DataFrame) -> bool:
