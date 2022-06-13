@@ -28,7 +28,7 @@ class data:
         return df
 
     @staticmethod
-    def data_fetch(db: str, type: str, currency: list, begin: str, stop: str) -> bool:
+    def __data_fetch(db: str, type: str, currency: list, begin: str, stop: str) -> bool:
         """Get data from Yahoo.
 
         Args:
@@ -108,7 +108,7 @@ class data:
         else:
             db = False
 
-        self.data_fetch(db = database, type = asset_type, currency = asset_list,
+        self.__data_fetch(db = database, type = asset_type, currency = asset_list,
                         begin = self.start, stop = end_time) # get stock data
 
         if db == True:
