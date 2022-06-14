@@ -1,5 +1,8 @@
+from re import X
+from shutil import which
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import datetime as dt
 
 import seaborn as sns
@@ -92,17 +95,26 @@ def RNN_model(x, y, units, closing_value, optimize, loss_function, epoch, batch)
 
     return model
 
-def plot_data(name, type, actual, predicted, colour_actual, colour_predicted):
+def plot_data(x_values, name, type, actual, predicted: np.ndarray, colour_actual, colour_predicted):
     """Plot two arrays. `actual` and `predicted` are the two arrays being plotted.
 
     `name` and `type` are the name of the data and type of data, respectively.
 
     `colour_actual` and `colour_predicted` are the colours for `actual` and `predicted` lines in the plot, respectively."""
 
-    plt.plot(actual, color = colour_actual, label = '%s Actual Price' %name)
-    plt.plot(predicted, color = colour_predicted, label = '%s Predicted Price' %name)
+    x_values_year = []
+    for i in x_values:  # get year, month, day for each x.
+        date = dt.datetime.strptime(i, "%Y-%m-%d %H:%M:%S")
+        date = str(date).split(' ',1)[0]
+        x_values_year.append(date)
+
+    plt.plot(x_values_year, actual, color = colour_actual, label = '%s Actual Price' %name)
+    plt.plot(x_values_year, predicted, color = colour_predicted, label = '%s Predicted Price' %name)
     plt.title('%s %s Price' %(name, type))
-    plt.xlabel('Time')
+    plt.xlabel('Date')
+
+    x_range = list(range(0, len(x_values_year)))
+    plt.xticks(np.arange(0, len(x_range) + 1, 300)) # show an x value every 300 intervals.
     plt.ylabel('%s %s Price' %(name, type))
     plt.legend()
     plt.show()
@@ -119,14 +131,15 @@ def plot_volatility(dataframe, name):
     `name` is the name of the stock/cryptocurrency."""
     
     fig, ax = plt.subplots()    # fig is placeholder, ax is used to set axis on graph.
-    dataframe.hist(ax=ax, bins=50, alpha=0.6, color="blue")
+    dataframe.hist(ax = ax, bins = 50, alpha = 0.6, color = "blue")
     ax.set_xlabel("Log Volatility")
     ax.set_ylabel("Volatility Frequency(%)")
     ax.set_title("%s Volatility Plot" %name)
 
     return True
 
-def next_day_prediction(input, name, type, prediction_days, model, scaler, today = True, year = "", month = "", day = ""):
+def next_day_prediction(input, name, type, prediction_days, model, 
+                        scaler, today = True, year = "", month = "", day = "") -> float:
     """Predict the closing value that the array will have on the next day.
     
     `input` is the input array. `prediction_days` are the number of days used for the prediction.
