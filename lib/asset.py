@@ -40,7 +40,7 @@ class financial_assets:
             all_att = [x for x in all_att if x not in default_atts]
             return all_att
 
-    def predictor(self, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
+    def predictor(self, x, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
                 tick: str, query_asset: pd.DataFrame) -> tuple[float, str]:
 
         """Financial asset predictor.
@@ -61,7 +61,7 @@ class financial_assets:
         asset_model = RNN_model(x_train, y_train, 50, 1, 'adam', 'mean_squared_error', 25, 32)
 
         # Test data.
-        test_start = dt.datetime(2019, 1, 1)
+        test_start = dt.datetime(2019, 11, 1)
         test_end = dt.datetime.now().date().isoformat()   # Today.
         test_data = yf.download(tickers = tick, start = test_start, end = test_end) # Get test data from Yahoo.
         actual_prices = test_data['Close'].values   # Get closing prices.
@@ -77,7 +77,7 @@ class financial_assets:
         pred_prices = asset_scaler.inverse_transform(pred_prices)
 
         # Plot Results
-        plot_data(name = tick, type = self.asset_type, 
+        plot_data(x_values = x, name = tick, type = self.asset_type, 
                                 actual = actual_prices, predicted = pred_prices, 
                                 colour_actual = "blue", colour_predicted = "red")
 
@@ -98,3 +98,12 @@ class financial_assets:
         print(f'{tick} {self.asset_type} Volatility = {volat}%%')
 
         return next_day, volat
+
+    ## Idea: Create or append a database with two columns: date and next day price pred. 
+    ## Then, make another method that will get the current price and match it to a database date.
+    ## Then make another table in the database that will have: predicted price column, actual price
+    ## column. Extract that as a dataframe and make a line graph with x = date, y = price, and each line
+    ## with actual vs predicted. From that also get the average percent difference between each value in 
+    ## the columns.
+    def prediction_tracking():
+        pass
