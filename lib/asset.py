@@ -41,7 +41,7 @@ class financial_assets:
             return all_att
 
     def predictor(self, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
-                tick: str, query_asset: pd.DataFrame) -> bool:
+                tick: str, query_asset: pd.DataFrame) -> tuple[float, str]:
 
         """Financial asset predictor.
 
@@ -64,7 +64,7 @@ class financial_assets:
         test_start = dt.datetime(2019, 1, 1)
         test_end = dt.datetime.now().date().isoformat()   # Today.
         test_data = yf.download(tickers = tick, start = test_start, end = test_end) # Get test data from Yahoo.
-        actual_prices = test_data['Close'].values   # Get closing cryptocurrency prices.
+        actual_prices = test_data['Close'].values   # Get closing prices.
 
         asset_dataset = pd.concat((query_asset['Close'], test_data['Close']), axis = 0)
         model_inputs = asset_dataset[len(asset_dataset) - len(test_data) - self.pred_days:].values
@@ -82,18 +82,19 @@ class financial_assets:
                                 colour_actual = "blue", colour_predicted = "red")
 
         # Predict next day
-        next_day_prediction(input = model_inputs, name = tick, 
+        next_day = next_day_prediction(input = model_inputs, name = tick, 
                                         type = self.asset_type, prediction_days = self.pred_days, 
                                         model = asset_model, scaler = asset_scaler)
 
         # Volatility
         asset_copy = query_asset.copy()   # Copy of dataframe to add a new column for volatility.
-        asset_copy['Log returns'] = np.log(query_asset['Close']/query_asset['Close'].shift())   # Creates a column called 'Log returns' with the daily log return of the Close price.
-        returns = asset_copy['Log returns']
-        volatility = returns.std() * 252 **.5   # 255 is the trading days per annum. **.5 is square root.
-        percentage_vol = lambda x : round(x, 4) * 100 # Calculate volatility.  
+
+        # Creates a column called 'Log returns' with the daily log return of the Close price.
+        asset_copy['Log returns'] = np.log(query_asset['Close']/query_asset['Close'].shift())
+        volatility = asset_copy['Log returns'].std() * 252 **.5   # 255 is the trading days per annum. **.5 is square root.
+        percentage_vol = lambda x : round(x, 4) * 100 
         volat = str(percentage_vol(volatility))
         plot_volatility(asset_copy['Log returns'], name = tick)
-        print(f'{tick} {self.asset_type} Volatility = {volat}')
+        print(f'{tick} {self.asset_type} Volatility = {volat}%%')
 
-        return True
+        return next_day, volat
