@@ -10,22 +10,18 @@ logging.getLogger('tensorflow').disabled = True     # Disable Tensorflow warning
 
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
+import pandas as pd
 from keras.layers import Dense, Dropout, LSTM
 
-def preprocessing(data, prediction_days) -> tuple[np.ndarray, np.ndarray, MinMaxScaler]:
-    """Preprocess the training data.
+def preprocessing(data: pd.DataFrame, prediction_days: int) -> tuple[np.ndarray, np.ndarray, MinMaxScaler]:
+    """Data preprocessing for training the model.
 
-    `data` is the dataframe holding the data.
+    Args:
+        * `data` (pd.Dataframe): Dataframe containing the data to train on.
+        * `prediction_days` (int): Number of days to predict the data for training.
 
-    `prediction_days` are the number of days that the prediction will be based on.
-
-    Returns 3 variables: 
-
-    * `x_train`
-
-    * `y_train`
-
-    * `scaler`
+    Returns:
+        tuple[np.ndarray, np.ndarray, MinMaxScaler]: x and y axis training data and the scaler.
     """
 
     scaler = MinMaxScaler(feature_range = (0, 1))
