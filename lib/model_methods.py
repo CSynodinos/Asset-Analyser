@@ -1,8 +1,5 @@
-from re import X
-from shutil import which
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import datetime as dt
 
 import seaborn as sns
@@ -95,12 +92,28 @@ def RNN_model(x, y, units, closing_value, optimize, loss_function, epoch, batch)
 
     return model
 
-def plot_data(x_values, name, type, actual, predicted: np.ndarray, colour_actual, colour_predicted):
-    """Plot two arrays. `actual` and `predicted` are the two arrays being plotted.
+def plot_data(x_values: list, name: str, dtype: str, actual:np.ndarray,
+            predicted: np.ndarray, colour_actual: str, colour_predicted: str) -> list:
 
-    `name` and `type` are the name of the data and type of data, respectively.
+    """Line plot real and predicted financial market data.
 
-    `colour_actual` and `colour_predicted` are the colours for `actual` and `predicted` lines in the plot, respectively."""
+    x axis is the dates of each price, y axis is the price of the financial asset.
+
+    Plots 2 lines, one for the real data and one for the predicted data at each date of
+    real data.
+
+    Args:
+        * `x_values` (list): List of dates.
+        * `name` (str): Name of financial asset.
+        * `dtype` (str): type of financial asset (Crypto or Stock).
+        * `actual` (np.ndarray): Array of real market values.
+        * `predicted` (np.ndarray): Array of predicted market values from model training.
+        * `colour_actual` (str): Line colour of real market values.
+        * `colour_predicted` (str): Line colour of predicted market values.
+
+    Returns:
+        `list`: List of dates without times.
+    """
 
     x_values_year = []
     for i in x_values:  # get year, month, day for each x.
@@ -110,16 +123,16 @@ def plot_data(x_values, name, type, actual, predicted: np.ndarray, colour_actual
 
     plt.plot(x_values_year, actual, color = colour_actual, label = '%s Actual Price' %name)
     plt.plot(x_values_year, predicted, color = colour_predicted, label = '%s Predicted Price' %name)
-    plt.title('%s %s Price' %(name, type))
+    plt.title('%s %s Price' %(name, dtype))
     plt.xlabel('Date')
 
     x_range = list(range(0, len(x_values_year)))
     plt.xticks(np.arange(0, len(x_range) + 1, 300)) # show an x value every 300 intervals.
-    plt.ylabel('%s %s Price' %(name, type))
+    plt.ylabel('%s %s Price' %(name, dtype))
     plt.legend()
     plt.show()
 
-    return True
+    return x_values_year
 
 def plot_volatility(dataframe, name):
     """Plot the volatility histogram.
