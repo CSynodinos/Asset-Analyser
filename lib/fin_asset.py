@@ -40,6 +40,14 @@ class financial_assets:
             all_att = [x for x in all_att if x not in default_atts]
             return all_att
 
+    @staticmethod
+    def df_act_pred(real:np.ndarray, pred:np.ndarray, d:list) -> pd.DataFrame:
+        real = np.ndarray.tolist(real)
+        pred = np.ndarray.tolist(pred)
+        pred = [val for vals in pred for val in vals]   # Flatten pred list of lists.
+        cols = ['Dates', 'Real_Values', 'Predicted_Values']
+        return pd.DataFrame({cols[0]: d, cols[1]: real, cols[2]: pred})
+
     def predictor(self, x, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
                 tick: str, query_asset: pd.DataFrame) -> tuple[float, str]:
 
@@ -53,7 +61,7 @@ class financial_assets:
             * `query_asset` (pd.DataFrame): Asset pandas dataframe.
 
         Returns:
-            Boolean: True when operation finishes successfully.
+            
         """
 
         # Training starts.
@@ -77,9 +85,11 @@ class financial_assets:
         pred_prices = asset_scaler.inverse_transform(pred_prices)
 
         # Plot Results
-        plot_data(x_values = x, name = tick, type = self.asset_type, 
+        dates = plot_data(x_values = x, name = tick, dtype = self.asset_type, 
                                 actual = actual_prices, predicted = pred_prices, 
                                 colour_actual = "blue", colour_predicted = "red")
+
+        all_data = self.df_act_pred(real = actual_prices, pred = pred_prices, d = dates)
 
         # Predict next day
         next_day = next_day_prediction(input = model_inputs, name = tick, 
@@ -97,7 +107,7 @@ class financial_assets:
         plot_volatility(asset_copy['Log returns'], name = tick)
         print(f'{tick} {self.asset_type} Volatility = {volat}%%')
 
-        return next_day, volat
+        return all_data, next_day[0][0], volat
 
     ## Idea: Create or append a database with two columns: date and next day price pred. 
     ## Then, make another method that will get the current price and match it to a database date.
