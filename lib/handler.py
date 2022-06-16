@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
 import os, sys, fnmatch
 from inspect import getfullargspec
 
@@ -65,11 +68,12 @@ class directories:
         cont = os.listdir(directory)
 
         for dir in cont:
-            if fnmatch.fnmatch(dir, pt):
+            print(dir)
+            if dir == "Databases":
                 x = str(os.path.join(directory, dir))
 
         return x
-    
+
     def contents(self, dir, pattern, extension):
         """Finds a file according to a pattern and returns it as a string.
 
