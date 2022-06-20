@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from sklearn.preprocessing import MinMaxScaler
-
+from dataclasses import dataclass
 from lib.model_methods import RNN_model, test_preprocessing, plot_data, next_day_prediction, plot_volatility
 from inspect import getfullargspec
 import yfinance as yf
@@ -110,11 +110,16 @@ class financial_assets:
 
         return all_data, next_day[0][0], volat
 
-    ## Idea: Create or append a database with two columns: date and next day price pred. 
-    ## Then, make another method that will get the current price and match it to a database date.
-    ## Then make another table in the database that will have: predicted price column, actual price
-    ## column. Extract that as a dataframe and make a line graph with x = date, y = price, and each line
-    ## with actual vs predicted. From that also get the average percent difference between each value in 
-    ## the columns.
-    def prediction_tracking():
+## Idea: Create or append a database with two columns: date and next day price pred. 
+## Then, make another method that will get the current price and match it to a database date.
+## Then make another table in the database that will have: predicted price column, actual price
+## column. Extract that as a dataframe and make a line graph with x = date, y = price, and each line
+## with actual vs predicted. From that also get the average percent difference between each value in 
+## the columns.
+
+@dataclass
+class prediction_comparison:
+    def __init__(self) -> None:
+        pass
+    def prediction_tracking(self, data):
         pass
