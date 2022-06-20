@@ -119,7 +119,7 @@ class financial_assets:
 
 @dataclass
 class prediction_comparison:
-    def __init__(self) -> None:
-        pass
-    def prediction_tracking(self, data):
+    df: pd.DataFrame
+
+    def prediction_tracking(self):
         pass
