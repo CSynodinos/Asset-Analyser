@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-from re import A
-import shutil
 
 from sklearn.preprocessing import MinMaxScaler
 from dataclasses import dataclass
@@ -12,7 +10,25 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 import sqlite3
-import os
+
+def table_parser(df:pd.DataFrame, dbname: str, asset_n) -> bool:
+    """Send data from dataframe to a database.
+
+    Args:
+        df (pd.Dataframe): Dataframe.
+
+    Returns:
+        bool: _description_
+    """
+
+    engine = sqlite3.connect(dbname)
+    if "-" in asset_n:
+        asset_n = asset_n.replace('-', "_")
+    if " " in asset_n:
+        asset_n = asset_n.replace(' ', "")
+
+    df.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
+    return True
 
 class financial_assets:
     """Financial asset class for price predictions.
@@ -53,7 +69,7 @@ class financial_assets:
         cols = ['Dates', 'Real_Values', 'Predicted_Values']
         return pd.DataFrame({cols[0]: d, cols[1]: real, cols[2]: pred})
 
-    def predictor(self, asset_n: str, x, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
+    def predictor(self, x, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
                 tick: str, query_asset: pd.DataFrame) -> tuple[float, str]:
 
         """Financial asset predictor.
@@ -111,16 +127,6 @@ class financial_assets:
         volat = str(percentage_vol(volatility))
         plot_volatility(asset_copy['Log returns'], name = tick)
         print(f'{tick} {self.asset_type} Volatility = {volat}%%')
-
-        # Send all_data to new database.
-        dbname = "Prediction_Assessment.db"
-        engine = sqlite3.connect(dbname)
-        if "-" in asset_n:
-            asset_n = asset_n.replace('-', "_")
-        if " " in asset_n:
-            asset_n = asset_n.replace(' ', "")
-
-        all_data.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
 
         return all_data, next_day[0][0], volat
 
