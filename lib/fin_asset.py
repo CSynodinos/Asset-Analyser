@@ -9,26 +9,6 @@ import yfinance as yf
 import datetime as dt
 import pandas as pd
 import numpy as np
-import sqlite3
-
-def table_parser(df:pd.DataFrame, dbname: str, asset_n) -> bool:
-    """Send data from dataframe to a database.
-
-    Args:
-        df (pd.Dataframe): Dataframe.
-
-    Returns:
-        bool: _description_
-    """
-
-    engine = sqlite3.connect(dbname)
-    if "-" in asset_n:
-        asset_n = asset_n.replace('-', "_")
-    if " " in asset_n:
-        asset_n = asset_n.replace(' ', "")
-
-    df.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
-    return True
 
 class financial_assets:
     """Financial asset class for price predictions.
@@ -130,16 +110,19 @@ class financial_assets:
 
         return all_data, next_day[0][0], volat
 
-## Idea: Create or append a database with two columns: date and next day price pred. 
-## Then, make another method that will get the current price and match it to a database date.
-## Then make another table in the database that will have: predicted price column, actual price
-## column. Extract that as a dataframe and make a line graph with x = date, y = price, and each line
-## with actual vs predicted. From that also get the average percent difference between each value in 
-## the columns.
-
 @dataclass
 class prediction_comparison:
     df: pd.DataFrame
+
+    def __eq__(self, __o: object) -> bool:
+        pass
+
+    def prediction_assessment(self, db, asset):
+        from lib.df_utils import df_analyses
+        from lib.db_utils import table_parser
+
+        all_data_df = df_analyses(df = self.df).assessment_df_parser()
+        table_parser(df = all_data_df, dbname = db, asset_n = asset)
 
     def prediction_tracking(self):
         pass
