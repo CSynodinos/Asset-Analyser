@@ -38,25 +38,6 @@ class data:
             return all_att
 
     @staticmethod
-    def SQLite_Query(database: str, table: str):
-        """Access an SQLite database and query a table. Get the entire table
-        and the dates column as two separate pandas Dataframes.
-
-        Args:
-            * `database` (str): Database name.
-            * `table` (str): Table name.
-
-        Returns:
-            `pd.DataFrame`: Pandas Dataframe with the queried data.
-        """
-
-        con = sqlite3.connect(database)   # Read SQLite table into dataframe.
-        df = pd.read_sql_query("SELECT * from %s" %table, con)
-        dates = df.iloc[:, 1].to_list()
-        con.close()
-        return df, dates
-
-    @staticmethod
     def __data_fetch(db: str, type: str, currency: list, begin: str, stop: str) -> bool:
         """Get data from Yahoo.
 
