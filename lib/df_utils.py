@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 
-np.set_printoptions(formatter = {'float_kind':'{:f}'.format})
+np.set_printoptions(formatter = {'float_kind':'{:f}'.format})   # Format numpy array results as floats
 
 class _df_ops(ABC):
     """Abstact class for all the dataframe methods. Inherited by the df_analyses class.
