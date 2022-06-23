@@ -9,7 +9,7 @@ class _df_ops(ABC):
     """
 
     @abstractmethod
-    def _row_subtract(self):
+    def _row_subtract(self) -> np.ndarray:
         """Subtract two numpy arrays.
 
         Returns:
@@ -19,7 +19,7 @@ class _df_ops(ABC):
         pass
 
     @abstractmethod
-    def _get_col_numpy(self, idx: int):
+    def _get_col_numpy(self, idx: int) -> np.ndarray:
         """Get a all column values via column index. 
 
         Args:
@@ -31,7 +31,7 @@ class _df_ops(ABC):
         pass
 
     @abstractmethod
-    def _actual_pred_numpy(self):
+    def _actual_pred_numpy(self) -> tuple[np.ndarray, np.ndarray]:
         """Get actual and predicted values from numpy arrays.
 
         Returns:
@@ -41,7 +41,7 @@ class _df_ops(ABC):
         pass
 
     @abstractmethod
-    def _percent_diff(self):
+    def _percent_diff(self) -> np.ndarray:
         """Get the percent difference between elements of two numpy arrays.
 
         Returns:
@@ -66,7 +66,7 @@ class df_analyses(_df_ops):
     def _get_col_numpy(self, idx: int) -> np.ndarray:
         return self.df.iloc[:, idx].to_numpy()
 
-    def _actual_pred_numpy(self):
+    def _actual_pred_numpy(self) -> tuple[np.ndarray, np.ndarray]:
         return self._get_col_numpy(idx = 2), self._get_col_numpy(idx = 1)
 
     def _row_subtract(self) -> np.ndarray:
