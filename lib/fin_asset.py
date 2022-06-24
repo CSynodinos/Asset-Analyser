@@ -119,10 +119,19 @@ def prediction_assessment(df, db, asset):
 
 @dataclass
 class prediction_comparison:
-    df: pd.DataFrame
+    value: float
 
-    def __eq__(self, __o: object) -> bool:
-        pass
+    """Dataclass to compare next day prediction with actual closing value of
+    the asset on that day.
 
-    def prediction_tracking(self):
-        pass
+    Returns:
+        __eq__() returns float: Resulting difference.
+    """
+
+    def __eq__(self, __o: object) -> float:
+        if isinstance(__o, __class__):
+            # get type of class variable as string.
+            val_type = str(list(__class__.__annotations__.values())[0]).replace("<class","").replace(">","").replace("'","").strip()
+            if val_type == 'float' or val_type == 'int':
+                if not self.value == __o.value:
+                    return self.value - __o.value   # get the difference between the unequal objects.
