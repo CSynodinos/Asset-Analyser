@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import datetime as dt
 
 import seaborn as sns
+import sklearn
 sns.set()   # Set seaborn graphs as default.
 
 import logging
@@ -150,21 +151,26 @@ def plot_volatility(dataframe, name):
 
     return True
 
-def next_day_prediction(input, name, type, prediction_days, model, 
-                        scaler, today = True, year = "", month = "", day = "") -> float:
+def next_day_prediction(input: np.ndarray, name: str, type: str, prediction_days: int, model: Sequential, 
+                        scaler: MinMaxScaler, today = True, year = "", month = "", day = "") -> float:
     """Predict the closing value that the array will have on the next day.
-    
-    `input` is the input array. `prediction_days` are the number of days used for the prediction.
-    
-    `name` and `type` are the name of the data and type of data, respectively.
-    
-    `model` is the model used for the prediction.
-    
-    `scaler` is the scaler for the array.
-    
-    `today` = True by default. If today = True and `year`, `month`, `day` are empty, the next day will be the day after today,
-    otherwise, it will be the day specified by the `year`, `month` and `day` parameters."""
-    
+
+    Args:
+        * `input` (np.ndarray): Numpy array with all the data to analyse.
+        * `name` (str): Name of financial asset.
+        * `type` (str): Type of financial asset.
+        * `prediction_days` (int): Days to use for prediction.
+        * `model` (Sequential): Linear model layer stack.
+        * `scaler` (MinMaxScaler): Model scaler.
+        * `today` (bool, optional): Today's date. Defaults to True.
+        * `year` (str, optional): Year. Defaults to "".
+        * `month` (str, optional): Month. Defaults to "".
+        * `day` (str, optional): Day. Defaults to "".
+
+    Returns:
+        float: Prediction of the price of the financial asset on the next day after the specified date.
+    """
+
     next_day = [input[len(input) + 1 - prediction_days:len(input + 1), 0]]  # Calculate the next day.
     next_day = np.array(next_day, dtype=object) # Hold result in an array.
     next_day = np.reshape(next_day, (next_day.shape[0], next_day.shape[1], 1))  # Reshape array into a single column.
