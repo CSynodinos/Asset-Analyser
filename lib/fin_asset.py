@@ -128,12 +128,19 @@ class prediction_comparison:
         __eq__() returns float: Resulting difference.
     """
 
+    def __post_init__(self):
+        # get type of class variable as string.
+        val_type = str(list(__class__.__annotations__.values())[0]).replace("<class","").replace(">","").replace("'","").strip()
+        if not (val_type == 'float' or val_type == 'int'):
+            raise TypeError("Class variable can only be of type float and int.")
+
+        # Ensure the input value is always of the same type as the specified class variable type.
+        if isinstance(self.value, float):
+            self.value = float(self.value)
+        if isinstance(self.value, int):
+            self.value = int(self.value)
+
     def __eq__(self, __o: object) -> float:
         if isinstance(__o, __class__):
-            # get type of class variable as string.
-            val_type = str(list(__class__.__annotations__.values())[0]).replace("<class","").replace(">","").replace("'","").strip()
-            if val_type == 'float' or val_type == 'int':
-                if not self.value == __o.value:
-                    return self.value - __o.value   # get the difference between the unequal objects.
-            else:
-                raise TypeError("Class variable can only be a float or int.")
+            if not self.value == __o.value:
+                return self.value - __o.value   # get the difference between the unequal objects.
