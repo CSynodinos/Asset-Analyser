@@ -101,7 +101,7 @@ def plot_data(x_values: list, name: str, dtype: str, actual:np.ndarray,
 
     """Line plot real and predicted financial market data.
 
-    x axis is the dates of each price, y axis is the price of the financial asset.
+    The x axis is the dates of each price, y axis is the price of the financial asset.
 
     Plots 2 lines, one for the real data and one for the predicted data at each date of
     real data.
