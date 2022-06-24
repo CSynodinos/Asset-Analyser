@@ -43,14 +43,16 @@ def preprocessing(data: pd.DataFrame, prediction_days: int) -> tuple[np.ndarray,
 
     return x_train, y_train, scaler
 
-def test_preprocessing(prediction_days, inputs):
+def test_preprocessing(prediction_days: int, inputs: np.ndarray) -> np.ndarray:
     """Preprocess the test data.
 
-    `prediction_days` are the number of days that the prediction will be based on.
+    Args:
+        * `prediction_days` (int): Number of days that the model will train on for the prediction.
+        * `inputs` (np.ndarray): Numpy array with the test dataset.
 
-    `inputs` is the dataset being tested.
-
-    Returns `x_test`"""
+    Returns:
+        np.ndarray: The trained dataset.
+    """
 
     x_test = []
 
