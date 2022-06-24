@@ -135,3 +135,5 @@ class prediction_comparison:
             if val_type == 'float' or val_type == 'int':
                 if not self.value == __o.value:
                     return self.value - __o.value   # get the difference between the unequal objects.
+            elif val_type == "str":
+                raise TypeError("Class variable can only be a float or int.")
