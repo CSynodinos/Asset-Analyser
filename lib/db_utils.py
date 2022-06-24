@@ -1,16 +1,17 @@
 import sqlite3
 import pandas as pd
 
-def SQLite_Query(database: str, table: str):
-        """Access an SQLite database and query a table. Get the entire table
-        and the dates column as two separate pandas Dataframes.
+def SQLite_Query(database: str, table: str) -> tuple[pd.DataFrame, list]:
+        """Access an SQLite database and query a table. Return the entire table
+        and the dates column as a pandas Dataframe and a list, respectively.
 
         Args:
             * `database` (str): Database name.
             * `table` (str): Table name.
 
         Returns:
-            `pd.DataFrame`: Pandas Dataframe with the queried data.
+            `tuple[pd.DataFrame, list]`: Pandas Dataframe with the all the queried data
+            and the list of all dates.
         """
 
         con = sqlite3.connect(database)   # Read SQLite table into dataframe.
@@ -23,10 +24,10 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
     """Send data from dataframe to a database.
 
     Args:
-        df (pd.Dataframe): Dataframe.
+        df (pd.Dataframe): Dataframe with the data.
 
     Returns:
-        bool: _description_
+        Boolean: True when operation finishes successfully.
     """
 
     engine = sqlite3.connect(dbname)
