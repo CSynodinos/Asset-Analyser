@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import datetime as dt
 
 import seaborn as sns
-import sklearn
 sns.set()   # Set seaborn graphs as default.
 
 import logging
