@@ -110,19 +110,19 @@ class financial_assets:
 
         return all_data, next_day[0][0], volat
 
+def prediction_assessment(df, db, asset):
+        from lib.df_utils import df_analyses
+        from lib.db_utils import table_parser
+
+        all_data_df = df_analyses(df = df).assessment_df_parser()
+        table_parser(df = all_data_df, dbname = db, asset_n = asset)
+
 @dataclass
 class prediction_comparison:
     df: pd.DataFrame
 
     def __eq__(self, __o: object) -> bool:
         pass
-
-    def prediction_assessment(self, db, asset):
-        from lib.df_utils import df_analyses
-        from lib.db_utils import table_parser
-
-        all_data_df = df_analyses(df = self.df).assessment_df_parser()
-        table_parser(df = all_data_df, dbname = db, asset_n = asset)
 
     def prediction_tracking(self):
         pass
