@@ -62,23 +62,26 @@ def test_preprocessing(prediction_days, inputs):
 
     return x_test
 
-def RNN_model(x, y, units, closing_value, optimize, loss_function, epoch, batch):
-    """Build and train a Long Short-Term Memory Reccurent Neural Network (LSTM-RNN) using the Keras Sequential API.
-    
-    `x` and `y` are the training sets respectively.
-    
-    `units` is the dimensionality of the output space.
-    
-    `closing_value` is the number of prediction days i.e. if it is equal to 1 then just the next day will be predicted.
-    
-    `optimize` is the optimization algorithm.
-    
-    `loss_function` is the loss function of the NN which is used to calculate the prediction error.
-    
-    `epoch` is the number of epochs that the model will be trained for.
-    
-    `batch` is the batch_size of the model."""
-    
+def RNN_model(x: np.ndarray, y: np.ndarray, units: int, closing_value: int, 
+            optimize: str, loss_function: str, epoch: int, batch: int) -> Sequential:
+
+    """Build and train a Long Short-Term Memory Reccurent Neural Network (`LSTM-RNN`) 
+    using the `Keras Sequential API`.
+
+    Args:
+        * `x` (np.ndarray): Training set x.
+        * `y` (np.ndarray): Training set y.
+        * `units` (int): Dimensionality of the output space.
+        * `closing_value` (int): Number of prediction days i.e. if it is equal to 1 then just the next day will be predicted.
+        * `optimize` (str): Optimization algorithm.
+        * `loss_function` (str): The loss function for error prediction.
+        * `epoch` (int): Number of epochs to train.
+        * `batch` (int): Batch size of the model.
+
+    Returns:
+        Sequential: The Sequential layers as a class.
+    """
+
     model = Sequential()
     model.add(LSTM(units = units, return_sequences = True, input_shape = (x.shape[1], 1)))
     model.add(Dropout(0.2))
