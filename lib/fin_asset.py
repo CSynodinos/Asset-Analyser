@@ -119,14 +119,14 @@ def prediction_assessment(df, db, asset):
 
 @dataclass
 class prediction_comparison:
-    value: float
-
     """Dataclass to compare next day prediction with actual closing value of
     the asset on that day.
 
     Returns:
         __eq__() returns float: Resulting difference.
     """
+
+    value: float
 
     def __post_init__(self):
         # get type of class variable as string.
