@@ -134,15 +134,17 @@ def plot_data(x_values: list, name: str, dtype: str, actual:np.ndarray,
 
     return x_values_year
 
-def plot_volatility(dataframe, name):
+def plot_volatility(dataframe: pd.DataFrame, name: str) -> bool:
     """Plot the volatility histogram.
-    
-    `dataframe` is the dataframe to be plotted.
-    
-    `str_vol` is the string of the volatility result.
-    
-    `name` is the name of the stock/cryptocurrency."""
-    
+
+    Args:
+        `dataframe` (pd.Dataframe): Dataframe to plot.
+        `name` (str): Name of financial asset.
+
+    Returns:
+        Boolean: True when operation finishes successfully.
+    """
+
     fig, ax = plt.subplots()    # fig is placeholder, ax is used to set axis on graph.
     dataframe.hist(ax = ax, bins = 50, alpha = 0.6, color = "blue")
     ax.set_xlabel("Log Volatility")
