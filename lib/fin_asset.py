@@ -123,7 +123,7 @@ class prediction_comparison:
     the asset on that day.
 
     Returns:
-        __eq__() returns float: Resulting difference.
+        __eq__() returns the resulting difference as float.
     """
 
     value: float
@@ -143,4 +143,4 @@ class prediction_comparison:
     def __eq__(self, __o: object) -> float:
         if isinstance(__o, __class__):
             if not self.value == __o.value:
-                return self.value - __o.value   # get the difference between the unequal objects.
+                return float(self.value - __o.value)   # get the difference between the unequal objects.
