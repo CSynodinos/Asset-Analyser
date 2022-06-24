@@ -135,10 +135,10 @@ class prediction_comparison:
             raise TypeError("Class variable can only be of type float and int.")
 
         # Ensure the input value is always of the same type as the specified class variable type.
-        if isinstance(self.value, float):
-            self.value = float(self.value)
-        if isinstance(self.value, int):
+        if isinstance(self.value, float) and val_type == "int":
             self.value = int(self.value)
+        if isinstance(self.value, int) and val_type == "float":
+            self.value = float(self.value)
 
     def __eq__(self, __o: object) -> float:
         if isinstance(__o, __class__):
