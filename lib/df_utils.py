@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
 import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
@@ -61,8 +64,9 @@ class _df_ops(ABC):
         pass
 
 class df_analyses(_df_ops):
-    def __init__(self, df:pd.DataFrame) -> None:
+    def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
+        super().__init__()
 
     @classmethod
     def __repr__(cls) -> str:
