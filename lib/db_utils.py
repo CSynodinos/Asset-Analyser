@@ -1,6 +1,12 @@
 import sqlite3
 import pandas as pd
 
+def db_conn(db: str) -> sqlite3.Connection:
+    return sqlite3.connect(db)   # Read SQLite table into dataframe.
+
+def db_curr(engine: sqlite3.Connection) -> sqlite3.Cursor:
+    return engine.cursor()
+
 def SQLite_Query(database: str, table: str) -> tuple[pd.DataFrame, list]:
     """Access an SQLite database and query a table. Return the entire table
     and the dates column as a pandas Dataframe and a list, respectively.
@@ -14,11 +20,35 @@ def SQLite_Query(database: str, table: str) -> tuple[pd.DataFrame, list]:
         and the list of all dates.
     """
 
-    con = sqlite3.connect(database)   # Read SQLite table into dataframe.
+    con = db_conn(db = database)
     df = pd.read_sql_query("SELECT * from %s" %table, con)
     dates = df.iloc[:, 1].to_list()
     con.close()
     return df, dates
+
+def get_column(db: str, table: str, col_n: str) -> list:
+    """Parse specific column from SQLite3 database into a python list.
+
+    Args:
+        * `db` (str): Database name.
+        * `table` (str): Table name.
+        * `col_n` (str): Column name.
+
+    Returns:
+        list: List with all column values.
+    """
+
+    engine = db_conn(db = db)
+    cursor = db_curr(engine = engine)
+    cursor.execute("SELECT %s FROM '%s'" %(col_n, table))
+    dat_tmp = cursor.fetchall()
+    data = []
+    for i in dat_tmp:
+        if not i == None:
+            i = str(i)
+            i = i.replace('(',"").replace(')',"").replace(',',"").strip()
+            data.append(i)
+    return data
 
 def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
     """Send data from dataframe to a database.
@@ -30,13 +60,13 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
         Boolean: True when operation finishes successfully.
     """
 
-    engine = sqlite3.connect(dbname)
+    engine = db_conn(db = dbname)
     if "-" in asset_n:
         asset_n = asset_n.replace('-', "_")
     if " " in asset_n:
         asset_n = asset_n.replace(' ', "")
 
-    cursor = engine.cursor()
+    cursor = db_curr(engine = engine)
     cursor.execute("SELECT COUNT(name) FROM sqlite_master WHERE type='table' AND name='%s'" %asset_n)
     if cursor.fetchone()[0] == 1:
         cursor.execute("SELECT * FROM '%s'" %asset_n)
@@ -53,3 +83,7 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
         df.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
 
     return True
+
+if __name__ == "__main__":
+    get_column(db = "/Users/christossynodinos/workspace/personal/Market-Analysis/jupyter/Prediction_Assessment.db",
+            table = "XRP_USD", col_n = "Difference")
