@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
+from inspect import getfullargspec
 
 np.set_printoptions(formatter = {'float_kind':'{:f}'.format})   # Format numpy array results as floats
 
@@ -62,6 +63,29 @@ class _df_ops(ABC):
 class df_analyses(_df_ops):
     def __init__(self, df:pd.DataFrame) -> None:
         self.df = df
+
+    @classmethod
+    def __repr__(cls) -> str:
+        params = getfullargspec(__class__).args
+        params.remove("self")
+        return params
+
+    @classmethod
+    def __dir__(cls, only_added = False) -> list:
+        """Display function attributes.
+        Args:
+            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
+        Returns:
+            list: List of attributes.
+        """
+
+        all_att = list(cls.__dict__.keys())
+        if not only_added:
+            return all_att
+        else:
+            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
+            all_att = [x for x in all_att if x not in default_atts]
+            return all_att
 
     def _get_col_numpy(self, idx: int) -> np.ndarray:
         return self.df.iloc[:, idx].to_numpy()
