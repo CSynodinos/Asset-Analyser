@@ -45,7 +45,7 @@ def get_column(db: str, table: str, col_n: str) -> list:
     data = []
     for i in dat_tmp:
         if not i == None:
-            i = str(i)
+            i = str(i)  # tuple to string.
             i = i.replace('(',"").replace(')',"").replace(',',"").strip()
             data.append(i)
     return data
