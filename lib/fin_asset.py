@@ -49,12 +49,13 @@ class financial_assets:
         cols = ['Dates', 'Real_Values', 'Predicted_Values']
         return pd.DataFrame({cols[0]: d, cols[1]: real, cols[2]: pred})
 
-    def predictor(self, x, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
-                tick: str, query_asset: pd.DataFrame) -> tuple[float, str]:
+    def predictor(self, x: list, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
+                tick: str, query_asset: pd.DataFrame) -> tuple[pd.DataFrame, float, str]:
 
         """Financial asset predictor.
 
         Args:
+            * `x` (list): List of values for the x-axis.
             * `x_train` (np.ndarray): Numpy array with x axis training set.
             * `y_train` (np.ndarray): Numpy array with y axis training set.
             * `asset_scaler` (MinMaxScaler): Feature scaler array containing numbers scaled to dataset range.
@@ -62,7 +63,8 @@ class financial_assets:
             * `query_asset` (pd.DataFrame): Asset pandas dataframe.
 
         Returns:
-            
+            tuple[pd.DataFrame, float, str]: All data output DataFrame, the prediction for the next day
+            and the mean percentage volatility as a string.
         """
 
         # Training starts.
