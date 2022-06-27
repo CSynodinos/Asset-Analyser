@@ -43,6 +43,16 @@ class financial_assets:
 
     @staticmethod
     def df_act_pred(real:np.ndarray, pred:np.ndarray, d:list) -> pd.DataFrame:
+        """Convert multiple Numpy arrays into 1 Dataframe.
+
+        Args:
+            * `real` (np.ndarray): Array with actual closing values of financial asset.
+            * `pred` (np.ndarray): Array with predicted closing values of financial asset.
+            * `d` (list): List of dates.
+
+        Returns:
+            pd.DataFrame: The 3 column Dataframe.
+        """
         real = np.ndarray.tolist(real)
         pred = np.ndarray.tolist(pred)
         pred = [val for vals in pred for val in vals]   # Flatten pred list of lists.
