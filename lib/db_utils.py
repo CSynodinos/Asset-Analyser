@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
 import sqlite3
 import pandas as pd
 
@@ -83,7 +86,3 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
         df.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
 
     return True
-
-if __name__ == "__main__":
-    get_column(db = "/Users/christossynodinos/workspace/personal/Market-Analysis/jupyter/Prediction_Assessment.db",
-            table = "XRP_USD", col_n = "Difference")
