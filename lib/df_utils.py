@@ -126,6 +126,8 @@ class df_analyses(_df_ops):
 
     @staticmethod
     def lst_assess(lst: list, threshold: float | int) -> list:
+        if not (isinstance(threshold, int) or isinstance(threshold, float)):
+            raise TypeError(f'Threshold parameter can only be a float or int, not {type(threshold).__name__}')
         above = []
         for i in lst:
             i = float(i)
