@@ -64,7 +64,16 @@ class _df_ops(ABC):
         pass
 
     @abstractmethod
-    def lst_assess(self):
+    def lst_assess(self, lst: list, threshold: float | int) -> list:
+        """Assess list for above threshold elements.
+
+        Args:
+            * `lst` (list): List to loop through.
+            * `threshold` (float | int): Threshold defined by user (both int and float supported).
+
+        Returns:
+            list: Holds above threshold values only.
+        """
         pass
 
 class df_analyses(_df_ops):
@@ -115,7 +124,7 @@ class df_analyses(_df_ops):
         self.df['Percent_Difference'] =  self._percent_diff().tolist()
         return self.df
 
-    def lst_assess(self, lst: list, threshold: float | int):
+    def lst_assess(self, lst: list, threshold: float | int) -> list:
         above = []
         for i in lst:
             i = float(i)
