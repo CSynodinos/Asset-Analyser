@@ -3,12 +3,16 @@ from __future__ import annotations
 
 import sqlite3
 import pandas as pd
+import re
 
 def db_conn(db: str) -> sqlite3.Connection:
     return sqlite3.connect(db)   # Read SQLite table into dataframe.
 
 def db_curr(engine: sqlite3.Connection) -> sqlite3.Cursor:
     return engine.cursor()
+
+def db_con_curr(db) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
+    return sqlite3.connect(db), sqlite3.connect(db).cursor()
 
 def SQLite_Query(database: str, table: str) -> tuple[pd.DataFrame, list]:
     """Access an SQLite database and query a table. Return the entire table
@@ -41,8 +45,7 @@ def get_column(db: str, table: str, col_n: str) -> list:
         list: List with all column values.
     """
 
-    engine = db_conn(db = db)
-    cursor = db_curr(engine = engine)
+    cursor = db_con_curr(db = db)[1]
     cursor.execute("SELECT %s FROM '%s' WHERE %s IS NOT NULL" %(col_n, table, col_n))
     dat_tmp = cursor.fetchall()
     data = []
@@ -86,3 +89,27 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
         df.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
 
     return True
+
+def get_entry(db: str, d: str, table: str):
+    cursor = db_con_curr(db = db)[1]
+    cursor.execute("SELECT * FROM '%s' WHERE Dates='%s'" %(table, d))
+    tmp = cursor.fetchall()
+    all_data = []
+    for i in tmp:
+        if None in i:
+            continue
+        else:
+            all_data.append(i)
+
+    if len(all_data) > 1:
+        all_percent_diff = []
+        for k in all_data:
+            percent_diff = k[-1]
+            all_percent_diff.append(percent_diff)
+        all_percent_diff = [float(x) for x in all_percent_diff] # convert to list of floats.
+        smallest_diff = min(all_percent_diff)
+        for m in all_data:
+            if smallest_diff in m:
+                return m
+            else:
+                continue
