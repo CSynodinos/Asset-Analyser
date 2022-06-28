@@ -43,7 +43,7 @@ def get_column(db: str, table: str, col_n: str) -> list:
 
     engine = db_conn(db = db)
     cursor = db_curr(engine = engine)
-    cursor.execute("SELECT %s FROM '%s'" %(col_n, table))
+    cursor.execute("SELECT %s FROM '%s' WHERE %s IS NOT NULL" %(col_n, table, col_n))
     dat_tmp = cursor.fetchall()
     data = []
     for i in dat_tmp:
