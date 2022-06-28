@@ -124,7 +124,8 @@ class df_analyses(_df_ops):
         self.df['Percent_Difference'] =  self._percent_diff().tolist()
         return self.df
 
-    def lst_assess(self, lst: list, threshold: float | int) -> list:
+    @staticmethod
+    def lst_assess(lst: list, threshold: float | int) -> list:
         above = []
         for i in lst:
             i = float(i)
