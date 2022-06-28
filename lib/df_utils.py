@@ -63,6 +63,10 @@ class _df_ops(ABC):
         """
         pass
 
+    @abstractmethod
+    def lst_assess(self):
+        pass
+
 class df_analyses(_df_ops):
     def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
@@ -110,3 +114,11 @@ class df_analyses(_df_ops):
         self.df['Difference'] = result_diff.tolist()
         self.df['Percent_Difference'] =  self._percent_diff().tolist()
         return self.df
+
+    def lst_assess(self, lst: list, threshold: float | int):
+        above = []
+        for i in lst:
+            i = float(i)
+            if i >= threshold and i != None:
+                above = above.append(i)
+        return above
