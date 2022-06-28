@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import sqlite3, os, datetime, time
-import pandas as pd
 import yfinance as yf
 from lib.exceptions import DateError
 from inspect import getfullargspec
