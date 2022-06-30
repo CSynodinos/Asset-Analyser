@@ -30,7 +30,7 @@ class financial_assets:
         Args:
             * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
         Returns:
-            list: List of attributes.
+            `list`: List of attributes.
         """
 
         all_att = list(cls.__dict__.keys())
@@ -51,7 +51,7 @@ class financial_assets:
             * `d` (list): List of dates.
 
         Returns:
-            pd.DataFrame: The 3 column Dataframe.
+            `pd.DataFrame`: The 3 column DataFrame.
         """
         real = np.ndarray.tolist(real)
         pred = np.ndarray.tolist(pred)
@@ -73,7 +73,7 @@ class financial_assets:
             * `query_asset` (pd.DataFrame): Asset pandas dataframe.
 
         Returns:
-            tuple[pd.DataFrame, float, str]: All data output DataFrame, the prediction for the next day
+            `tuple[pd.DataFrame, float, str]`: All data output DataFrame, the prediction for the next day
             and the mean percentage volatility as a string.
         """
 
@@ -122,6 +122,7 @@ class financial_assets:
 
         return all_data, next_day[0][0], volat
 
+#TODO: Not ready!
 def prediction_assessment(df, db, asset):
         from lib.df_utils import df_analyses
         from lib.db_utils import table_parser
@@ -138,7 +139,7 @@ class prediction_comparison:
         __eq__() returns the resulting difference as float.
     """
 
-    value: float
+    value: float | int
 
     def __post_init__(self):
         # get type of class variable as string.
