@@ -3,15 +3,39 @@ from __future__ import annotations
 
 import sqlite3
 import pandas as pd
-import re
+from lib.exceptions import EntryNotFoundError
 
 def db_conn(db: str) -> sqlite3.Connection:
+    """Connect to SQLite3 database.
+
+    Args:
+        * `db` (str): Database name.
+
+    Returns:
+        `sqlite3.Connection`: Database connection object.
+    """
     return sqlite3.connect(db)   # Read SQLite table into dataframe.
 
 def db_curr(engine: sqlite3.Connection) -> sqlite3.Cursor:
+    """Generate SQLite3 cursor object.
+
+    Args:
+        * `engine` (sqlite3.Connection): Database connection object.
+
+    Returns:
+        `sqlite3.Cursor`: SQLite3 cursor object.
+    """
     return engine.cursor()
 
-def db_con_curr(db) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
+def db_con_curr(db: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
+    """Generate both a connection and cursor objects.
+
+    Args:
+        * `db` (str): Database name.
+
+    Returns:
+        `tuple[sqlite3.Connection, sqlite3.Cursor]`: SQLite3 connection and cursor objects.
+    """
     return sqlite3.connect(db), sqlite3.connect(db).cursor()
 
 def SQLite_Query(database: str, table: str) -> tuple[pd.DataFrame, list]:
@@ -42,7 +66,7 @@ def get_column(db: str, table: str, col_n: str) -> list:
         * `col_n` (str): Column name.
 
     Returns:
-        list: List with all column values.
+        `list`: List with all column values.
     """
 
     cursor = db_con_curr(db = db)[1]
@@ -60,10 +84,10 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
     """Send data from dataframe to a database.
 
     Args:
-        df (pd.Dataframe): Dataframe with the data.
+        `df` (pd.Dataframe): Dataframe with the data.
 
     Returns:
-        Boolean: True when operation finishes successfully.
+        `boolean`: True when operation finishes successfully.
     """
 
     engine = db_conn(db = dbname)
@@ -82,15 +106,27 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
         if len(col_diff) != 0:
             for i in col_diff:
                 cursor.execute("ALTER TABLE '%s' ADD COLUMN '%s'" %(asset_n, i))
-        else:
-            pass
-        df.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
+        df.to_sql(asset_n, con = engine, if_exists = 'replace', index = True)
     else:
-        df.to_sql(asset_n, con = engine, if_exists = 'append', index = True)
+        df.to_sql(asset_n, con = engine, if_exists = 'replace', index = True)
 
     return True
 
-def get_entry(db: str, d: str, table: str):
+def get_entry(db: str, d: str, table: str) -> tuple:
+    """Get row from database, specified by the data column.
+
+    Args:
+        * `db` (str): Database name.
+        * `d` (str): Date as string.
+        * `table` (str): Table name.
+
+    Raises:
+        `EntryNotFoundError`: If date entry is not in the database.
+
+    Returns:
+        `tuple`: Resulting row from query.
+    """
+
     cursor = db_con_curr(db = db)[1]
     cursor.execute("SELECT * FROM '%s' WHERE Dates='%s'" %(table, d))
     tmp = cursor.fetchall()
@@ -101,7 +137,8 @@ def get_entry(db: str, d: str, table: str):
         else:
             all_data.append(i)
 
-    if len(all_data) > 1:
+    if len(all_data) > 1:   # If there is more than one entry of the same date,
+                            # get the one with the best percent difference.
         all_percent_diff = []
         for k in all_data:
             percent_diff = k[-1]
@@ -110,6 +147,12 @@ def get_entry(db: str, d: str, table: str):
         smallest_diff = min(all_percent_diff)
         for m in all_data:
             if smallest_diff in m:
-                return m
+                return tuple(m)
             else:
                 continue
+
+    elif len(all_data) == 1:
+        return tuple(all_data[0])
+
+    else:
+        raise EntryNotFoundError(f"Unable to locate entry '{d}' in the database.")
