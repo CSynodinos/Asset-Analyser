@@ -72,7 +72,7 @@ class _df_ops(ABC):
             * `threshold` (float | int): Threshold defined by user (both int and float supported).
 
         Returns:
-            list: Holds above threshold values only.
+            `list`: Holds above threshold values only.
         """
         pass
 
@@ -93,7 +93,7 @@ class df_analyses(_df_ops):
         Args:
             * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
         Returns:
-            list: List of attributes.
+            `list`: List of attributes.
         """
 
         all_att = list(cls.__dict__.keys())
