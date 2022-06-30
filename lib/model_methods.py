@@ -24,7 +24,7 @@ def preprocessing(data: pd.DataFrame, prediction_days: int) -> tuple[np.ndarray,
         * `prediction_days` (int): Number of days to predict the data for training.
 
     Returns:
-        tuple[np.ndarray, np.ndarray, MinMaxScaler]: x and y axis training data and the scaler.
+        `tuple[np.ndarray, np.ndarray, MinMaxScaler]`: x and y axis training data and the scaler.
     """
 
     scaler = MinMaxScaler(feature_range = (0, 1))
@@ -80,7 +80,7 @@ def RNN_model(x: np.ndarray, y: np.ndarray, units: int, closing_value: int,
         * `batch` (int): Batch size of the model.
 
     Returns:
-        Sequential: The Sequential layers as a class.
+        `Sequential`: The Sequential layers as a class.
     """
 
     model = Sequential()
@@ -125,14 +125,14 @@ def plot_data(x_values: list, name: str, dtype: str, actual:np.ndarray,
         date = str(date).split(' ',1)[0]
         x_values_year.append(date)
 
-    plt.plot(x_values_year, actual, color = colour_actual, label = '%s Actual Price' %name)
-    plt.plot(x_values_year, predicted, color = colour_predicted, label = '%s Predicted Price' %name)
-    plt.title('%s %s Price' %(name, dtype))
+    plt.plot(x_values_year, actual, color = colour_actual, label = f'{name} Actual Price')
+    plt.plot(x_values_year, predicted, color = colour_predicted, label = f'{name} Predicted Price')
+    plt.title(f'{name} {dtype} Price')
     plt.xlabel('Date')
 
     x_range = list(range(0, len(x_values_year)))
     plt.xticks(np.arange(0, len(x_range) + 1, 300)) # show an x value every 300 intervals.
-    plt.ylabel('%s %s Price' %(name, dtype))
+    plt.ylabel(f'{name} {dtype} Price')
     plt.legend()
     plt.show()
 
@@ -146,14 +146,14 @@ def plot_volatility(dataframe: pd.DataFrame, name: str) -> bool:
         `name` (str): Name of financial asset.
 
     Returns:
-        Boolean: True when operation finishes successfully.
+        `boolean`: True when operation finishes successfully.
     """
 
     fig, ax = plt.subplots()    # fig is placeholder, ax is used to set axis on graph.
     dataframe.hist(ax = ax, bins = 50, alpha = 0.6, color = "blue")
     ax.set_xlabel("Log Volatility")
     ax.set_ylabel("Volatility Frequency(%)")
-    ax.set_title("%s Volatility Plot" %name)
+    ax.set_title(f"{name} Volatility Plot")
 
     return True
 
@@ -174,7 +174,7 @@ def next_day_prediction(input: np.ndarray, name: str, type: str, prediction_days
         * `day` (str, optional): Day. Defaults to "".
 
     Returns:
-        float: Prediction of the price of the financial asset on the next day after the specified date.
+        `float`: Prediction of the price of the financial asset on the next day after the specified date.
     """
 
     next_day = [input[len(input) + 1 - prediction_days:len(input + 1), 0]]  # Calculate the next day.
@@ -187,12 +187,12 @@ def next_day_prediction(input: np.ndarray, name: str, type: str, prediction_days
     # Print the result and the prediction date.
     tomorrow = dt.date.today() + dt.timedelta(days=1)   # Today.
     if today == True:
-        print("%s %s Adj.Close price prediction for %s: $%f" %(name, type, tomorrow, prediction))
+        print(f"{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction}")
     elif today == False and year != "" and month != "" and day != "":
-        print("%s %s Adj.Close price prediction (%d/%d/%d): $%f" %(name, type, day, month, year, prediction))
+        print(f"{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction}")
     elif today == True and year != "" and month != "" and day != "":
-        print("%s %s Adj.Close price prediction (%d/%d/%d): $%f" %(name, type, day, month, year, prediction))
+        print(f"{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction}")
     else:
-        print("%s %s Adj.Close price prediction: $%f" %(name, type, prediction))
+        print(f"{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction}")
 
     return prediction
