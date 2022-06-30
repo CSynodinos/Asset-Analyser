@@ -48,7 +48,7 @@ class data:
             * `stop` (str): End date for data fetching.
 
         Returns:
-            Boolean: True when operation finishes successfully.
+            `boolean`: True when operation finishes successfully.
         """
 
         engine = sqlite3.connect(db)
@@ -100,7 +100,7 @@ class data:
             DateError: When data is incorrectly selected.
 
         Returns:
-            Boolean: True when operation finishes successfully.
+            `boolean`: True when operation finishes successfully.
         """
 
         if today == True:
