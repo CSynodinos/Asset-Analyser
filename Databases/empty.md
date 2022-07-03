@@ -1,1 +1,1 @@
-empty
+Placeholder for folder
