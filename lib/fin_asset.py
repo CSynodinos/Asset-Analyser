@@ -60,7 +60,8 @@ class financial_assets:
         return pd.DataFrame({cols[0]: d, cols[1]: real, cols[2]: pred})
 
     def predictor(self, x: list, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
-                tick: str, query_asset: pd.DataFrame) -> tuple[pd.DataFrame, float, str]:
+                tick: str, query_asset: pd.DataFrame, any_p: bool = False,
+                volat_p: bool = False) -> tuple[pd.DataFrame, float, str]:
 
         """Financial asset predictor.
 
@@ -71,10 +72,11 @@ class financial_assets:
             * `asset_scaler` (MinMaxScaler): Feature scaler array containing numbers scaled to dataset range.
             * `tick` (str): Asset name to download data for.
             * `query_asset` (pd.DataFrame): Asset pandas dataframe.
+            * `volat_p` (bool, default = False): Plot the volatility log graph.
 
         Returns:
-            `tuple[pd.DataFrame, float, str]`: All data output DataFrame, the prediction for the next day
-            and the mean percentage volatility as a string.
+        `tuple[pd.DataFrame, float, str]`: All data output DataFrame, the prediction for the 
+        next day and the mean percentage volatility as a string.
         """
 
         # Training starts.
@@ -84,23 +86,25 @@ class financial_assets:
         # Test data.
         test_start = dt.datetime(2019, 11, 1)
         test_end = dt.datetime.now().date().isoformat()   # Today.
-        test_data = yf.download(tickers = tick, start = test_start, end = test_end) # Get test data from Yahoo.
-        actual_prices = test_data['Close'].values   # Get closing prices.
+        test_data: pd.DataFrame = yf.download(tickers = tick, start = test_start,
+                                            end = test_end) # Get test data from Yahoo.
 
+        actual_prices = test_data['Close'].values   # Get closing prices.
         asset_dataset = pd.concat((query_asset['Close'], test_data['Close']), axis = 0)
         model_inputs = asset_dataset[len(asset_dataset) - len(test_data) - self.pred_days:].values
         model_inputs = model_inputs.reshape(-1, 1)
-        model_inputs = asset_scaler.transform(model_inputs) # Data scaled according to the scaler.
+        model_inputs: np.ndarray = asset_scaler.transform(model_inputs) # Data scaled according to the scaler.
 
         # Make predictions on test data.
         x_test = test_preprocessing(self.pred_days, model_inputs)
-        pred_prices = asset_model.predict(x_test, verbose = 0)
-        pred_prices = asset_scaler.inverse_transform(pred_prices)
+        pred_prices: np.ndarray = asset_model.predict(x_test, verbose = 0)
+        pred_prices: np.ndarray = asset_scaler.inverse_transform(pred_prices)
 
         # Plot Results
-        dates = plot_data(x_values = x, name = tick, dtype = self.asset_type, 
-                                actual = actual_prices, predicted = pred_prices, 
-                                colour_actual = "blue", colour_predicted = "red")
+        if any_p:
+            dates = plot_data(x_values = x, name = tick, dtype = self.asset_type, 
+                                    actual = actual_prices, predicted = pred_prices, 
+                                    colour_actual = "blue", colour_predicted = "red")
 
         all_data = self.df_act_pred(real = actual_prices, pred = pred_prices, d = dates)
 
@@ -114,11 +118,12 @@ class financial_assets:
 
         # Creates a column called 'Log returns' with the daily log return of the Close price.
         asset_copy['Log returns'] = np.log(query_asset['Close']/query_asset['Close'].shift())
-        volatility = asset_copy['Log returns'].std() * 252 **.5   # 255 is the trading days per annum. **.5 is square root.
+        volatility: int | float = asset_copy['Log returns'].std() * 252 **.5   # 255 is the trading days per annum. **.5 is square root.
         percentage_vol = lambda x : round(x, 4) * 100 
         volat = str(percentage_vol(volatility))
-        plot_volatility(asset_copy['Log returns'], name = tick)
-        print(f'{tick} {self.asset_type} Volatility = {volat}%%')
+        if volat_p:
+            plot_volatility(asset_copy['Log returns'], name = tick)
+        print(f'{tick} {self.asset_type} Volatility = {volat}%')
 
         return all_data, next_day[0][0], volat
 
