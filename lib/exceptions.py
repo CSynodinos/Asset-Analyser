@@ -36,3 +36,54 @@ class EntryNotFoundError(Exception):
             return '{0} '.format(self.errmessage)
         else:
             return 'EntryNotFoundError has been raised'
+
+class BadPortError(Exception):
+    """Custom exception class raised when local host port is invalid."""
+
+    __module__ = 'builtins'
+
+    def __init__(self, *args) -> None:
+        if args:
+            self.errmessage = args[0]
+        else:
+            self.errmessage = None
+
+    def __repr__(self) -> str:
+        if self.errmessage:
+            return '{0} '.format(self.errmessage)
+        else:
+            return 'BadPortError has been raised'
+
+class AssetTypeError(Exception):
+    """Custom exception class raised when asset type is invalid."""
+
+    __module__ = 'builtins'
+
+    def __init__(self, *args) -> None:
+        if args:
+            self.errmessage = args[0]
+        else:
+            self.errmessage = None
+
+    def __repr__(self) -> str:
+        if self.errmessage:
+            return '{0} '.format(self.errmessage)
+        else:
+            return 'AssetTypeError has been raised'
+
+class PredictionDaysError(Exception):
+    """Custom exception class raised when prediction days are invalid."""
+
+    __module__ = 'builtins'
+
+    def __init__(self, *args) -> None:
+        if args:
+            self.errmessage = args[0]
+        else:
+            self.errmessage = None
+
+    def __repr__(self) -> str:
+        if self.errmessage:
+            return '{0} '.format(self.errmessage)
+        else:
+            return 'PredictionDaysError has been raised'
