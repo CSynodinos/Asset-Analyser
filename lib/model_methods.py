@@ -50,7 +50,7 @@ def test_preprocessing(prediction_days: int, inputs: np.ndarray) -> np.ndarray:
         * `inputs` (np.ndarray): Numpy array with the test dataset.
 
     Returns:
-        np.ndarray: The trained dataset.
+        `np.ndarray`: The trained dataset.
     """
 
     x_test = []
