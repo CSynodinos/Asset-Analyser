@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import sqlite3, os, datetime, time
 import yfinance as yf
+import pandas as pd
 from lib.exceptions import DateError
 from inspect import getfullargspec
 
@@ -59,7 +60,7 @@ class data:
             while not connected:    # Check connection to Yahoo finance.
                 try:
                     print(f'Fetching {i} {type} data...')
-                    df = yf.download(tickers = i, start = begin, end = stop)
+                    df: pd.DataFrame = yf.download(tickers = i, start = begin, end = stop)
                     connected = True
                 except Exception as e:
                     print("type error: " + str(e))
