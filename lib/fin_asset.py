@@ -149,7 +149,8 @@ class prediction_comparison:
 
     def __post_init__(self):
         # get type of class variable as string.
-        val_type = str(list(__class__.__annotations__.values())[0]).replace("<class","").replace(">","").replace("'","").strip()
+        val_type = str(list(__class__.__annotations__.values())[0])
+        val_type = val_type.replace("<class","").replace(">","").replace("'","").strip()
         if not (val_type == 'float' or val_type == 'int'):
             raise TypeError("Class variable can only be of type float and int.")
 
