@@ -13,7 +13,22 @@ from threading import Timer
 
 ##http://localhost:8050
 
-def __dash_db_import(df: pd.DataFrame, asset, asset_type, next_day, volatility):
+def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: int | float,
+                    volatility: str) -> dash.Dash:
+
+    """Create a one graph dashboard using dash.
+
+    Args:
+        * `df` (pd.DataFrame): DataFrame with the dashboard data.
+        * `asset` (str): Asset name.
+        * `asset_type` (str): Type of asset.
+        * `next_day` (int | float): Next day prediction value.
+        * `volatility` (str): Volatility percentage value.
+
+    Returns:
+        Dash: Instance of the dash web application.
+    """
+
     external_stylesheets = [
         {
             "href": "https://fonts.googleapis.com/css2?"
@@ -118,26 +133,49 @@ def __dash_db_import(df: pd.DataFrame, asset, asset_type, next_day, volatility):
     return app
 
 def __check_port(p: int) -> bool:
+    """Internal method: Check if port is valid.
+
+    Args:
+        `p` (int): Port.
+
+    Returns:
+        `bool`: True or False depending on isinstance() result.
+    """
+
     if not isinstance(p, int):
         return False
     else:
         return True
 
-def dash_launch(db: str, table: str, fin_asset: str, asset_type: str, 
+def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str, 
                 nxt_day: float | int, volatility: str, port = 8050):
-    
+
+    """Launch a dash dashboard.
+
+    Args:
+        * `db` (str): Name of database.
+        * `table` (str): Table with asset data.
+        * `fin_asset` (str): Name of asset.
+        * `asset_type` (str): Type of asset e.g. crypto, stock.
+        * `nxt_day` (float | int): Next day price prediction.
+        * `volatility` (str): Volatility of asset.
+        * `port` (int, optional): Port for server. Defaults to 8050.
+
+    Raises:
+        `BadPortError`: Raised when port is not an integer.
+    """
 
     df = SQLite_Query(database = db, table = table)[0]
-    app = __dash_db_import(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
+    app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
                         volatility = volatility)
 
     if __check_port == False:
         raise BadPortError(f"Local host port: {port} is not an integer.")
     elif __check_port == True:
         Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
-        app.run_server(port = port)
+        return app.run_server(port = port)
 
 if __name__ == "__main__":
-    dash_launch(db = "/Users/christossynodinos/workspace/personal/Market-Analysis/jupyter/Prediction_Assessment.db",
+    dashboard_launch(db = "/Users/christossynodinos/workspace/personal/Market-Analysis/jupyter/Prediction_Assessment.db",
                 table = 'XRP_USD', fin_asset = "XRP-USD", asset_type = 'Cryptocurrency',
                 nxt_day = 0.33, volatility = "100")
