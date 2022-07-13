@@ -7,7 +7,7 @@ from __future__ import annotations
 import os, shutil
 from lib.data import data
 from lib.exceptions import AssetTypeError, PredictionDaysError
-from lib.model_methods import *
+from lib.model_methods import preprocessing
 from lib.fin_asset import financial_assets, prediction_comparison, prediction_assessment
 from lib.db_utils import SQLite_Query, table_parser
 from dashboard.app import dashboard_launch
