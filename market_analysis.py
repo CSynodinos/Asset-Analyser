@@ -10,11 +10,12 @@ from lib.exceptions import AssetTypeError, PredictionDaysError
 from lib.model_methods import *
 from lib.fin_asset import financial_assets, prediction_comparison, prediction_assessment
 from lib.db_utils import SQLite_Query, table_parser
-#from dashboard.app import dash_launch
+from dashboard.app import dashboard_launch
 import datetime as dt
 from inspect import getfullargspec
 
 class analyze_asset:
+
     cwd = os.getcwd()
 
     def __init__(self, asset_type: str, asset: str, big_db = "",
@@ -63,6 +64,11 @@ class analyze_asset:
 
     @classmethod
     def __db_subdir(cls):
+        """Class method for database subdirectory.
+
+        Returns:
+            `str`: Path to database subdirectory.
+        """
         return os.path.join(cls.cwd, "Databases")
 
     def analyze(self):
