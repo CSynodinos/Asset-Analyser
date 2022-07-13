@@ -98,7 +98,7 @@ class data:
             * `today` (bool): Select today's date.
 
         Raises:
-            DateError: When data is incorrectly selected.
+            `DateError`: When data is incorrectly selected.
 
         Returns:
             `boolean`: True when operation finishes successfully.
