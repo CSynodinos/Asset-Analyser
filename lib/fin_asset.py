@@ -129,7 +129,7 @@ class financial_assets:
         return all_data, next_day[0][0], volat
 
 #TODO: Not ready!
-def prediction_assessment(df, db, asset):
+def prediction_assessment(df: pd.DataFrame, db: str, asset: str):
         from lib.df_utils import df_analyses
         from lib.db_utils import table_parser
 
