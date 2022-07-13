@@ -9,7 +9,7 @@ from lib.data import data
 from lib.exceptions import AssetTypeError, PredictionDaysError
 from lib.model_methods import preprocessing
 from lib.fin_asset import financial_assets, prediction_comparison, prediction_assessment
-from lib.db_utils import SQLite_Query, table_parser
+from lib.db_utils import SQLite_Query
 from dashboard.app import dashboard_launch
 import datetime as dt
 from inspect import getfullargspec
@@ -91,7 +91,6 @@ class analyze_asset:
                                                                             tick = asset_l[0], 
                                                                             query_asset = asset_df)
         prediction_db = f"Prediction_Assessment_{self.asset}.db"
-        table_parser(asset_all_data, dbname = prediction_db, asset_n = asset_l[0])
         prediction_assessment(df = asset_all_data, db = prediction_db, asset = asset_l[0])
 
 if __name__ == "__main__":
