@@ -53,6 +53,7 @@ class financial_assets:
         Returns:
             `pd.DataFrame`: The 3 column DataFrame.
         """
+
         real = np.ndarray.tolist(real)
         pred = np.ndarray.tolist(pred)
         pred = [val for vals in pred for val in vals]   # Flatten pred list of lists.
@@ -119,7 +120,7 @@ class financial_assets:
         # Creates a column called 'Log returns' with the daily log return of the Close price.
         asset_copy['Log returns'] = np.log(query_asset['Close']/query_asset['Close'].shift())
         volatility: int | float = asset_copy['Log returns'].std() * 252 **.5   # 255 is the trading days per annum. **.5 is square root.
-        percentage_vol = lambda x : round(x, 4) * 100 
+        percentage_vol: int | float = lambda x : round(x, 4) * 100 
         volat = str(percentage_vol(volatility))
         if volat_p:
             plot_volatility(asset_copy['Log returns'], name = tick)
