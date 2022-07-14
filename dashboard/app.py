@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import os, sys
-SCRIPT_DIR = os.path.dirname(os.path.abspath("__file__"))
-sys.path.append(os.path.dirname(SCRIPT_DIR))
 from lib.db_utils import SQLite_Query
 from lib.exceptions import BadPortError
 import dash
@@ -174,8 +171,3 @@ def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str,
     elif __check_port == True:
         Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
         return app.run_server(port = port)
-
-if __name__ == "__main__":
-    dashboard_launch(db = "/Users/christossynodinos/workspace/personal/Market-Analysis/jupyter/Prediction_Assessment.db",
-                table = 'XRP_USD', fin_asset = "XRP-USD", asset_type = 'Cryptocurrency',
-                nxt_day = 0.33, volatility = "100")
