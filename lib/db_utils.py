@@ -106,9 +106,13 @@ def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
         if len(col_diff) != 0:
             for i in col_diff:
                 cursor.execute("ALTER TABLE '%s' ADD COLUMN '%s'" %(asset_n, i))
+                cursor.close()
+        else:
+            cursor.close()
         df.to_sql(asset_n, con = engine, if_exists = 'replace', index = True)
     else:
         df.to_sql(asset_n, con = engine, if_exists = 'replace', index = True)
+        cursor.close()
 
     return True
 
