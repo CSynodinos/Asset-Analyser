@@ -100,12 +100,9 @@ class financial_assets:
         x_test = test_preprocessing(self.pred_days, model_inputs)
         pred_prices: np.ndarray = asset_model.predict(x_test, verbose = 0)
         pred_prices: np.ndarray = asset_scaler.inverse_transform(pred_prices)
-
-        # Plot Results
-        if any_p:
-            dates = plot_data(x_values = x, name = tick, dtype = self.asset_type, 
-                                    actual = actual_prices, predicted = pred_prices, 
-                                    colour_actual = "blue", colour_predicted = "red")
+        dates = plot_data(x_values = x, name = tick, dtype = self.asset_type, 
+                                actual = actual_prices, predicted = pred_prices, 
+                                colour_actual = "blue", colour_predicted = "red")
 
         all_data = self.df_act_pred(real = actual_prices, pred = pred_prices, d = dates)
 
