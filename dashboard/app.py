@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import os, sys
+SCRIPT_DIR = os.path.dirname(os.path.abspath("__file__"))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
 from lib.db_utils import SQLite_Query
 from lib.exceptions import BadPortError
 import dash
@@ -165,9 +169,10 @@ def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str,
     df = SQLite_Query(database = db, table = table)[0]
     app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
                         volatility = volatility)
-
-    if __check_port == False:
+    check = __check_port(p = port)
+    if check == False:
         raise BadPortError(f"Local host port: {port} is not an integer.")
-    elif __check_port == True:
+    elif check == True:
+        print('j')
         Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
-        return app.run_server(port = port)
+        return app.run(port = port)
