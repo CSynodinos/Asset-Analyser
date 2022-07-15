@@ -97,7 +97,8 @@ def RNN_model(x: np.ndarray, y: np.ndarray, units: int, closing_value: int,
     return model
 
 def plot_data(x_values: list, name: str, dtype: str, actual:np.ndarray,
-            predicted: np.ndarray, colour_actual: str, colour_predicted: str) -> list:
+            predicted: np.ndarray, colour_actual: str, colour_predicted: str,
+            plot = False) -> list:
 
     """Line plot real and predicted financial market data.
 
@@ -125,16 +126,17 @@ def plot_data(x_values: list, name: str, dtype: str, actual:np.ndarray,
         date = str(date).split(' ',1)[0]
         x_values_year.append(date)
 
-    plt.plot(x_values_year, actual, color = colour_actual, label = f'{name} Actual Price')
-    plt.plot(x_values_year, predicted, color = colour_predicted, label = f'{name} Predicted Price')
-    plt.title(f'{name} {dtype} Price')
-    plt.xlabel('Date')
+    if plot:
+        plt.plot(x_values_year, actual, color = colour_actual, label = f'{name} Actual Price')
+        plt.plot(x_values_year, predicted, color = colour_predicted, label = f'{name} Predicted Price')
+        plt.title(f'{name} {dtype} Price')
+        plt.xlabel('Date')
 
-    x_range = list(range(0, len(x_values_year)))
-    plt.xticks(np.arange(0, len(x_range) + 1, 300)) # show an x value every 300 intervals.
-    plt.ylabel(f'{name} {dtype} Price')
-    plt.legend()
-    plt.show()
+        x_range = list(range(0, len(x_values_year)))
+        plt.xticks(np.arange(0, len(x_range) + 1, 300)) # show an x value every 300 intervals.
+        plt.ylabel(f'{name} {dtype} Price')
+        plt.legend()
+        plt.show()
 
     return x_values_year
 
