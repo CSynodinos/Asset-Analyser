@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import os, sys
+from typing import Any
 SCRIPT_DIR = os.path.dirname(os.path.abspath("__file__"))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from lib.db_utils import SQLite_Query
-from lib.exceptions import BadPortError
 import dash
 from dash import dcc, html
 import pandas as pd
@@ -133,23 +133,8 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
     )
     return app
 
-def __check_port(p: int) -> bool:
-    """Internal method: Check if port is valid.
-
-    Args:
-        `p` (int): Port.
-
-    Returns:
-        `bool`: True or False depending on isinstance() result.
-    """
-
-    if not isinstance(p, int):
-        return False
-    else:
-        return True
-
 def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str, 
-                nxt_day: float | int, volatility: str, port = 8050):
+                nxt_day: float | int, volatility: str, port: int) -> Any:
 
     """Launch a dash dashboard.
 
@@ -160,19 +145,14 @@ def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str,
         * `asset_type` (str): Type of asset e.g. crypto, stock.
         * `nxt_day` (float | int): Next day price prediction.
         * `volatility` (str): Volatility of asset.
-        * `port` (int, optional): Port for server. Defaults to 8050.
+        * `port` (int, optional): Port for server.
 
-    Raises:
-        `BadPortError`: Raised when port is not an integer.
+    Returns:
+        Launches an instance of the app.
     """
 
     df = SQLite_Query(database = db, table = table)[0]
     app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
                         volatility = volatility)
-    check = __check_port(p = port)
-    if check == False:
-        raise BadPortError(f"Local host port: {port} is not an integer.")
-    elif check == True:
-        print('j')
-        Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
-        return app.run(port = port)
+    Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
+    return app.run(port = port)
