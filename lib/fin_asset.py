@@ -62,7 +62,7 @@ class financial_assets:
 
     def predictor(self, x: list, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
                 tick: str, query_asset: pd.DataFrame, any_p: bool = False,
-                volat_p: bool = False) -> tuple[pd.DataFrame, float, str]:
+                volat_p: bool = False, drop = 0.2) -> tuple[pd.DataFrame, float, str]:
 
         """Financial asset predictor.
 
@@ -74,6 +74,7 @@ class financial_assets:
             * `tick` (str): Asset name to download data for.
             * `query_asset` (pd.DataFrame): Asset pandas dataframe.
             * `volat_p` (bool, default = False): Plot the volatility log graph.
+            * `drop` (int | float): Model Dropout. Default is 0.2.
 
         Returns:
         `tuple[pd.DataFrame, float, str]`: All data output DataFrame, the prediction for the 
@@ -81,8 +82,10 @@ class financial_assets:
         """
 
         # Training starts.
-        print('Training the model...')
-        asset_model = RNN_model(x_train, y_train, 50, 1, 'adam', 'mean_squared_error', 25, 32)
+        print('Training the model...\n')
+        asset_model = RNN_model(x = x_train, y = y_train, units = 50, closing_value = 1,
+                                optimize = 'adam', dropout = drop, loss_function = 'mean_squared_error', 
+                                epoch = 25, batch = 32)
 
         # Test data.
         test_start = dt.datetime(2019, 11, 1)
