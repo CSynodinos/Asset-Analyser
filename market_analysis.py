@@ -6,12 +6,11 @@ from __future__ import annotations
 
 import os, shutil
 from lib.data import data
-from lib.exceptions import AssetTypeError, PredictionDaysError
+from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError
 from lib.model_methods import preprocessing
 from lib.fin_asset import financial_assets, prediction_comparison, prediction_assessment
 from lib.db_utils import SQLite_Query
 from dashboard.app import dashboard_launch
-import dash
 import datetime as dt
 from inspect import getfullargspec
 
@@ -21,7 +20,7 @@ class analyze_asset:
 
     def __init__(self, asset_type: str, asset: str, big_db = "",
                 date = dt.datetime(2019, 11, 1), today = True,
-                pred_days = 60) -> None:
+                pred_days = 60, port = 8050) -> None:
 
         self.date = date
         self.asset_type = asset_type
@@ -42,6 +41,9 @@ class analyze_asset:
         self.pred_days = pred_days
         if not isinstance(self.pred_days, int):
             raise PredictionDaysError('Prediction days used are not an integer.')
+        self.port = port
+        if not isinstance(port, int):
+            raise BadPortError(f"Local host port: {port} is not an integer.")
 
     @classmethod
     def __repr__(cls) -> str:
@@ -75,7 +77,13 @@ class analyze_asset:
         """
         return os.path.join(cls.cwd, "Databases")
 
-    def analyze(self):
+    def analyze(self) -> bool:
+        """Run through all the analysis of the asset. Produces the dash dashboard on localhost.
+
+        Returns:
+            `boolean`: True when operation finishes successfully.
+        """
+
         db_subdir = self.__db_subdir()
         fin_asset = data(start = self.date)
         asset_l = self.asset.split()
@@ -97,9 +105,14 @@ class analyze_asset:
                                                                             query_asset = asset_df)
         prediction_db = f"Prediction_Assessment_{self.asset}.db"
         prediction_assessment(df = asset_all_data, db = prediction_db, asset = asset_l[0])
-        dashboard_launch(db = prediction_db, table = asset_l_q, fin_asset = self.asset,
+        db_pred_new_fl = os.path.join(db_subdir, prediction_db)
+
+        # Move prediction database output to Databases subdirectory.
+        shutil.move(prediction_db, db_pred_new_fl)
+        dashboard_launch(db = db_pred_new_fl, table = asset_l_q, fin_asset = self.asset,
                         asset_type = self.asset_type, nxt_day = asset_next,
-                        volatility = asset_volatility)
+                        volatility = asset_volatility, port = self.port)
+        return True
 
 if __name__ == "__main__":
     analyze_asset(asset_type = 'Cryptocurrency', asset = 'XRP', pred_days = 60).analyze()
