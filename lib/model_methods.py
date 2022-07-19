@@ -64,7 +64,8 @@ def test_preprocessing(prediction_days: int, inputs: np.ndarray) -> np.ndarray:
     return x_test
 
 def RNN_model(x: np.ndarray, y: np.ndarray, units: int, closing_value: int, 
-            optimize: str, loss_function: str, epoch: int, batch: int) -> Sequential:
+            optimize: str, dropout: int | float, loss_function: str, 
+            epoch: int, batch: int) -> Sequential:
 
     """Build and train a Long Short-Term Memory Reccurent Neural Network (`LSTM-RNN`) 
     using the `Keras Sequential API`.
@@ -75,6 +76,7 @@ def RNN_model(x: np.ndarray, y: np.ndarray, units: int, closing_value: int,
         * `units` (int): Dimensionality of the output space.
         * `closing_value` (int): Number of prediction days i.e. if it is equal to 1 then just the next day will be predicted.
         * `optimize` (str): Optimization algorithm.
+        * `dropout` (int | float): BaseRandomLayer.
         * `loss_function` (str): The loss function for error prediction.
         * `epoch` (int): Number of epochs to train.
         * `batch` (int): Batch size of the model.
@@ -85,18 +87,18 @@ def RNN_model(x: np.ndarray, y: np.ndarray, units: int, closing_value: int,
 
     model = Sequential()
     model.add(LSTM(units = units, return_sequences = True, input_shape = (x.shape[1], 1)))
-    model.add(Dropout(0.2))
+    model.add(Dropout(dropout))
     model.add(LSTM(units = units, return_sequences = True))
-    model.add(Dropout(0.2))
+    model.add(Dropout(dropout))
     model.add(LSTM(units = units))
-    model.add(Dropout(0.2))
+    model.add(Dropout(dropout))
     model.add(Dense(units = closing_value)) # Predict a closing value. 1 is the next closing value.
     model.compile(optimizer = optimize, loss = loss_function)
     model.fit(x, y, epochs = epoch, batch_size = batch, verbose = 0)
 
     return model
 
-def plot_data(x_values: list, name: str, dtype: str, actual:np.ndarray,
+def plot_data(x_values: list, name: str, dtype: str, actual: np.ndarray,
             predicted: np.ndarray, colour_actual: str, colour_predicted: str,
             plot = False) -> list:
 
