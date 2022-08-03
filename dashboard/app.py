@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-import os, sys
 from typing import Any
-SCRIPT_DIR = os.path.dirname(os.path.abspath("__file__"))
-sys.path.append(os.path.dirname(SCRIPT_DIR))
-
 from lib.db_utils import SQLite_Query
 import dash
 from dash import dcc, html
