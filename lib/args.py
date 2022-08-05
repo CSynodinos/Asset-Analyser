@@ -13,7 +13,12 @@ def args_parser(msg) -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser(description = msg, formatter_class = argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("-f", help = "Input.")
+    parser.add_argument("-ast", help = "Market Asset. Needs to be written as: Asset_initials-currency")
+    parser.add_argument("-tp", help = "Asset Type, etc. Cryptocurrency or Stock.")
+    parser.add_argument("-pd", help = "Prediction days used for training. Must be a positive integer.")
+    parser.add_argument("-db", help = "Optional argument: SQLite3 Database name. Defaults: asset_name_data.db")
+    parser.add_argument("-d", help = "Optional argument: Start date for data calls. Format. Defaults: 2019-11-1")
+    parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050")
     return parser.parse_args()
 
 def bool_parser(var: any) -> bool:
