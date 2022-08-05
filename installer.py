@@ -1,61 +1,152 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import argparse
-import sys
-import subprocess
+import os, subprocess, argparse
 import urllib.request
-from lib.args import bool_parser
+from typing import Literal
 
-def connect(host = 'http://google.com'):
+from sys import platform
+if platform == "linux" or platform == "linux2" or platform == "darwin":
+    python_dist = 'python3'
+elif platform == "win32":
+    python_dist = 'python'
+else:
+    raise RuntimeError(f'Platform {platform} is not supported.')
+
+def internet_connect(host = 'http://google.com') -> Literal[True]:
+    """Check internet connection.
+
+    Args:
+        * `host` (str, optional): http link. Defaults to 'http://google.com'.
+
+    Raises:
+        ConnectionError: No Internet.
+
+    Returns:
+        Literal[True]: True for established internet connection.
+    """
     try:
         urllib.request.urlopen(host)
         return True
     except:
-        raise ConnectionError('No Internet connection!')
+        try:    # try bing in case google is down.
+            urllib.request.urlopen('http://bing.com')
+        except:
+            raise ConnectionError('No Internet connection!')
 
 def args_parser(msg) -> argparse.Namespace:
     """Custom argument parser.
     Args:
         * `msg` (str): Description help message.
+        * `-env` (str): Select python environment.
     Returns:
         `argparse.Namespace`: Namespace of input arguments.
     """
 
     parser = argparse.ArgumentParser(description = msg, formatter_class = argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("-env", help = "Input.")
+    parser.add_argument("-env", help = "Python environment.")
     return parser.parse_args()
 
-class installer:
-    def __init__(self, package: str) -> None:
+def requirements() -> str | None:
+    """Check if requirements file exists.
+
+    Returns:
+        str | None: string if file is found.
+    """
+    reqfile = 'requirements.txt'
+    if os.path.isfile(reqfile):
+        return str(reqfile)
+    else:
+        return None
+
+class installer_class:
+    """Installer class holding all package manager core subprocesses.
+    """
+
+    def __init__(self, package: str, f: bool) -> None:
         self.package = package
+        self.f = f
 
     def pip_install(self) -> int:
         """Install package via pip.
 
         Returns:
-            int: Returns 0 on success
+            `int`: Returns 0 on success from subprocess.call()
         """
-        return subprocess.check_call([sys.executable, "-m", "pip", "install", self.package])
+        if self.f:
+            return subprocess.call([f'{python_dist} -m pip install -r {self.package}'], shell = True)
+        else:
+            return subprocess.call([f'{python_dist} -m pip install {self.package}'], shell = True)
 
-    def conda_install(self):
-        import conda.cli
-        return conda.cli.main('conda', 'install',  '-y', self.package)
+    def conda_install(self) -> int:
+        """Install package via conda.
 
-def main():
-    connect()
+        Returns:
+            `int`: Returns 0 on success from subprocess.call()
+        """
+        subprocess.call(['conda install pip -y'], shell = True)
+        return int(self.pip_install())
+
+def pip_caller(pack: str | list) -> int:
+    """pip package manager caller.
+
+    Args:
+        * `pack` (str | list): Package.
+
+    Returns:
+        `int`: 0 from subprocess.call()
+    """
+    if isinstance(pack, str):
+        return installer_class(package = pack, f = True).pip_install()
+    elif isinstance(pack, list):
+        for i in pack:
+            installer_class(package = i, f = False).pip_install()
+        return 0
+
+def conda_caller(pack: str | list) -> int:
+    """conda package manager caller.
+
+    Args:
+        * `pack` (str | list): Package.
+
+    Returns:
+        `int`: 0 from subprocess.call()
+    """
+    if isinstance(pack, str):
+        return installer_class(package = pack, f = True).conda_install()
+    elif isinstance(pack, list):
+        for i in pack:
+            installer_class(package = i, f = False).conda_install()
+        return 0
+
+def main() -> None:
+    internet_connect()
     print('Internet connection established!\n')
 
     message = ("Installer")
     args = args_parser(msg = message)
     arguments = vars(args)
-    env = bool_parser(arguments.get('env'))
+    env = arguments.get('env')
+    reqs = requirements()
+
+    if reqs is not None:
+        dep = requirements()
+    else:
+        dep = ['dash', 'keras', 'matplotlib', 'numpy', 'pandas', 
+            'scikit_learn', 'seaborn', 'yfinance', 'tensorflow']
+
+    print('Installing dependencies...\n')
     if env:
         if env == 'venv':   # do pip install here.
-            pass
-    else:   # do pip install here.
-        pass
-    print('Installing dependencies...')
+            pip_caller(pack = dep)
+
+        elif env == 'conda':    # do conda install here.
+            conda_caller(pack = dep)
+
+    elif env == None:   # default installer is pip if -env is not specified.
+        pip_caller(pack = dep)
+
+    return print('\nInstallation complete!!!')
 
 if __name__ == '__main__':
     main()
