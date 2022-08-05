@@ -128,14 +128,24 @@ class financial_assets:
 
         return all_data, next_day[0][0], volat
 
-#TODO: Not ready!
-def prediction_assessment(df: pd.DataFrame, db: str, asset: str):
-        from lib.df_utils import df_analyses
-        from lib.db_utils import table_parser
+def prediction_assessment(df: pd.DataFrame, db: str, asset: str) -> bool:
+    """Wrapper for table_parser().
 
-        all_data_df = df_analyses(df = df).assessment_df_parser()
-        table_parser(df = all_data_df, dbname = db, asset_n = asset)
+    Args:
+        * `df` (pd.DataFrame): Dataframe input for df_analyses class.
+        * `db` (str): Database for table_parser().
+        * `asset` (str): Asset name.
 
+    Returns:
+        bool: True when operation finishes successfully.
+    """
+    from lib.df_utils import df_analyses
+    from lib.db_utils import table_parser
+
+    all_data_df = df_analyses(df = df).assessment_df_parser()
+    return table_parser(df = all_data_df, dbname = db, asset_n = asset)
+
+## Will be used in the comparison script for new AI/ML models.
 @dataclass
 class prediction_comparison:
     """Dataclass to compare next day prediction with actual closing value of
