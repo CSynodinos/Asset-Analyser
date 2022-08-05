@@ -1,22 +1,32 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+from typing_extensions import assert_never
 
 """Wrapper script for all modules and functionalities of the market analysis project.
 """
 
-import os, shutil
+import os, shutil, re
+from lib.args import bool_parser, args_parser
 from lib.data import data
-from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError
+from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError, NoInputError, DateError
 from lib.model_methods import preprocessing
 from lib.fin_asset import financial_assets, prediction_comparison, prediction_assessment
 from lib.db_utils import SQLite_Query
 from dashboard.app import dashboard_launch
 import datetime as dt
 from inspect import getfullargspec
+from typing import Any
 
 class analyze_asset:
+    """Analyzer class wrapping all program utilities.
 
-    cwd = os.getcwd()
+    Raises:
+        * AssetTypeError: Invalid asset type.
+        * `PredictionDaysError`: Invalid prediction days specified.
+        * `BadPortError`: Invalid network port specified.
+    """
+
+    cwd: str = os.getcwd()
 
     def __init__(self, asset_type: str, asset: str, big_db = "",
                 date = dt.datetime(2019, 11, 1), today = True,
@@ -115,7 +125,50 @@ class analyze_asset:
         return True
 
 def main():
-    analyze_asset(asset_type = 'Cryptocurrency', asset = 'XRP', pred_days = 60).analyze()
+    message = "Temporary Help message."
+    args = args_parser(msg = message)
+    arguments = vars(args)
+    ast = arguments.get('ast')
+    ast_n: str = [k for k, v in locals().items() if v == ast][0] # gets var name.
+    tp: str = arguments.get('tp')
+    tp_n: str = [k for k, v in locals().items() if v == tp][1]
+    pd: str = arguments.get('pd')
+    pd_n: str = [k for k, v in locals().items() if v == pd][2]
+    db: str | None = arguments.get('db')
+    p = str(arguments.get('p'))
+    d: str | None = arguments.get('d')
+
+    def _var_n(var_n, var: Any) -> tuple:
+        if var == None:
+            var = 'None'
+        _str = var_n + ", " + var
+        return tuple(map(str, _str.split(', ')))
+
+    ast_nv = _var_n(var_n = ast_n, var = ast)
+    tp_nv = _var_n(var_n = tp_n, var = tp)
+    pd_nv = _var_n(var_n = pd_n, var = pd)
+    lst_vars = [ast_nv, tp_nv, pd_nv]  # Add to this for new essential args.
+    essential_args = {} 
+    for i in lst_vars:
+        key = i[0]
+        value = i[1]
+        essential_args[key] = value
+    for key, value in essential_args.items():
+        if essential_args[key] == 'None':
+            raise NoInputError(f'Argument: "-{key}" is not set.')
+        else:
+            continue
+
+    # Check date format
+    r = re.compile('.*-.*-.*')
+    if r.match(d) is not None:
+        try:
+            dt.datetime.strptime(d, '%Y-%m-%d')
+        except ValueError:
+            raise DateError('Date format should be YYYY-MM-DD.')
+    else:
+        raise DateError('Input for argument -d is not a date.')
+    #analyze_asset(asset_type = 'Cryptocurrency', asset = 'XRP', pred_days = 60).analyze()
 
 if __name__ == "__main__":
     main()
