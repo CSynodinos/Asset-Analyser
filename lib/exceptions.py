@@ -87,3 +87,20 @@ class PredictionDaysError(Exception):
             return '{0} '.format(self.errmessage)
         else:
             return 'PredictionDaysError has been raised'
+
+class NoInputError(Exception):
+    """Custom exception class raised when no command line input is set."""
+
+    __module__ = 'builtins'
+
+    def __init__(self, *args) -> None:
+        if args:
+            self.errmessage = args[0]
+        else:
+            self.errmessage = None
+
+    def __repr__(self) -> str:
+        if self.errmessage:
+            return '{0} '.format(self.errmessage)
+        else:
+            return 'NoInputError has been raised'
