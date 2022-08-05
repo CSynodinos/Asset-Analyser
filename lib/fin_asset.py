@@ -152,7 +152,7 @@ class prediction_comparison:
     the asset on that day.
 
     Returns:
-        __eq__() returns the resulting difference as float.
+        __eq__() internal returns the resulting difference as float.
     """
 
     value: float | int
