@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-from typing_extensions import assert_never
 
 """Wrapper script for all modules and functionalities of the market analysis project.
 """
 
 import os, shutil, re
-from lib.args import bool_parser, args_parser
+from lib.args import args_parser
 from lib.data import data
 from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError, NoInputError, DateError
 from lib.model_methods import preprocessing
