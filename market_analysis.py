@@ -114,5 +114,8 @@ class analyze_asset:
                         volatility = asset_volatility, port = self.port)
         return True
 
-if __name__ == "__main__":
+def main():
     analyze_asset(asset_type = 'Cryptocurrency', asset = 'XRP', pred_days = 60).analyze()
+
+if __name__ == "__main__":
+    main()
