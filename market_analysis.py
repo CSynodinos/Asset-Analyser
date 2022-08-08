@@ -1,20 +1,40 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-"""Wrapper script for all modules and functionalities of the market analysis project.
+"""Wrapper script for all modules and functionalities of the market analysis software.
 """
 
 import os, shutil, re
 from lib.args import args_parser
 from lib.data import data
-from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError, NoInputError, DateError
+from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError, NoParameterError, DateError
 from lib.model_methods import preprocessing
-from lib.fin_asset import financial_assets, prediction_comparison, prediction_assessment
+from lib.fin_asset import financial_assets, prediction_assessment
 from lib.db_utils import SQLite_Query
 from dashboard.app import dashboard_launch
 import datetime as dt
 from inspect import getfullargspec
-from typing import Any
+from typing import Any, Final
+
+# constants
+HELP_MESSAGE: Final[str] = 'Temporary Help message.'
+PORT: Final[int] = 8050
+PREDICTION_DAYS: Final[int] = 60
+
+def _defaults(var: Any, default: object) -> object | Any:
+    """Checks for None for variable var.
+
+    Args:
+        * `var` (Any): The variable.
+        * `default` (object): The default value of the object.
+
+    Returns:
+        `object | Any`: The default value specified (object) or the original value (Any).
+    """
+    if var in [None, 'None']:
+        return default
+    else:
+        return var
 
 class analyze_asset:
     """Analyzer class wrapping all program utilities.
@@ -27,18 +47,17 @@ class analyze_asset:
 
     cwd: str = os.getcwd()
 
-    def __init__(self, asset_type: str, asset: str, big_db = "",
-                date = dt.datetime(2019, 11, 1), today = True,
+    def __init__(self, asset_type: str, asset: str, big_db = None,
+                date = None, today = True,
                 pred_days = 60, port = 8050) -> None:
 
-        self.date = date
+        self.date = _defaults(var = self.date, default = dt.datetime(2019, 11, 1))
         self.asset_type = asset_type
         asset_types_tup = ('Cryptocurrency', 'cryptocurrency', 'crypto',
                         'Crypto', 'stock', 'Stock')
         if self.asset_type in asset_types_tup:
-            self.big_db = big_db
-            if self.big_db == "":
-                self.big_db = asset_type + "_data.db"
+            DEFAULT_DB: Final[str] = asset_type + "_data.db"
+            self.big_db = _defaults(var = self.big_db, default = DEFAULT_DB)
         else:
             raise AssetTypeError(f"Asset type: {self.asset_type} is not valid. Some valid asset types are: "
                                 "Cryptocurrency, crypto, stock.")
@@ -47,10 +66,10 @@ class analyze_asset:
         if not any(curr in self.asset for curr in valid_curr):
             self.asset = self.asset + "-USD"
         self.today = today
-        self.pred_days = pred_days
+        self.pred_days = _defaults(val = pred_days, default = PREDICTION_DAYS)
         if not isinstance(self.pred_days, int):
             raise PredictionDaysError('Prediction days used are not an integer.')
-        self.port = port
+        self.port = _defaults(var = port, default = PORT)
         if not isinstance(port, int):
             raise BadPortError(f"Local host port: {port} is not an integer.")
 
@@ -124,15 +143,14 @@ class analyze_asset:
         return True
 
 def main():
-    message = "Temporary Help message."
-    args = args_parser(msg = message)
+    args = args_parser(msg = HELP_MESSAGE)
     arguments = vars(args)
     ast = arguments.get('ast')
     ast_n: str = [k for k, v in locals().items() if v == ast][0] # gets var name.
     tp: str = arguments.get('tp')
-    tp_n: str = [k for k, v in locals().items() if v == tp][1]
+    tp_n: str = [k for k, v in locals().items() if v == tp][0]
     pd: str = arguments.get('pd')
-    pd_n: str = [k for k, v in locals().items() if v == pd][2]
+    pd_n: str = [k for k, v in locals().items() if v == pd][0]
     db: str | None = arguments.get('db')
     p = str(arguments.get('p'))
     d: str | None = arguments.get('d')
@@ -147,26 +165,27 @@ def main():
     tp_nv = _var_n(var_n = tp_n, var = tp)
     pd_nv = _var_n(var_n = pd_n, var = pd)
     lst_vars = [ast_nv, tp_nv, pd_nv]  # Add to this for new essential args.
-    essential_args = {} 
+    essential_args = {}     # Contains all essential argument values.
     for i in lst_vars:
         key = i[0]
         value = i[1]
         essential_args[key] = value
     for key, value in essential_args.items():
         if essential_args[key] == 'None':
-            raise NoInputError(f'Argument: "-{key}" is not set.')
+            raise NoParameterError(f'Argument: "-{key}" is not set.')
         else:
             continue
 
     # Check date format
     r = re.compile('.*-.*-.*')
-    if r.match(d) is not None:
-        try:
-            dt.datetime.strptime(d, '%Y-%m-%d')
-        except ValueError:
-            raise DateError('Date format should be YYYY-MM-DD.')
-    else:
-        raise DateError('Input for argument -d is not a date.')
+    if d is not None:
+        if r.match(d) is not None:
+            try:
+                str(dt.datetime.strptime(d, '%Y-%m-%d').date())
+            except ValueError:
+                raise DateError('Date format should be YYYY-MM-DD.')
+        else:
+            raise DateError('Input for argument -d is not a date.')
     #analyze_asset(asset_type = 'Cryptocurrency', asset = 'XRP', pred_days = 60).analyze()
 
 if __name__ == "__main__":
