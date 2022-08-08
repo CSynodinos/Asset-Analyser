@@ -88,7 +88,7 @@ class PredictionDaysError(Exception):
         else:
             return 'PredictionDaysError has been raised'
 
-class NoInputError(Exception):
+class NoParameterError(Exception):
     """Custom exception class raised when no command line input is set."""
 
     __module__ = 'builtins'
