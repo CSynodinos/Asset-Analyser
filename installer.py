@@ -34,7 +34,7 @@ def internet_connect(host = 'http://google.com') -> Literal[True]:
         except:
             raise ConnectionError('No Internet connection!')
 
-def args_parser(msg) -> argparse.Namespace:
+def args_p(msg) -> argparse.Namespace:
     """Custom argument parser.
     Args:
         * `msg` (str): Description help message.
@@ -124,7 +124,7 @@ def main() -> None:
     print('Internet connection established!\n')
 
     message = ("Installer")
-    args = args_parser(msg = message)
+    args = args_p(msg = message)
     arguments = vars(args)
     env = arguments.get('env')
     reqs = requirements()
