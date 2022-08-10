@@ -98,7 +98,7 @@ def _defaults(var: Any, default: object) -> object | Any:
     else:
         return var
 
-class asset_analyzer:
+class analyzer_launcher:
     """Analyzer class wrapping all program utilities.
 
     Raises:
@@ -277,7 +277,7 @@ def main():
     _dt_format(date = d)
     _dt_format(date = tdy)
 
-    asset_analyzer(asset_type = 'Cryptocurrency', asset = 'XRP', big_db = db, date = d, pred_days = pd, port = p).analyze()
+    analyzer_launcher(asset_type = 'Cryptocurrency', asset = 'XRP', big_db = db, date = d, pred_days = pd, port = p).analyze()
 
 if __name__ == "__main__":
     print(HELP_MESSAGE)

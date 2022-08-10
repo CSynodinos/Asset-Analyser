@@ -59,7 +59,7 @@ def requirements() -> str | None:
     else:
         return None
 
-class installer_class:
+class installer_launcher:
     """Installer class holding all package manager core subprocesses.
     """
 
@@ -97,10 +97,10 @@ def pip_caller(pack: str | list) -> int:
         `int`: 0 from subprocess.call()
     """
     if isinstance(pack, str):
-        return installer_class(package = pack, f = True).pip_install()
+        return installer_launcher(package = pack, f = True).pip_install()
     elif isinstance(pack, list):
         for i in pack:
-            installer_class(package = i, f = False).pip_install()
+            installer_launcher(package = i, f = False).pip_install()
         return 0
 
 def conda_caller(pack: str | list) -> int:
@@ -113,10 +113,10 @@ def conda_caller(pack: str | list) -> int:
         `int`: 0 from subprocess.call()
     """
     if isinstance(pack, str):
-        return installer_class(package = pack, f = True).conda_install()
+        return installer_launcher(package = pack, f = True).conda_install()
     elif isinstance(pack, list):
         for i in pack:
-            installer_class(package = i, f = False).conda_install()
+            installer_launcher(package = i, f = False).conda_install()
         return 0
 
 def main() -> None:
