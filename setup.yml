@@ -1,4 +1,4 @@
-appName: Market_Analyses
+appName: Market_Analysis
 constants:
     HELP_MESSAGE: 'Temporary Help message.'
     PORT: 8050
