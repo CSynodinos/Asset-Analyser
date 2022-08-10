@@ -98,7 +98,7 @@ def _defaults(var: Any, default: object) -> object | Any:
     else:
         return var
 
-class analyzer_launcher:
+class analyzer_launcher:    #TODO: docstrings for class
     """Analyzer class wrapping all program utilities.
 
     Raises:

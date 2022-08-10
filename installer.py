@@ -59,7 +59,7 @@ def requirements() -> str | None:
     else:
         return None
 
-class installer_launcher:
+class installer_launcher: #TODO: docstrings for class
     """Installer class holding all package manager core subprocesses.
     """
 
