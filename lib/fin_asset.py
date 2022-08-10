@@ -14,9 +14,10 @@ class financial_assets:
     """Financial asset class for price predictions.
     """
 
-    def __init__(self, pred_days: int, asset_type: str) -> None:
+    def __init__(self, pred_days: int, asset_type: str, plot: bool) -> None:
         self.pred_days = pred_days
         self.asset_type = asset_type
+        self.plot = plot
 
     @classmethod
     def __repr__(cls) -> str:
@@ -105,7 +106,7 @@ class financial_assets:
         pred_prices: np.ndarray = asset_scaler.inverse_transform(pred_prices)
         dates = plot_data(x_values = x, name = tick, dtype = self.asset_type, 
                                 actual = actual_prices, predicted = pred_prices, 
-                                colour_actual = "blue", colour_predicted = "red")
+                                colour_actual = "blue", colour_predicted = "red", plot = self.plot)
 
         all_data = self.df_act_pred(real = actual_prices, pred = pred_prices, d = dates)
 
