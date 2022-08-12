@@ -1,4 +1,4 @@
-# Needs to be revised. Program is almost ready!!!!
+# Needs to be revised. Program is ready!!!! For default profile for any stock or crypto run: python3 asset_analysis.py -ast Your_Stock-USD -tp Stock
 
 The aim of this project is to analyze stock and cryptocurrency data before COVID and during COVID using a Long Short-Term Memory Recurrent Neural Network (LSTM-RNN). The resulting analysis will look at how market volatility has been affected by the pandemic in both markets and how that volatility can affect price predictions. 
 
