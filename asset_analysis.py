@@ -38,6 +38,8 @@ HELP_MESSAGE: Final[str] = parse['HELP_MESSAGE']
 PORT: Final[int] = parse['PORT']
 PLT: Final[bool] = parse['PLT']
 PREDICTION_DAYS: Final[int] = parse['PREDICTION_DAYS']
+DEFAULT_ASSET: Final[str] = parse['DEFAULT_ASSET']
+DEFAULT_ASSET_TYPE: Final[str] = parse['DEFAULT_ASSET_TYPE']
 
 def args_parser(msg) -> argparse.Namespace:
     """Custom argument parser.
@@ -270,7 +272,7 @@ def main():
     default: bool = bool_parser(arguments.get('default'))
 
     if default:     # Launch default profile.
-        analyzer_launcher(asset_type = 'Cryptocurrency', asset = 'BTC-USD', big_db = None, date = None, 
+        analyzer_launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, date = None, 
                         today = True, pred_days = 60, port = None, plt = False).analyze()
 
     else:
