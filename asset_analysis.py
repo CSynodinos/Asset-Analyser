@@ -101,11 +101,11 @@ def _defaults(var: Any, default: object) -> object | Any:
     else:
         return var
 
-class analyzer_launcher:    #TODO: docstrings for class
-    """Analyzer class wrapping all program utilities.
+class analyzer_launcher:
+    """Launcher class wrapping all program utilities and running the analysis.
 
     Raises:
-        * AssetTypeError: Invalid asset type.
+        * `AssetTypeError`: Invalid asset type.
         * `PredictionDaysError`: Invalid prediction days specified.
         * `BadPortError`: Invalid network port specified.
     """
@@ -202,11 +202,19 @@ class analyzer_launcher:    #TODO: docstrings for class
         db_subdir = self.__db_subdir()
         fin_asset = data(start = self.date)
         asset_l = self.asset.split()
-        fin_asset.asset_data(database = self.big_db, asset_type = self.asset_type, asset_list = asset_l,
-                today = self.today)
-        db_output = os.path.join(self.cwd, self.big_db)
         db_output_fl = os.path.join(db_subdir, self.big_db)
-        shutil.move(db_output, db_output_fl)    # Move database output to Databases subdirectory.
+
+        if os.path.isfile(db_output_fl):
+            fin_asset.asset_data(database = db_output_fl, asset_type = self.asset_type, asset_list = asset_l,
+                today = self.today)
+
+        else:
+            fin_asset.asset_data(database = self.big_db, asset_type = self.asset_type, asset_list = asset_l,
+                    today = self.today)
+
+            # Move database output to Databases subdirectory.
+            db_output = os.path.join(self.cwd, self.big_db)
+            shutil.move(db_output, db_output_fl)
 
         asset_l_q = asset_l[0].replace("-", "_")
         asset_df, asset_dates = SQLite_Query(db_output_fl, asset_l_q)
