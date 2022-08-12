@@ -285,9 +285,8 @@ def main():
         return tuple(map(str, _str.split(', ')))
 
     ast_nv = _var_n(var_n = ast_n, var = ast)
-    tp_nv = _var_n(var_n = tp_n, var = tp)
-    pd_nv = _var_n(var_n = pd_n, var = pd)
-    lst_vars = [ast_nv, tp_nv, pd_nv]  # Add to this for new essential args.
+    tp_nv = _var_n(var_n = tp_n, var = tp)  # Add to this for new essential args.
+    lst_vars = [ast_nv, tp_nv]
     essential_args = {}     # Contains all essential argument values.
     for i in lst_vars:
         key = i[0]
