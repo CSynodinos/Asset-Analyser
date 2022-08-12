@@ -75,11 +75,11 @@ class data:
                 str_to_replace = "-"
                 str_check = any(tables in str_to_replace for tables in i)
 
-                if str_check == True:  # Checks if the "-" character exists. If yes, then it gets replaced with "_" (Needed for crypto in SQL database).
+                if str_check == True:  # Checks if the "-" character exists. If yes, then it gets replaced with "_".
                     crypto_table = i.replace("-", "_")
-                    df.to_sql(crypto_table, con = engine, if_exists='replace', index = True)
+                    df.to_sql(crypto_table, con = engine, if_exists = 'replace', index = True)
                 else:
-                    df.to_sql(i, con = engine, if_exists='replace', index = True)
+                    df.to_sql(i, con = engine, if_exists = 'replace', index = True)
                 print(f'{i} {type} data saved!\n')
 
         cur.close()
