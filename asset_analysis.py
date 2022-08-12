@@ -56,6 +56,7 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with format: YYYY-MM-DD. Defaults: True")
     parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050")
     parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False")
+    parser.add_argument("-default", help = "Optional argument: Runs default profile. Uses BTC as an example")
     return parser.parse_args()
 
 def bool_parser(var: any) -> bool:
@@ -266,43 +267,49 @@ def _dt_format(date: str | None):
 def main():
     args = args_parser(msg = HELP_MESSAGE)
     arguments = vars(args)
-    ast = arguments.get('ast')
-    ast_n: str = [k for k, v in locals().items() if v == ast][0] # gets var name.
-    tp: str = arguments.get('tp')
-    tp_n: str = [k for k, v in locals().items() if v == tp][0]
-    pd: str = arguments.get('pd')
-    pd_n: str = [k for k, v in locals().items() if v == pd][0]
-    db: str | None = arguments.get('db')
-    tdy: bool | None = arguments.get('tdy')
-    p: str = str(arguments.get('p'))
-    d: str | None = arguments.get('d')
-    plt: bool = bool_parser(arguments.get('plt'))
+    default: bool = bool_parser(arguments.get('default'))
 
-    def _var_n(var_n, var: Any) -> tuple:
-        if var == None:
-            var = 'None'
-        _str = var_n + ", " + var
-        return tuple(map(str, _str.split(', ')))
+    if default:     # Launch default profile.
+        analyzer_launcher(asset_type = 'Cryptocurrency', asset = 'BTC-USD', big_db = None, date = None, 
+                        today = True, pred_days = 60, port = None, plt = False).analyze()
 
-    ast_nv = _var_n(var_n = ast_n, var = ast)
-    tp_nv = _var_n(var_n = tp_n, var = tp)  # Add to this for new essential args.
-    lst_vars = [ast_nv, tp_nv]
-    essential_args = {}     # Contains all essential argument values.
-    for i in lst_vars:
-        key = i[0]
-        value = i[1]
-        essential_args[key] = value
-    for key, value in essential_args.items():
-        if essential_args[key] == 'None':
-            raise NoParameterError(f'Argument: "-{key}" is not set.')
-        else:
-            continue
+    else:
+        ast = arguments.get('ast')
+        ast_n: str = [k for k, v in locals().items() if v == ast][0] # gets var name.
+        tp: str = arguments.get('tp')
+        tp_n: str = [k for k, v in locals().items() if v == tp][0]
+        pd: str = arguments.get('pd')
+        db: str | None = arguments.get('db')
+        tdy: bool | None = arguments.get('tdy')
+        p: str = str(arguments.get('p'))
+        d: str | None = arguments.get('d')
+        plt: bool = bool_parser(arguments.get('plt'))
 
-    # Date checks
-    _dt_format(date = d)
-    _dt_format(date = tdy)
+        def _var_n(var_n, var: Any) -> tuple:
+            if var == None:
+                var = 'None'
+            _str = var_n + ", " + var
+            return tuple(map(str, _str.split(', ')))
 
-    analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d, today = tdy, pred_days = pd, port = p, plt = plt).analyze()
+        ast_nv = _var_n(var_n = ast_n, var = ast)
+        tp_nv = _var_n(var_n = tp_n, var = tp)  # Add to this for new essential args.
+        lst_vars = [ast_nv, tp_nv]
+        essential_args = {}     # Contains all essential argument values.
+        for i in lst_vars:
+            key = i[0]
+            value = i[1]
+            essential_args[key] = value
+        for key, value in essential_args.items():
+            if essential_args[key] == 'None':
+                raise NoParameterError(f'Argument: "-{key}" is not set.')
+            else:
+                continue
+
+        # Date checks
+        _dt_format(date = d)
+        _dt_format(date = tdy)
+
+        analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d, today = tdy, pred_days = pd, port = p, plt = plt).analyze()
 
 if __name__ == "__main__":
     main()
