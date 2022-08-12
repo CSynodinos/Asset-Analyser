@@ -104,6 +104,16 @@ def _defaults(var: Any, default: object) -> object | Any:
 class analyzer_launcher:
     """Launcher class wrapping all program utilities and running the analysis.
 
+    Args:
+        * `asset_type` (str): Type of asset e.g. Cryptocurrency or Stock.
+        * `asset` (str): Asset codename.
+        * `big_db` (str | None): Main database name.
+        * `date` (None | dt.datetime): Start date.
+        * `today` (bool): If True, today becomes the end date.
+        * `pred_days` (int): Days used for training the model.
+        * `port` (int): Local host port for the dashboard.
+        * `plt` (bool): If True, show the matplotlib plots.
+
     Raises:
         * `AssetTypeError`: Invalid asset type.
         * `PredictionDaysError`: Invalid prediction days specified.
