@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+from itertools import count
 
 import os, subprocess, argparse
 import urllib.request
@@ -73,18 +74,24 @@ class installer_launcher: #TODO: docstrings for class
         Returns:
             `int`: Returns 0 on success from subprocess.call()
         """
+
         if self.f:
             return subprocess.call([f'{python_dist} -m pip install -r {self.package}'], shell = True)
         else:
             return subprocess.call([f'{python_dist} -m pip install {self.package}'], shell = True)
 
-    def conda_install(self) -> int:
-        """Install package via conda.
+    def conda_install(self, state: int) -> int:
+        """Install package for conda using pip.
+
+        Args:
+            * `state` (int): State of package installation. First package gets 0, 
+            the rest get a value > 0 to avoid retrying installation of pip.
 
         Returns:
             `int`: Returns 0 on success from subprocess.call()
         """
-        subprocess.call(['conda install pip -y'], shell = True)
+        if state == 0:
+            subprocess.call(['conda install pip -y'], shell = True)
         return int(self.pip_install())
 
 def pip_caller(pack: str | list) -> int:
@@ -113,10 +120,12 @@ def conda_caller(pack: str | list) -> int:
         `int`: 0 from subprocess.call()
     """
     if isinstance(pack, str):
-        return installer_launcher(package = pack, f = True).conda_install()
+        return installer_launcher(package = pack, f = True).conda_install(state = 0)
     elif isinstance(pack, list):
+        counter = 0
         for i in pack:
-            installer_launcher(package = i, f = False).conda_install()
+            installer_launcher(package = i, f = False).conda_install(state = counter)
+            counter += 1
         return 0
 
 def main() -> None:
