@@ -14,6 +14,7 @@ from lib.db_utils import SQLite_Query
 import datetime as dt
 from inspect import getfullargspec
 from typing import Any, Final
+import warnings
 
 def yml_parser(f: str) -> dict:
     """Parser for a .yml file.
@@ -55,10 +56,13 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-pd", help = "Prediction days used for training. Must be a positive integer.")
     parser.add_argument("-db", help = "Optional argument: SQLite3 Database name. Defaults: asset_name_data.db")
     parser.add_argument("-d", help = "Optional argument: Start date for data calls. Format. Defaults: 2019-11-1")
-    parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with format: YYYY-MM-DD. Defaults: True")
+    parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with -y -m -d parameters. Defaults: True")
     parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050")
     parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False")
-    parser.add_argument("-default", help = "Optional argument: Runs default profile. Uses BTC as an example")
+    parser.add_argument("-default", help = f"Optional argument: Runs default profile. Uses {DEFAULT_ASSET} as an example")
+    parser.add_argument("-end_y", help = "Optional argument: Year of end date for data calls. Only use when -tdy is set to False.")
+    parser.add_argument("-end_m", help = "Optional argument: Month of end date for data calls. Only use when -tdy is set to False.")
+    parser.add_argument("-end_d", help = "Optional argument: Day of end date for data calls. Only use when -tdy is set to False.")
     return parser.parse_args()
 
 def bool_parser(var: any) -> bool:
@@ -123,8 +127,9 @@ class analyzer_launcher:
     cwd: str = os.getcwd()
 
     def __init__(self, asset_type: str, asset: str, big_db: str | None,
-                date: None | dt.datetime, today: bool,
-                pred_days: int, port: int, plt: bool) -> None:
+                date: None | dt.datetime, today: bool, year: str | None, 
+                month: str | None, day: str | None, pred_days: int,
+                port: int, plt: bool) -> None:
 
         self.date = date
         # will always be datetime if interpreter reaches this point because self.date input will be checked by _dt_format().
@@ -148,6 +153,9 @@ class analyzer_launcher:
 
         self.today = today
         self.today = _defaults(var = self.today, default = True)
+        self.year = year
+        self.month = month
+        self.day = day
 
         self.pred_days = pred_days
         if not isinstance(self.pred_days, int):
@@ -216,7 +224,7 @@ class analyzer_launcher:
 
         if os.path.isfile(db_output_fl):
             fin_asset.asset_data(database = db_output_fl, asset_type = self.asset_type, asset_list = asset_l,
-                today = self.today)
+                today = self.today, year = self.year, month = self.month, day = self.day)
 
         else:
             fin_asset.asset_data(database = self.big_db, asset_type = self.asset_type, asset_list = asset_l,
@@ -291,7 +299,8 @@ def main():
 
     if default:     # Launch default profile.
         analyzer_launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, date = None, 
-                        today = True, pred_days = 60, port = None, plt = False).analyze()
+                        today = True, year = None, month = None, day = None, pred_days = 60,
+                        port = None, plt = False).analyze()
 
     else:
         ast = arguments.get('ast')
@@ -304,6 +313,27 @@ def main():
         p: str = str(arguments.get('p'))
         d: str | None = arguments.get('d')
         plt: bool = bool_parser(arguments.get('plt'))
+        end_year: str | None = arguments.get('y')
+        end_month: str | None = arguments.get('m')
+        end_day: str | None = arguments.get('d')
+
+        if not tdy:
+            if not isinstance(end_year, int):
+                raise DateError('-tdy is set to False, but -end_y is not an integer. Please use an eligible number e.g. 2015')
+            if not isinstance(end_month, int):
+                raise DateError('-tdy is set to False, but -end_m is not an integer. Please use an eligible number e.g. 12')
+            if not isinstance(end_day, int):
+                raise DateError('-tdy is set to False, but -end_d is not an integer. Please use an eligible number e.g. 30')
+        elif tdy:
+            if not end_year == None:
+                warnings.warn('-tdy has been set but end_year is not None. end_year has been set to None.')
+            if not end_month == None:
+                warnings.warn('-tdy has been set but end_month is not None. end_month has been set to None.')
+            if not end_day == None:
+                warnings.warn('-tdy has been set but end_day is not None. end_day has been set to None.')
+            end_year = None
+            end_month = None
+            end_day = None
 
         def _var_n(var_n, var: Any) -> tuple:
             if var == None:
@@ -329,7 +359,9 @@ def main():
         _dt_format(date = d)
         _dt_format(date = tdy)
 
-        analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d, today = tdy, pred_days = pd, port = p, plt = plt).analyze()
+        analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d,
+                        today = tdy, year = end_year, month = end_month, day = end_day,
+                        pred_days = pd, port = p, plt = plt).analyze()
 
 if __name__ == "__main__":
     main()
