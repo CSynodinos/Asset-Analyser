@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-from asyncio import constants
 
 """Wrapper script for all modules and functionalities of the market analysis software.
 """
@@ -12,7 +11,6 @@ from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError, No
 from lib.model_methods import preprocessing
 from lib.fin_asset import financial_assets, prediction_assessment
 from lib.db_utils import SQLite_Query
-from dashboard.app import dashboard_launch
 import datetime as dt
 from inspect import getfullargspec
 from typing import Any, Final
@@ -64,8 +62,10 @@ def bool_parser(var: any) -> bool:
     """Check if parameter is boolean, if not, convert it to boolean.
     Args:
         * `var` (Any): variable to check for boolean.
+
     Raises:
         TypeError: Unable to convert to boolean.
+
     Returns:
         boolean: True if var is boolean, False if not.
     """
@@ -77,13 +77,13 @@ def bool_parser(var: any) -> bool:
     else:
         if var in _true:
             return True
-        elif var in _false:
+        elif var in _false:     # Includes None checks.
             return False
         else:
             raise TypeError(f"{var} must be true, True, 1, False, false, 0 or None.")
 
 def _defaults(var: Any, default: object) -> object | Any:
-    """Checks for None for variable var.
+    """Checks for None on variable var.
 
     Args:
         * `var` (Any): The variable.
@@ -113,13 +113,16 @@ class analyzer_launcher:    #TODO: docstrings for class
                 date: None | dt.datetime, today: bool,
                 pred_days: int, port: int, plt: bool) -> None:
 
-        self.date = _defaults(var = self.date, default = dt.datetime(2019, 11, 1))
+        self.date = date
+        # will always be datetime if interpreter reaches this point because self.date input will be checked by _dt_format().
+        self.date = _defaults(var = date, default = dt.datetime(2019, 11, 1))
 
         self.asset_type = asset_type
         asset_types_tup = ('Cryptocurrency', 'cryptocurrency', 'crypto',
                         'Crypto', 'stock', 'Stock')
         if self.asset_type in asset_types_tup:
             DEFAULT_DB: Final[str] = asset_type + "_data.db"
+            self.big_db = big_db
             self.big_db = _defaults(var = self.big_db, default = DEFAULT_DB)
         else:
             raise AssetTypeError(f"Asset type: {self.asset_type} is not valid. Some valid asset types are: "
@@ -130,21 +133,29 @@ class analyzer_launcher:    #TODO: docstrings for class
         if not any(curr in self.asset for curr in valid_curr):
             self.asset = self.asset + "-USD"
 
-        self.today = _defaults(var = today, default = True)
+        self.today = today
+        self.today = _defaults(var = self.today, default = True)
 
-        self.pred_days = _defaults(val = pred_days, default = PREDICTION_DAYS)
+        self.pred_days = pred_days
         if not isinstance(self.pred_days, int):
-            raise PredictionDaysError('Prediction days used are not an integer.')
+            try:
+                self.pred_days = int(_defaults(var = pred_days, default = PREDICTION_DAYS))
+            except:
+                raise PredictionDaysError('Prediction days (-pd) used are not an integer.')
         else:
             self.pred_days = int(self.pred_days)
 
+        self.port = port
         self.port = _defaults(var = port, default = PORT)
         if not isinstance(port, int):
-            raise BadPortError(f"Local host port: {port} is not an integer.")
-        else:
-            self.port = int(self.port)
+            try:
+                self.port = int(self.port)
+            except:
+                raise BadPortError(f"Local host port: {port} is not an integer.")
 
-        self.plt = _defaults(val = self.plt, default = PLT)
+        self.plt = plt
+        self.plt = bool_parser(var = self.plt)
+        self.plt = _defaults(var = self.plt, default = PLT)
 
     @classmethod
     def __repr__(cls) -> str:
@@ -211,13 +222,17 @@ class analyzer_launcher:    #TODO: docstrings for class
 
         # Move prediction database output to Databases subdirectory.
         shutil.move(prediction_db, db_pred_new_fl)
+
+        # Import dashboard_launch and launch app.
+        from dashboard.app import dashboard_launch
         dashboard_launch(db = db_pred_new_fl, table = asset_l_q, fin_asset = self.asset,
                         asset_type = self.asset_type, nxt_day = asset_next,
                         volatility = asset_volatility, port = self.port)
+
         return True
 
 def _dt_format(date: str | None):
-    """Checks for data format with regex. Format is YYYY-MM-DD.
+    """Checks for date format with regex. Format is YYYY-MM-DD.
 
     Args:
         * `date` (str | None): Input date.
@@ -228,14 +243,25 @@ def _dt_format(date: str | None):
     """
 
     r = re.compile('.*-.*-.*')
-    if date is not None:
-        if r.match(date) is not None:
+    if not date == None and not date == "None" and not isinstance(date, (int, float)):
+        try:
+            pattern = r.match(date)
+        except:
+            raise TypeError(f"Date: {date} cannot be compiled as a regex expression. Ensure that it's either True, False or YYYY-MM-DD.")
+
+        if pattern is not None:
             try:
                 str(dt.datetime.strptime(date, '%Y-%m-%d').date())
             except ValueError:
                 raise DateError('Date format should be YYYY-MM-DD.')
         else:
             raise DateError('Input for argument -d is not a date.')
+
+    else:
+        if isinstance(date, (int, float)):
+            return bool_parser(date)
+        else:
+            return None
 
 def main():
     args = args_parser(msg = HELP_MESSAGE)
@@ -247,7 +273,7 @@ def main():
     pd: str = arguments.get('pd')
     pd_n: str = [k for k, v in locals().items() if v == pd][0]
     db: str | None = arguments.get('db')
-    tdy: bool | None= bool_parser(arguments.get('tdy'))
+    tdy: bool | None = arguments.get('tdy')
     p: str = str(arguments.get('p'))
     d: str | None = arguments.get('d')
     plt: bool = bool_parser(arguments.get('plt'))
@@ -277,8 +303,7 @@ def main():
     _dt_format(date = d)
     _dt_format(date = tdy)
 
-    analyzer_launcher(asset_type = 'Cryptocurrency', asset = 'XRP', big_db = db, date = d, pred_days = pd, port = p).analyze()
+    analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d, today = tdy, pred_days = pd, port = p, plt = plt).analyze()
 
 if __name__ == "__main__":
-    print(HELP_MESSAGE)
-    #main()
+    main()
