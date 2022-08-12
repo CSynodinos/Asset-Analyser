@@ -4,3 +4,5 @@ constants:
     PORT: 8050
     PLT: False
     PREDICTION_DAYS: 60
+    DEFAULT_ASSET: 'BTC-USD'
+    DEFAULT_ASSET_TYPE: 'Cryptocurrency'
