@@ -14,7 +14,6 @@ from lib.db_utils import SQLite_Query
 import datetime as dt
 from inspect import getfullargspec
 from typing import Any, Final
-import warnings
 
 def yml_parser(f: str) -> dict:
     """Parser for a .yml file.
@@ -325,12 +324,13 @@ def main():
             if not isinstance(end_day, int):
                 raise DateError('-tdy is set to False, but -end_d is not an integer. Please use an eligible number e.g. 30')
         elif tdy:
+            from warnings import warn
             if not end_year == None:
-                warnings.warn('-tdy has been set but end_year is not None. end_year has been set to None.')
+                warn('-tdy has been set but end_year is not None. end_year has been set to None.')
             if not end_month == None:
-                warnings.warn('-tdy has been set but end_month is not None. end_month has been set to None.')
+                warn('-tdy has been set but end_month is not None. end_month has been set to None.')
             if not end_day == None:
-                warnings.warn('-tdy has been set but end_day is not None. end_day has been set to None.')
+                warn('-tdy has been set but end_day is not None. end_day has been set to None.')
             end_year = None
             end_month = None
             end_day = None
