@@ -80,6 +80,9 @@ def get_column(db: str, table: str, col_n: str) -> list:
             data.append(i)
     return data
 
+##TODO: This needs to change, instead of sending data and differences to new db, 
+## it needs to also be able to do it in the original db, not just its copy. Maybe using an isfile()
+## to check if db exists and if it does run the column difference parser. Potentially a separate method?
 def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
     """Send data from dataframe to a database.
 
@@ -159,4 +162,4 @@ def get_entry(db: str, d: str, table: str) -> tuple:
         return tuple(all_data[0])
 
     else:
-        raise EntryNotFoundError(f"Unable to locate entry '{d}' in the database.")
+        raise EntryNotFoundError(f"Unable to locate entry '{d}' in database: {db}")
