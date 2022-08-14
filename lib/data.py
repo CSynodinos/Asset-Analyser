@@ -54,19 +54,19 @@ class data:
 
         engine = sqlite3.connect(db)
         cur = engine.cursor()
-        print('Connecting to Yahoo Finance...')
+        print('Connecting to Yahoo Finance...\n')
         for i in currency:
             connected = False
             while not connected:    # Check connection to Yahoo finance.
                 try:
-                    print(f'Fetching {i} {type} data...')
+                    print(f'Fetching {i} {type} data...\n')
                     df: pd.DataFrame = yf.download(tickers = i, start = begin, end = stop)
                     connected = True
                 except Exception as e:
                     print("type error: " + str(e))
                     time.sleep(30)
 
-                print(f'Adding {i} data to {db} database...')                
+                print(f'Adding {i} data to {db} database...\n')                
 
                 df.rename(columns = {"Adj Close": "Adj_Close"}, inplace = True) # Replace white space with _ in column names.
 
@@ -122,8 +122,8 @@ class data:
                         begin = self.start, stop = end_time) # get stock data
 
         if db == True:
-            print(f'{asset_type} Database has been successfully updated!')
+            print(f'{asset_type} Database has been successfully updated!\n')
         elif db == False:
-            print(f'{asset_type} Database has been successfully generated!')
+            print(f'{asset_type} Database has been successfully generated!\n')
 
         return True
