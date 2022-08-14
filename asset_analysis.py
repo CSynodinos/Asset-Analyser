@@ -17,8 +17,6 @@ from inspect import getfullargspec
 from typing import Any, Final
 from lib.utils import yml_parser
 
-
-# constants
 parse = yml_parser(f = 'setup.yml')
 HELP_MESSAGE: Final[str] = parse['help_messages']['LAUNCHER_HELP_MESSAGE']
 TITLE: Final[str] = parse['appName']
