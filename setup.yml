@@ -1,4 +1,4 @@
-appName: Market_Analysis
+appName: 'Asset Analyser'
 constants:
     PORT: 8050
     PLT: False
@@ -6,5 +6,26 @@ constants:
     DEFAULT_ASSET: 'BTC-USD'
     DEFAULT_ASSET_TYPE: 'Cryptocurrency'
 help_messages:
-    LAUNCHER_HELP_MESSAGE: 'Temporary Help message.'
-    INSTALLER_HELP_MESSAGE: 'Installer Help message.'
+    LAUNCHER_HELP_MESSAGE: > 
+
+        This application will use a NN to analyze and store data for a stock or cryptocurrency specified by the user.
+
+        It will produce a dashboard through the Dash Python framework with the results of the analysis and
+
+        a prediction for next day's (current day is specified by the user)
+
+        closing price.
+
+        To test the program, run asset_analysis.py -test True
+
+    INSTALLER_HELP_MESSAGE: >
+
+        This script will install all required dependancies for the Market Analysis program.
+
+        Python enviroments supported for package installation are venv and conda.
+
+        All package installation is done via pip. In a conda env, pip will be installed first.
+
+        Running the installer with no arguments will install via pip in the activated venv.
+
+        If no enviroment is activated, dependancies will be installed in the Python installation directory.
