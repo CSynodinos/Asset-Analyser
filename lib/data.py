@@ -54,7 +54,7 @@ class data:
 
         engine = sqlite3.connect(db)
         cur = engine.cursor()
-        print('Connecting to Yahoo Finance...\n')
+        print('\nConnecting to Yahoo Finance...\n')
         for i in currency:
             connected = False
             while not connected:    # Check connection to Yahoo finance.
