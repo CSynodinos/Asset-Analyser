@@ -237,12 +237,9 @@ class analyzer_launcher:
         asset_df, asset_dates = SQLite_Query(db_output_fl, asset_l_q)
         asset_x_train, asset_y_train, asset_scaler = preprocessing(asset_df, self.pred_days)
         asset_class = financial_assets(pred_days = self.pred_days, asset_type = self.asset_type, plot = self.plt)
-        asset_all_data, asset_next, asset_volatility = asset_class.predictor(x = asset_dates, 
-                                                                            x_train = asset_x_train, 
-                                                                            y_train = asset_y_train,
-                                                                            asset_scaler = asset_scaler,
-                                                                            tick = asset_l[0], 
-                                                                            query_asset = asset_df)
+        asset_all_data, asset_next, asset_volatility = asset_class.predictor(x = asset_dates, x_train = asset_x_train, 
+                                                                            y_train = asset_y_train, asset_scaler = asset_scaler,
+                                                                            tick = asset_l[0], query_asset = asset_df)
 
         prediction_db = f"Prediction_Assessment_{self.asset}.db"
         prediction_assessment(df = asset_all_data, db = prediction_db, asset = asset_l[0])
