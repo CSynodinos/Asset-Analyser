@@ -21,6 +21,7 @@ from lib.utils import yml_parser
 # constants
 parse = yml_parser(f = 'setup.yml')
 HELP_MESSAGE: Final[str] = parse['help_messages']['LAUNCHER_HELP_MESSAGE']
+TITLE: Final[str] = parse['appName']
 
 parse_constants = parse['constants']    # get constants.
 PORT: Final[int] = parse_constants['PORT']
@@ -277,6 +278,12 @@ def _dt_format(date: str | None):
             return None
 
 def main():
+    # Get terminal width, center and bold the title.
+    terminal_width = os.get_terminal_size().columns
+    print('\n')
+    print(f'\033[1m{TITLE}\033[0m'.center(terminal_width))
+    print('\n')
+
     args = args_parser(msg = HELP_MESSAGE)
     arguments = vars(args)
     test_profile: bool = bool_parser(arguments.get('test'))

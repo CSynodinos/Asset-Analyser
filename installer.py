@@ -157,7 +157,13 @@ class callers:
 
             return 0
 
-def main() -> None:
+def main():
+    # Get terminal width, center and bold the title.
+    terminal_width = os.get_terminal_size().columns
+    print('\n')
+    print('\033[1mMarket Analysis Dependancy Installer\033[0m'.center(terminal_width))
+    print('\n')
+
     args = args_p(msg = HELP)
     internet_connect()
     print('Internet connection established!\n')
