@@ -16,6 +16,7 @@ help_messages:
 
         closing price.
 
+
         To test the program, run asset_analysis.py -test True
 
     INSTALLER_HELP_MESSAGE: >
