@@ -15,23 +15,8 @@ from lib.db_utils import SQLite_Query
 import datetime as dt
 from inspect import getfullargspec
 from typing import Any, Final
+from lib.utils import yml_parser
 
-def yml_parser(f: str) -> dict:
-    """Parser for a .yml file.
-
-    Args:
-        * `f` (str): .yml file.
-
-    Returns:
-        dict: Contents of yml.
-    """
-
-    import yaml
-    with open(f, 'r') as fl_stream:
-        try:
-            return dict(yaml.safe_load(fl_stream))
-        except yaml.YAMLError as exc:
-            print(exc)
 
 # constants
 parse = yml_parser(f = 'setup.yml')

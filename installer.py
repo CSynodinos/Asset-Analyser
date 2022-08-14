@@ -7,7 +7,7 @@ from subprocess import run
 from typing import Literal, Final
 
 from sys import platform
-from asset_analysis import yml_parser   # Taken from the launcher script
+from lib.utils import yml_parser
 
 
 if platform == "linux" or platform == "linux2" or platform == "darwin":
@@ -54,7 +54,7 @@ def args_p(msg) -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser(description = msg, formatter_class = argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("-env", help = "Python environment.")
+    parser.add_argument("-env", help = "Python environment. Supports venv and conda.")
     return parser.parse_args()
 
 def requirements() -> bool:
