@@ -1,8 +1,10 @@
 appName: Market_Analysis
 constants:
-    HELP_MESSAGE: 'Temporary Help message.'
     PORT: 8050
     PLT: False
     PREDICTION_DAYS: 60
     DEFAULT_ASSET: 'BTC-USD'
     DEFAULT_ASSET_TYPE: 'Cryptocurrency'
+help_messages:
+    LAUNCHER_HELP_MESSAGE: 'Temporary Help message.'
+    INSTALLER_HELP_MESSAGE: 'Installer Help message.'
