@@ -8,7 +8,6 @@ from typing import Literal, Final
 
 from sys import platform
 
-from regex import R
 if platform == "linux" or platform == "linux2" or platform == "darwin":
     PYTHON_DIST: str = 'python3'
 elif platform == "win32":
