@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-from itertools import count
 
-import os, subprocess, argparse
+import os, argparse
 import urllib.request
-from typing import Literal
+from subprocess import run
+from typing import Literal, Final
 
 from sys import platform
+
+from regex import R
 if platform == "linux" or platform == "linux2" or platform == "darwin":
-    python_dist = 'python3'
+    PYTHON_DIST: str = 'python3'
 elif platform == "win32":
-    python_dist = 'python'
+    PYTHON_DIST: str = 'python'
 else:
     raise RuntimeError(f'Platform {platform} is not supported.')
+
+ENV = os.environ
+REQFILE: Final[str] = 'requirements.txt'
 
 def internet_connect(host = 'http://google.com') -> Literal[True]:
     """Check internet connection.
@@ -37,9 +42,10 @@ def internet_connect(host = 'http://google.com') -> Literal[True]:
 
 def args_p(msg) -> argparse.Namespace:
     """Custom argument parser.
+
     Args:
         * `msg` (str): Description help message.
-        * `-env` (str): Select python environment.
+
     Returns:
         `argparse.Namespace`: Namespace of input arguments.
     """
@@ -48,20 +54,23 @@ def args_p(msg) -> argparse.Namespace:
     parser.add_argument("-env", help = "Python environment.")
     return parser.parse_args()
 
-def requirements() -> str | None:
+def requirements() -> bool:
     """Check if requirements file exists.
 
     Returns:
-        str | None: string if file is found.
+        `bool`: True if file is found, False if not.
     """
-    reqfile = 'requirements.txt'
-    if os.path.isfile(reqfile):
-        return str(reqfile)
+    if os.path.isfile(REQFILE):
+        return True
     else:
-        return None
+        return False
 
-class installer_launcher: #TODO: docstrings for class
+class installer_launcher:
     """Installer class holding all package manager core subprocesses.
+
+    Args:
+        * `package` (str): Package to install. Can either be a requirements file or the name of the package.
+        * `f` (bool): True if package file exists, False if not. Checking occurs by requirements() outside of the class.
     """
 
     def __init__(self, package: str, f: bool) -> None:
@@ -72,13 +81,13 @@ class installer_launcher: #TODO: docstrings for class
         """Install package via pip.
 
         Returns:
-            `int`: Returns 0 on success from subprocess.call()
+            `int`: Returns 0 on success from subprocess.run()
         """
 
         if self.f:
-            return subprocess.call([f'{python_dist} -m pip install -r {self.package}'], shell = True)
+            return run(['pip', 'install', '-r', f'{self.package}'], shell = True, env = ENV)
         else:
-            return subprocess.call([f'{python_dist} -m pip install {self.package}'], shell = True)
+            return run(['pip', 'install', f'{self.package}'], shell = True, env = ENV)
 
     def conda_install(self, state: int) -> int:
         """Install package for conda using pip.
@@ -88,45 +97,62 @@ class installer_launcher: #TODO: docstrings for class
             the rest get a value > 0 to avoid retrying installation of pip.
 
         Returns:
-            `int`: Returns 0 on success from subprocess.call()
+            `int`: Returns 0 on success from subprocess.run()
         """
         if state == 0:
-            subprocess.call(['conda install pip -y'], shell = True)
+            run(['conda', 'install', 'pip', '-y'], shell = True, env = ENV)
         return int(self.pip_install())
 
-def pip_caller(pack: str | list) -> int:
-    """pip package manager caller.
+class callers:
+    """Class for pip and conda callers.
 
     Args:
-        * `pack` (str | list): Package.
-
-    Returns:
-        `int`: 0 from subprocess.call()
+        * `req` (bool): requirements.txt boolean argument. Get passed after requirements() has been called. 
     """
-    if isinstance(pack, str):
-        return installer_launcher(package = pack, f = True).pip_install()
-    elif isinstance(pack, list):
-        for i in pack:
-            installer_launcher(package = i, f = False).pip_install()
-        return 0
 
-def conda_caller(pack: str | list) -> int:
-    """conda package manager caller.
+    def __init__(self, req: bool) -> None:
+        self.req = req
 
-    Args:
-        * `pack` (str | list): Package.
+    def pip_caller(self, pack: str | list) -> int:
+        """pip package manager caller.
 
-    Returns:
-        `int`: 0 from subprocess.call()
-    """
-    if isinstance(pack, str):
-        return installer_launcher(package = pack, f = True).conda_install(state = 0)
-    elif isinstance(pack, list):
-        counter = 0
-        for i in pack:
-            installer_launcher(package = i, f = False).conda_install(state = counter)
-            counter += 1
-        return 0
+        Args:
+            * `pack` (str | list): Package.
+
+        Returns:
+            `int`: 0 from subprocess.run()
+        """
+
+        if self.req:
+            return installer_launcher(package = pack, f = True).pip_install()
+        else:
+            if isinstance(pack, list):
+                for i in pack:
+                    installer_launcher(package = i, f = False).pip_install()
+            else:
+                raise TypeError("If requirements.txt doesn't exist, use a list with each dependancy as a string.")
+
+            return 0
+
+    def conda_caller(self, pack: str | list) -> int:
+        """conda package manager caller.
+
+        Args:
+            * `pack` (str | list): Package.
+
+        Returns:
+            `int`: 0 from subprocess.run()
+        """
+        if self.req:
+            return installer_launcher(package = pack, f = True).conda_install()
+        else:
+            if isinstance(pack, list):
+                for i in pack:
+                    installer_launcher(package = i, f = False).conda_install()
+            else:
+                raise TypeError("If requirements.txt doesn't exist, use a list with each dependancy as a string.")
+
+            return 0
 
 def main() -> None:
     internet_connect()
@@ -138,8 +164,8 @@ def main() -> None:
     env = arguments.get('env')
     reqs = requirements()
 
-    if reqs is not None:
-        dep = requirements()
+    if reqs:
+        dep = REQFILE
     else:
         dep = ['dash', 'keras', 'matplotlib', 'numpy', 'pandas', 
             'scikit_learn', 'seaborn', 'yfinance', 'tensorflow']
@@ -147,13 +173,13 @@ def main() -> None:
     print('Installing dependencies...\n')
     if env:
         if env == 'venv':   # do pip install here.
-            pip_caller(pack = dep)
+            callers(req = reqs).pip_caller(pack = dep)
 
         elif env == 'conda':    # do conda install here.
-            conda_caller(pack = dep)
+            callers(req = reqs).conda_caller(pack = dep)
 
     elif env == None:   # default installer is pip if -env is not specified.
-        pip_caller(pack = dep)
+        callers(req = reqs).pip_caller(pack = dep)
 
     return print('\nInstallation complete!!!')
 
