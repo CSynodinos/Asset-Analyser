@@ -33,13 +33,14 @@ def yml_parser(f: str) -> dict:
             print(exc)
 
 # constants
-parse = yml_parser(f = 'setup.yml')['constants']    # get constants.
-HELP_MESSAGE: Final[str] = parse['HELP_MESSAGE']
-PORT: Final[int] = parse['PORT']
-PLT: Final[bool] = parse['PLT']
-PREDICTION_DAYS: Final[int] = parse['PREDICTION_DAYS']
-DEFAULT_ASSET: Final[str] = parse['DEFAULT_ASSET']
-DEFAULT_ASSET_TYPE: Final[str] = parse['DEFAULT_ASSET_TYPE']
+parse = yml_parser(f = 'setup.yml')
+parse_constants = parse['constants']    # get constants.
+HELP_MESSAGE: Final[str] = parse_constants['HELP_MESSAGE']
+PORT: Final[int] = parse_constants['PORT']
+PLT: Final[bool] = parse_constants['PLT']
+PREDICTION_DAYS: Final[int] = parse_constants['PREDICTION_DAYS']
+DEFAULT_ASSET: Final[str] = parse_constants['DEFAULT_ASSET']
+DEFAULT_ASSET_TYPE: Final[str] = parse_constants['DEFAULT_ASSET_TYPE']
 
 def args_parser(msg) -> argparse.Namespace:
     """Custom argument parser.
