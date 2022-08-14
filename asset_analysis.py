@@ -5,6 +5,7 @@ from __future__ import annotations
 """
 
 import os, shutil, re
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import argparse
 from lib.data import data
 from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError, NoParameterError, DateError
@@ -34,8 +35,9 @@ def yml_parser(f: str) -> dict:
 
 # constants
 parse = yml_parser(f = 'setup.yml')
+HELP_MESSAGE: Final[str] = parse['help_messages']['LAUNCHER_HELP_MESSAGE']
+
 parse_constants = parse['constants']    # get constants.
-HELP_MESSAGE: Final[str] = parse_constants['HELP_MESSAGE']
 PORT: Final[int] = parse_constants['PORT']
 PLT: Final[bool] = parse_constants['PLT']
 PREDICTION_DAYS: Final[int] = parse_constants['PREDICTION_DAYS']
