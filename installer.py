@@ -7,6 +7,8 @@ from subprocess import run
 from typing import Literal, Final
 
 from sys import platform
+from asset_analysis import yml_parser
+
 
 if platform == "linux" or platform == "linux2" or platform == "darwin":
     PYTHON_DIST: str = 'python3'
@@ -15,8 +17,10 @@ elif platform == "win32":
 else:
     raise RuntimeError(f'Platform {platform} is not supported.')
 
+# constants
 ENV = os.environ
 REQFILE: Final[str] = 'requirements.txt'
+HELP: Final[str] = yml_parser(f = 'setup.yml')['help_messages']['INSTALLER_HELP_MESSAGE']
 
 def internet_connect(host = 'http://google.com') -> Literal[True]:
     """Check internet connection.
@@ -154,11 +158,10 @@ class callers:
             return 0
 
 def main() -> None:
+    args = args_p(msg = HELP)
     internet_connect()
     print('Internet connection established!\n')
 
-    message = ("Installer")
-    args = args_p(msg = message)
     arguments = vars(args)
     env = arguments.get('env')
     reqs = requirements()
@@ -170,15 +173,16 @@ def main() -> None:
             'scikit_learn', 'seaborn', 'yfinance', 'tensorflow']
 
     print('Installing dependencies...\n')
+    call = callers(req = reqs)
     if env:
         if env == 'venv':   # do pip install here.
-            callers(req = reqs).pip_caller(pack = dep)
+            call.pip_caller(pack = dep)
 
         elif env == 'conda':    # do conda install here.
-            callers(req = reqs).conda_caller(pack = dep)
+            call.conda_caller(pack = dep)
 
     elif env == None:   # default installer is pip if -env is not specified.
-        callers(req = reqs).pip_caller(pack = dep)
+        call.pip_caller(pack = dep)
 
     return print('\nInstallation complete!!!')
 
