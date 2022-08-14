@@ -7,7 +7,7 @@ from subprocess import run
 from typing import Literal, Final
 
 from sys import platform
-from asset_analysis import yml_parser
+from asset_analysis import yml_parser   # Taken from the launcher script
 
 
 if platform == "linux" or platform == "linux2" or platform == "darwin":
