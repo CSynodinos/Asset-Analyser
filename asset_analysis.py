@@ -64,7 +64,7 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-end_d", help = "Optional argument: Day of end date for data calls. Only use when -tdy is set to False.")
     return parser.parse_args()
 
-def bool_parser(var: any) -> bool:
+def bool_parser(var: Any) -> bool:
     """Check if parameter is boolean, if not, convert it to boolean.
     Args:
         * `var` (Any): variable to check for boolean.
