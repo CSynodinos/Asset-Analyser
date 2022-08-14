@@ -57,11 +57,11 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-tp", help = "Asset Type, etc. Cryptocurrency or Stock.")
     parser.add_argument("-pd", help = "Prediction days used for training. Must be a positive integer.")
     parser.add_argument("-db", help = "Optional argument: SQLite3 Database name. Defaults: asset_name_data.db")
-    parser.add_argument("-d", help = "Optional argument: Start date for data calls. Format. Defaults: 2019-11-1")
-    parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with -y -m -d parameters. Defaults: True")
-    parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050")
-    parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False")
-    parser.add_argument("-default", help = f"Optional argument: Runs default profile. Uses {DEFAULT_ASSET} as an example")
+    parser.add_argument("-d", help = "Optional argument: Start date for data calls. Format. Defaults: 2019-11-1.")
+    parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with -y -m -d parameters. Defaults: True.")
+    parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050.")
+    parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False.")
+    parser.add_argument("-test", help = f"Optional argument: Runs a test profile. Uses {DEFAULT_ASSET} as an example.")
     parser.add_argument("-end_y", help = "Optional argument: Year of end date for data calls. Only use when -tdy is set to False.")
     parser.add_argument("-end_m", help = "Optional argument: Month of end date for data calls. Only use when -tdy is set to False.")
     parser.add_argument("-end_d", help = "Optional argument: Day of end date for data calls. Only use when -tdy is set to False.")
@@ -294,9 +294,9 @@ def _dt_format(date: str | None):
 def main():
     args = args_parser(msg = HELP_MESSAGE)
     arguments = vars(args)
-    default: bool = bool_parser(arguments.get('default'))
+    test_profile: bool = bool_parser(arguments.get('test'))
 
-    if default:     # Launch default profile.
+    if test_profile:     # Launch default profile.
         analyzer_launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, date = None, 
                         today = True, year = None, month = None, day = None, pred_days = 60,
                         port = None, plt = False).analyze()
