@@ -1,11 +1,11 @@
 body {
     font-family: "Lato", sans-serif;
     margin: 0;
-    background-color: #F7F7F7;
+    background-color: #272727;
 }
 
 .header {
-    background-color: #5c3193;
+    background-color: #313193;
     height: 256px;
     display: flex;
     flex-direction: column;
@@ -24,17 +24,28 @@ body {
     font-weight: bold;
     text-align: center;
     margin: 0 auto;
+    filter: grayscale(100%);
 }
 
 .header-description {
-    color: #CFCFCF;
+    color: #fcfcfc;
     margin: 4px auto;
     text-align: center;
     max-width: 384px;
+    filter: grayscale(100%);
+}
+
+.header-author {
+    color: #fcfcfc;
+    margin: 4px auto;
+    text-align: center;
+    max-width: 384px;
+    font-weight: bold;
+    text-shadow: rgb(0, 0, 0) 0px 0px 10px;
 }
 
 .legend-title {
-    color: #222222;
+    color: #ffffff;
     height: 256px;
     font-size: 18px;
     text-align: center;
@@ -42,7 +53,7 @@ body {
 }
 
 .legend-description {
-    color: #222222;
+    color: #fffdfd;
     height: 10px;
     text-align: center;
     max-width: 400px;

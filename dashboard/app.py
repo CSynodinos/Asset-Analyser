@@ -48,6 +48,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                         f"Predict the price of the {asset_type} for the next day from the specified date.",
                         className="header-description",
                     ),
+                    html.P(
+                        children = f"Made by Christos Synodinos",
+                        className="header-author",
+                    ),
                 ],
                 className = "header",
             ),
@@ -100,6 +104,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                                         "tickprefix": "$",
                                         "fixedrange": True,
                                     },
+                                    'plot_bgcolor': '#111111',
+                                    'paper_bgcolor': '#111111',
+                                    'font': {
+                                        'color': '#FFFFFF'}
                                 },
                             },
                         ),
@@ -151,4 +159,4 @@ def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str,
     app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
                         volatility = volatility)
     Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
-    return app.run(port = port)
+    return app.run(port = port, debug = True)
