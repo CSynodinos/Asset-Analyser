@@ -5,7 +5,6 @@ import os, argparse
 import urllib.request
 from subprocess import run
 from typing import Literal, Final
-
 from sys import platform
 from lib.utils import yml_parser, terminal_str_formatter
 
@@ -147,11 +146,13 @@ class callers:
             `int`: 0 from subprocess.run()
         """
         if self.req:
-            return installer_launcher(package = pack, f = True).conda_install()
+            return installer_launcher(package = pack, f = True).conda_install(state = 0)
         else:
             if isinstance(pack, list):
+                counter = 0
                 for i in pack:
-                    installer_launcher(package = i, f = False).conda_install()
+                    installer_launcher(package = i, f = False).conda_install(state = counter)
+                    counter += 1
             else:
                 raise TypeError("If requirements.txt doesn't exist, use a list with each dependancy as a string.")
 
