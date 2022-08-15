@@ -4,6 +4,8 @@ from __future__ import annotations
 import os, argparse
 import urllib.request
 from subprocess import run
+run(['pip', 'install', f'pyyaml'], shell = True)    # install pyyaml here.
+
 from typing import Literal, Final
 from sys import platform
 from lib.utils import yml_parser, terminal_str_formatter
@@ -176,7 +178,7 @@ def main():
         dep = REQFILE
     else:
         dep = ['dash', 'keras', 'matplotlib', 'numpy', 'pandas', 
-            'scikit_learn', 'seaborn', 'yfinance', 'tensorflow']
+            'scikit_learn', 'seaborn', 'yfinance', 'tensorflow', 'pyyaml']
 
     print('Installing dependencies...\n')
     call = callers(req = reqs)
