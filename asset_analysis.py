@@ -291,7 +291,7 @@ def main():
                         port = None, plt = False).analyze()
 
     else:
-        ast = arguments.get('ast')
+        ast: str = arguments.get('ast')
         ast_n: str = [k for k, v in locals().items() if v == ast][0] # gets var name.
         tp: str = arguments.get('tp')
         tp_n: str = [k for k, v in locals().items() if v == tp][0]
@@ -324,7 +324,17 @@ def main():
             end_month = None
             end_day = None
 
-        def _var_n(var_n, var: Any) -> tuple:
+        def _var_n(var_n: str, var: Any) -> tuple:
+            """Generate tuple containing the name and value of a variable.
+
+            Args:
+                * `var_n` (str): Variable name.
+                * `var` (Any): Variable value.
+
+            Returns:
+                tuple: The resulting tuple.
+            """
+
             if var == None:
                 var = 'None'
             _str = var_n + ", " + var
