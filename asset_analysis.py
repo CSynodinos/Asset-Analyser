@@ -15,7 +15,7 @@ from lib.db_utils import SQLite_Query
 import datetime as dt
 from inspect import getfullargspec
 from typing import Any, Final
-from lib.utils import yml_parser
+from lib.utils import yml_parser, terminal_str_formatter
 
 parse = yml_parser(f = 'setup.yml')
 HELP_MESSAGE: Final[str] = parse['help_messages']['LAUNCHER_HELP_MESSAGE']
@@ -277,9 +277,8 @@ def _dt_format(date: str | None):
 
 def main():
     # Get terminal width, center and bold the title.
-    terminal_width = os.get_terminal_size().columns
     print('\n')
-    print(f'\033[1m{TITLE}\033[0m'.center(terminal_width))
+    print(terminal_str_formatter(_str_ = TITLE))
     print('\n')
 
     args = args_parser(msg = HELP_MESSAGE)

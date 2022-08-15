@@ -7,7 +7,7 @@ from subprocess import run
 from typing import Literal, Final
 
 from sys import platform
-from lib.utils import yml_parser
+from lib.utils import yml_parser, terminal_str_formatter
 
 
 if platform == "linux" or platform == "linux2" or platform == "darwin":
@@ -159,9 +159,8 @@ class callers:
 
 def main():
     # Get terminal width, center and bold the title.
-    terminal_width = os.get_terminal_size().columns
     print('\n')
-    print('\033[1mMarket Analysis Dependancy Installer\033[0m'.center(terminal_width))
+    print(terminal_str_formatter(_str_ = 'Market Analysis Dependancy Installer'))
     print('\n')
 
     args = args_p(msg = HELP)
