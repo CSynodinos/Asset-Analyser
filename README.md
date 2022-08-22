@@ -16,8 +16,11 @@ Download the repository in your system and run installer.py
 >>> curl https://raw.githubusercontent.com/CSynodinos/Market-Analyser
 
 >>> installer.py -env [venv or conda] # Default is venv.
+```
 
-To see all the options available:
+*Note*: To see all the options available in the application:
+
+```bash
 >>> installer.py -h
 ```
 
