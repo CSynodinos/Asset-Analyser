@@ -159,4 +159,4 @@ def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str,
     app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
                         volatility = volatility)
     Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
-    return app.run(port = port, debug = True)
+    return app.run(port = port, debug = False)
