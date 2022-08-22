@@ -83,11 +83,11 @@ Download the repository in your system and run installer.py
 
 The resulting dashboard localhost page from running the test profile:
 
-![My Image](tests/examples/full_dash_test.png)
+![My Image](assets/full_dash_test.png)
 
 The graph itself:
 
-![My Image](tests/examples/test_plot.png)
+![My Image](assets/test_plot.png)
 
 ## Application Features
 
