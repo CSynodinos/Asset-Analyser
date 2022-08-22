@@ -41,7 +41,7 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-tp", help = "Asset Type, etc. Cryptocurrency or Stock.")
     parser.add_argument("-pd", help = "Prediction days used for training. Must be a positive integer.")
     parser.add_argument("-db", help = "Optional argument: SQLite3 Database name. Defaults: asset_name_data.db")
-    parser.add_argument("-d", help = "Optional argument: Start date for data calls. Format. Defaults: 2019-11-1.")
+    parser.add_argument("-d", help = "Optional argument: Start date for data calls. Format: YYYY-MM-DD. Defaults: 2019-11-1.")
     parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with -y -m -d parameters. Defaults: True.")
     parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050.")
     parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False.")
