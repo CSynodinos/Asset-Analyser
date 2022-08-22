@@ -1,5 +1,5 @@
 <p align="center">
-<font size=20><ins><strong>Market Analyser</strong><ins></font>
+<font size=10><ins><strong>Market Analyser</strong><ins></font>
 <p>
 
 A Python application for the analysis and prediction of market assets, including Cryptocurrencies and Stocks.
