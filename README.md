@@ -1,4 +1,7 @@
-# <ins>Market Analyser<ins>
+<p align="center">
+<ins><strong>Market Analyser</strong><ins>
+<p>
+
 A Python application for the analysis and prediction of market assets, including Cryptocurrencies and Stocks.
 
 ## Developers
