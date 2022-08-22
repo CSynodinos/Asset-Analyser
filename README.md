@@ -20,9 +20,58 @@ To see all the options available:
 
 ## Example
 ```bash
->>> asset_analysis.py -test True
+>>> asset_analysis.py -test
+                                    Asset Analyser
 
-To see all the options available:
+    Connecting to Yahoo Finance...
+
+    Fetching BTC-USD Cryptocurrency data...
+
+    [*********************100%***********************]  1 of 1 completed
+    Adding BTC-USD data to YOUR/PATH/TO/*.db database...
+
+    BTC-USD Cryptocurrency data saved!
+
+    Cryptocurrency Database has been successfully updated!
+
+    Training the model...
+
+    [*********************100%***********************]  1 of 1 completed
+    1/1 [==============================] - 1s 910ms/step
+    BTC-USD Cryptocurrency Adj.Close price prediction for 2022-08-23: $[[23380.16]]
+    BTC-USD Cryptocurrency Volatility = 62.31%
+    Dash is running on http://127.0.0.1:8050/
+
+    WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+    * Serving Flask app 'dashboard.app'
+    * Debug mode: off
+    * Running on http://127.0.0.1:8050 (Press CTRL+C to quit)
+    127.0.0.1 - - [22/Aug/2022 11:31:09] "GET / HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:09] "GET /assets/style.css?m=1660504342.4959888 HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:09] "GET /_dash-component-suites/dash/deps/react-dom@16.v2_5_0m1659572569.14.0.min.js HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:09] "GET /_dash-component-suites/dash/deps/prop-types@15.v2_5_0m1659572569.8.1.min.js HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:09] "GET /_dash-component-suites/dash/deps/react@16.v2_5_0m1659572569.14.0.min.js HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:09] "GET /_dash-component-suites/dash/dash-renderer/build/dash_renderer.v2_5_0m1659572568.min.js HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:09] "GET /_dash-layout HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:10] "GET /_dash-dependencies HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:10] "GET /assets/favicon.ico?m=1660494775.9404457 HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:10] "GET / HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:10] "GET /_dash-component-suites/dash/dcc/async-graph.js HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:10] "GET /assets/style.css?m=1660504342.4959888 HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:10] "GET /_dash-component-suites/dash/dcc/async-plotlyjs.js HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:10] "GET /_dash-layout HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:11] "GET /_dash-dependencies HTTP/1.1" 200 -
+    127.0.0.1 - - [22/Aug/2022 11:31:11] "GET /_dash-component-suites/dash/dcc/async-markdown.js HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:11] "GET /_dash-component-suites/dash/dcc/async-graph.js HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:11] "GET /_dash-component-suites/dash/dcc/async-plotlyjs.js HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:11] "GET /_dash-component-suites/dash/dcc/async-markdown.js HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:11] "GET /_dash-component-suites/dash/dcc/async-highlight.js HTTP/1.1" 304 -
+    127.0.0.1 - - [22/Aug/2022 11:31:11] "GET /_dash-component-suites/dash/dcc/async-highlight.js HTTP/1.1" 304 -
+```
+
+*Note*: To see all the options available in the application:
+
+```bash
 >>> asset_analysis.py -h
 ```
 
