@@ -1,4 +1,4 @@
-<p align="center"; style='font-size:200%'>
+<p align="center"; style='font-size:2000%'>
 <ins><strong>Market Analyser</strong><ins>
 <p>
 
