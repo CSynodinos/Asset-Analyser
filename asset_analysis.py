@@ -45,7 +45,7 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with -y -m -d parameters. Defaults: True.")
     parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050.")
     parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False.")
-    parser.add_argument("-test", help = f"Optional argument: Runs a test profile. Uses {DEFAULT_ASSET} as an example.")
+    parser.add_argument("-test",  action = 'store_true', help = f"Optional argument: Runs a test profile. Uses {DEFAULT_ASSET} as an example.")
     parser.add_argument("-end_y", help = "Optional argument: Year of end date for data calls. Only use when -tdy is set to False.")
     parser.add_argument("-end_m", help = "Optional argument: Month of end date for data calls. Only use when -tdy is set to False.")
     parser.add_argument("-end_d", help = "Optional argument: Day of end date for data calls. Only use when -tdy is set to False.")
@@ -267,7 +267,7 @@ def _dt_format(date: str | None):
             except ValueError:
                 raise DateError('Date format should be YYYY-MM-DD.')
         else:
-            raise DateError('Input for argument -d is not a date.')
+            raise DateError('Input argument is not a date.')
 
     else:
         if isinstance(date, (int, float)):
@@ -305,6 +305,10 @@ def main():
         end_month: str | None = arguments.get('m')
         end_day: str | None = arguments.get('d')
 
+        if tdy == None or tdy == 'None':
+            tdy = True
+        elif tdy == False or tdy == 'False':
+            tdy = False
         if not tdy:
             if not isinstance(end_year, int):
                 raise DateError('-tdy is set to False, but -end_y is not an integer. Please use an eligible number e.g. 2015')
