@@ -41,7 +41,7 @@ class dunders:
         params = getfullargspec(__class__).args
         try:
             params.remove("self")
-        except:
+        except:     # Only when class __init__ has self and no other parameters.
             return ['self']
         return params
 
