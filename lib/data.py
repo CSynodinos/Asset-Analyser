@@ -44,7 +44,7 @@ class data(dunders):
                     print("type error: " + str(e))
                     time.sleep(30)
 
-                print(f'Adding {i} data to {db} database...\n')                
+                print(f'\nAdding {i} data to {db} database...\n')                
 
                 df.rename(columns = {"Adj Close": "Adj_Close"}, inplace = True) # Replace white space with _ in column names.
 
