@@ -13,9 +13,8 @@ from lib.model_methods import preprocessing
 from lib.fin_asset import financial_assets, prediction_assessment
 from lib.db_utils import SQLite_Query
 import datetime as dt
-from inspect import getfullargspec
 from typing import Any, Final
-from lib.utils import yml_parser, terminal_str_formatter
+from lib.utils import dunders, yml_parser, terminal_str_formatter
 
 parse = yml_parser(f = 'setup.yml')
 HELP_MESSAGE: Final[str] = parse['help_messages']['LAUNCHER_HELP_MESSAGE']
@@ -91,7 +90,7 @@ def _defaults(var: Any, default: object) -> object | Any:
     else:
         return var
 
-class analyzer_launcher:
+class analyzer_launcher(dunders):
     """Launcher class wrapping all program utilities and running the analysis.
 
     Args:
@@ -163,29 +162,6 @@ class analyzer_launcher:
         self.plt = plt
         self.plt = bool_parser(var = self.plt)
         self.plt = _defaults(var = self.plt, default = PLT)
-
-    @classmethod
-    def __repr__(cls) -> str:
-        params = getfullargspec(__class__).args
-        params.remove("self")
-        return params
-
-    @classmethod
-    def __dir__(cls, only_added = False) -> list:
-        """Display function attributes.
-        Args:
-            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
-        Returns:
-            `list`: List of attributes.
-        """
-
-        all_att = list(cls.__dict__.keys())
-        if not only_added:
-            return all_att
-        else:
-            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
-            all_att = [x for x in all_att if x not in default_atts]
-            return all_att
 
     @classmethod
     def __db_subdir(cls):
