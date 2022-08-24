@@ -5,37 +5,15 @@ import sqlite3, os, datetime, time
 import yfinance as yf
 import pandas as pd
 from lib.exceptions import DateError
-from inspect import getfullargspec
+from lib.utils import dunders
 
-class data:
+class data(dunders):
     """Access data through the Yahoo API and store them in an SQLite local database.
     """
 
     def __init__(self, start: datetime) -> None:
-        self.start = start 
-
-    @classmethod
-    def __repr__(cls) -> str:
-        params = getfullargspec(__class__).args
-        params.remove("self")
-        return params
-
-    @classmethod
-    def __dir__(cls, only_added = False) -> list:
-        """Display function attributes.
-        Args:
-            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
-        Returns:
-            list: List of attributes.
-        """
-
-        all_att = list(cls.__dict__.keys())
-        if not only_added:
-            return all_att
-        else:
-            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
-            all_att = [x for x in all_att if x not in default_atts]
-            return all_att
+        self.start = start
+        super().__init__()
 
     @staticmethod
     def __data_fetch(db: str, type: str, currency: list, begin: str, stop: str) -> bool:
