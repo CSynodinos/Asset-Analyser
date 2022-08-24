@@ -8,7 +8,7 @@ run(['pip', 'install', f'pyyaml'], shell = True)    # install pyyaml here.
 
 from typing import Literal, Final
 from sys import platform
-from lib.utils import yml_parser, terminal_str_formatter
+from lib.utils import dunders, yml_parser, terminal_str_formatter
 
 
 if platform == "linux" or platform == "linux2" or platform == "darwin":
@@ -69,7 +69,7 @@ def requirements() -> bool:
     else:
         return False
 
-class installer_launcher:
+class installer_launcher(dunders):
     """Installer class holding all package manager core subprocesses.
 
     Args:
@@ -80,6 +80,7 @@ class installer_launcher:
     def __init__(self, package: str, f: bool) -> None:
         self.package = package
         self.f = f
+        super().__init__()
 
     def pip_install(self) -> int:
         """Install package via pip.
@@ -107,7 +108,7 @@ class installer_launcher:
             run(['conda', 'install', 'pip', '-y'], shell = True, env = ENV)
         return int(self.pip_install())
 
-class callers:
+class callers(dunders):
     """Class for pip and conda callers.
 
     Args:
@@ -116,6 +117,7 @@ class callers:
 
     def __init__(self, req: bool) -> None:
         self.req = req
+        super().__init__()
 
     def pip_caller(self, pack: str | list) -> int:
         """pip package manager caller.
