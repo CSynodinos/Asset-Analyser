@@ -9,8 +9,9 @@ import yfinance as yf
 import datetime as dt
 import pandas as pd
 import numpy as np
+from lib.utils import dunders
 
-class financial_assets:
+class financial_assets(dunders):
     """Financial asset class for price predictions.
     """
 
@@ -18,29 +19,7 @@ class financial_assets:
         self.pred_days = pred_days
         self.asset_type = asset_type
         self.plot = plot
-
-    @classmethod
-    def __repr__(cls) -> str:
-        params = getfullargspec(__class__).args
-        params.remove("self")
-        return params
-
-    @classmethod
-    def __dir__(cls, only_added = False) -> list:
-        """Display function attributes.
-        Args:
-            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
-        Returns:
-            `list`: List of attributes.
-        """
-
-        all_att = list(cls.__dict__.keys())
-        if not only_added:
-            return all_att
-        else:
-            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
-            all_att = [x for x in all_att if x not in default_atts]
-            return all_att
+        super().__init__()
 
     @staticmethod
     def df_act_pred(real:np.ndarray, pred:np.ndarray, d:list) -> pd.DataFrame:
