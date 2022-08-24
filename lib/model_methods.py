@@ -189,14 +189,14 @@ def next_day_prediction(input: np.ndarray, name: str, type: str, prediction_days
     prediction = scaler.inverse_transform(prediction)
 
     # Print the result and the prediction date.
-    tomorrow = dt.date.today() + dt.timedelta(days=1)   # Today.
+    tomorrow = dt.date.today() + dt.timedelta(days = 1)   # Today.
     if today == True:
-        print(f"{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction}")
+        print(f"{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction[0][0]}")
     elif today == False and year != "" and month != "" and day != "":
-        print(f"{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction}")
+        print(f"{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction[0][0]}")
     elif today == True and year != "" and month != "" and day != "":
-        print(f"{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction}")
+        print(f"\n{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction[0][0]}")
     else:
-        print(f"{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction}")
+        print(f"\n{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction[0][0]}")
 
     return prediction
