@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import yaml, os
+from inspect import getfullargspec
 
 def yml_parser(f: str) -> dict:
     """Parser for a .yml file.
@@ -30,3 +31,33 @@ def terminal_str_formatter(_str_: str) -> str:
     """
     terminal_width = os.get_terminal_size().columns
     return f'\033[1m{_str_}\033[0m'.center(terminal_width)
+
+class dunders:
+    """Custom dunder methods.
+    """
+
+    @classmethod
+    def __repr__(cls) -> str:
+        params = getfullargspec(__class__).args
+        try:
+            params.remove("self")
+        except:
+            return ['self']
+        return params
+
+    @classmethod
+    def __dir__(cls, only_added = False) -> list:
+        """Display function attributes.
+        Args:
+            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
+        Returns:
+            list: List of attributes.
+        """
+
+        all_att = list(cls.__dict__.keys())
+        if not only_added:
+            return all_att
+        else:
+            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
+            all_att = [x for x in all_att if x not in default_atts]
+            return all_att
