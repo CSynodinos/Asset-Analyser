@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import os, sys, fnmatch
-from inspect import getfullargspec
+import os, fnmatch
+from lib.utils import dunders
 
 #TODO: Might get deprecated!!!!
-class directories:
+class directories(dunders):
     """Class holds 2 functions:
 
     >>> location(pattern)
@@ -19,29 +19,7 @@ class directories:
 
     def __init__(self, d):
         self.d = d
-
-    @classmethod
-    def __repr__(cls) -> str:
-        params = getfullargspec(__class__).args
-        params.remove("self")
-        return params
-
-    @classmethod
-    def __dir__(cls, only_added = False) -> list:
-        """Display function attributes.
-        Args:
-            * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
-        Returns:
-            list: List of attributes.
-        """
-
-        all_att = list(cls.__dict__.keys())
-        if not only_added:
-            return all_att
-        else:
-            default_atts = ['__module__', '__doc__', '__dict__', '__weakref__']
-            all_att = [x for x in all_att if x not in default_atts]
-            return all_att
+        super().__init__()
 
     def location(self, pattern):
         """Finds a subdirectory according to a pattern and returns it as a string.
