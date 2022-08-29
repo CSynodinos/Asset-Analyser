@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 from lib.db_utils import SQLite_Query
 from lib.fin_asset import prediction_comparison
 import dash
@@ -11,7 +11,9 @@ from threading import Timer
 
 ##http://localhost:8050
 
-def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> str:
+def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (Literal['a downwards trend',
+                                                                                        'an upwards trend',
+                                                                                        'no change'] | None):
     """Compare two asset prices to find the trend.
 
     Args:
