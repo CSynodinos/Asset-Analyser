@@ -155,7 +155,7 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                                             f"asset on the next day (Previous date: {df['Dates'].iloc[-1]}) "
                                             f"is: **{currency}{next_day}**. The mean volatility of "
                                             f"the asset is **{volatility}**%. Comparing the price prediction with the value of the asset "
-                                            f"on the previous day, {__compare_prices(df = df, value_pre = df['Dates'].iloc[-1], next_day_price = next_day)} " 
+                                            f"on the previous day, **{__compare_prices(df = df, value_pre = df['Dates'].iloc[-1], next_day_price = next_day)}** " 
                                             "can be observed between the two days.",
                                             className = "legend-title")
                     ),
