@@ -136,8 +136,7 @@ class analyzer_launcher(dunders):
                                 "Cryptocurrency, crypto, stock.")
 
         self.asset = asset
-        valid_curr = ('USD', 'EUR', 'JPY', 'GBP')
-        if not any(curr in self.asset for curr in valid_curr):
+        if not any(curr in self.asset for curr in tuple(CURRENCIES.keys())):
             self.asset = self.asset + "-USD"
 
         self.today = today
