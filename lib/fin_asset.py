@@ -141,15 +141,16 @@ class prediction_comparison:
 
     def __post_init__(self):
         # get type of class variable as string.
-        val_type = str(list(__class__.__annotations__.values())[0])
-        val_type = val_type.replace("<class","").replace(">","").replace("'","").strip()
-        if not (val_type == 'float' or val_type == 'int'):
+        val_type = str(list(__class__.__annotations__.values())[0]).replace(" ", "")
+        if not (val_type == 'float' or val_type == 'int' or val_type == 'float|int'):
             raise TypeError("Class variable can only be of type float and int.")
 
         # Ensure the input value is always of the same type as the specified class variable type.
         if isinstance(self.value, float) and val_type == "int":
             self.value = int(self.value)
-        if isinstance(self.value, int) and val_type == "float":
+        elif isinstance(self.value, int) and val_type == "float":
+            self.value = float(self.value)
+        elif isinstance(self.value, int) and val_type == 'float|int':
             self.value = float(self.value)
 
     def __eq__(self, __o: object) -> float:
