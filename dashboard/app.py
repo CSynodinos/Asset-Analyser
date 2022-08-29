@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 from lib.db_utils import SQLite_Query
+from lib.fin_asset import prediction_comparison
 import dash
 from dash import dcc, html
 import pandas as pd
@@ -9,6 +10,20 @@ import webbrowser
 from threading import Timer
 
 ##http://localhost:8050
+
+def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> str:
+    # Convert the strings to floats for comparison.
+    df_value_pre = float(df.loc[df['Dates'] == value_pre, 'Real_Values'].iloc[0])   # Real_Values will need to change on a db merge.
+    next_day_price = float(next_day_price)
+    previous_date = prediction_comparison(value = df_value_pre) 
+    next_day = prediction_comparison(value = next_day_price)
+    difference: float | int = previous_date == next_day
+    if difference > 0:
+        return 'a downwards trend'
+    elif difference < 0:
+        return 'an upwards trend'
+    elif difference == 0:
+        return 'no change'
 
 def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: int | float,
                     volatility: str, currency: str) -> dash.Dash:
@@ -124,7 +139,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                         children=dcc.Markdown("_**Description**_: The prediction for the price of the " 
                                             f"asset on the next day (Previous date: {df['Dates'].iloc[-1]}) "
                                             f"is: **{currency}{next_day}**. The mean volatility of "
-                                            f"the asset is **{volatility}**%.", className = "legend-title")
+                                            f"the asset is **{volatility}**%. Comparing the price prediction with the value of the asset "
+                                            f"on the previous day, {__compare_prices(df = df, value_pre = df['Dates'].iloc[-1], next_day_price = next_day)} " 
+                                            "can be observed between the two days.",
+                                            className = "legend-title")
                     ),
                     html.Span(
                         className = "legend-description",
