@@ -12,6 +12,17 @@ from threading import Timer
 ##http://localhost:8050
 
 def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> str:
+    """Compare two asset prices to find the trend.
+
+    Args:
+        * `df` (pd.DataFrame): Dataframe to pull the data from.
+        * `value_pre` (str): Actual price of asset on a specific day.
+        * `next_day_price` (str): Predicted price of the asset for the next day.
+
+    Returns:
+        str: Description of results as text.
+    """
+
     # Convert the strings to floats for comparison.
     df_value_pre = float(df.loc[df['Dates'] == value_pre, 'Real_Values'].iloc[0])   # Real_Values will need to change on a db merge.
     next_day_price = float(next_day_price)
