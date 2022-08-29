@@ -44,7 +44,7 @@ Download the repository in your system and run installer.py
 
     [*********************100%***********************]  1 of 1 completed
     1/1 [==============================] - 1s 910ms/step
-    BTC-USD Cryptocurrency Adj.Close price prediction for 2022-08-23: $[[23380.16]]
+    BTC-USD Cryptocurrency Adj.Close price prediction for 2022-08-23: $23380.16
     BTC-USD Cryptocurrency Volatility = 62.31%
     Dash is running on http://127.0.0.1:8050/
 
