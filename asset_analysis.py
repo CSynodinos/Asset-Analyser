@@ -30,6 +30,8 @@ CURRENCIES: Final[dict] = { 'USD': '$',
                             'EUR': '€',
                             'JPY': '¥',
                             'GBP': '£'}
+ASSET_TYPES: Final[tuple] = ('Cryptocurrency', 'cryptocurrency', 'crypto',
+                        'Crypto', 'stock', 'Stock')
 
 def args_parser(msg) -> argparse.Namespace:
     """Custom argument parser.
@@ -125,9 +127,7 @@ class analyzer_launcher(dunders):
         self.date = _defaults(var = date, default = dt.datetime(2019, 11, 1))
 
         self.asset_type = asset_type
-        asset_types_tup = ('Cryptocurrency', 'cryptocurrency', 'crypto',
-                        'Crypto', 'stock', 'Stock')
-        if self.asset_type in asset_types_tup:
+        if self.asset_type in ASSET_TYPES:
             DEFAULT_DB: Final[str] = asset_type + "_data.db"
             self.big_db = big_db
             self.big_db = _defaults(var = self.big_db, default = DEFAULT_DB)
