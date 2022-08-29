@@ -127,7 +127,6 @@ def prediction_assessment(df: pd.DataFrame, db: str, asset: str) -> bool:
     all_data_df = df_analyses(df = df).assessment_df_parser()
     return table_parser(df = all_data_df, dbname = db, asset_n = asset)
 
-## Will be used in the comparison script for new AI/ML models.
 @dataclass
 class prediction_comparison:
     """Dataclass to compare next day prediction with actual closing value of
