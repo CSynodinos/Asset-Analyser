@@ -162,7 +162,7 @@ def plot_volatility(dataframe: pd.DataFrame, name: str) -> bool:
     return True
 
 def next_day_prediction(input: np.ndarray, name: str, type: str, prediction_days: int, model: Sequential, 
-                        scaler: MinMaxScaler, today = True, year = "", month = "", day = "") -> float:
+                        scaler: MinMaxScaler, currency: str, today = True, year = "", month = "", day = "") -> np.ndarray:
     """Predict the closing value that the array will have on the next day.
 
     Args:
@@ -178,25 +178,25 @@ def next_day_prediction(input: np.ndarray, name: str, type: str, prediction_days
         * `day` (str, optional): Day. Defaults to "".
 
     Returns:
-        `float`: Prediction of the price of the financial asset on the next day after the specified date.
+        `np.ndarray`: Prediction of the price of the financial asset on the next day after the specified date.
     """
 
     next_day = [input[len(input) + 1 - prediction_days:len(input + 1), 0]]  # Calculate the next day.
     next_day = np.array(next_day, dtype=object) # Hold result in an array.
     next_day = np.reshape(next_day, (next_day.shape[0], next_day.shape[1], 1))  # Reshape array into a single column.
     next_day = np.asarray(next_day).astype(np.float)
-    prediction = model.predict(next_day)
-    prediction = scaler.inverse_transform(prediction)
+    prediction: np.ndarray = model.predict(next_day)
+    prediction: np.ndarray = scaler.inverse_transform(prediction)
 
     # Print the result and the prediction date.
     tomorrow = dt.date.today() + dt.timedelta(days = 1)   # Today.
     if today == True:
-        print(f"{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction[0][0]}")
+        print(f"{name} {type} Adj.Close price prediction for {tomorrow}: {currency}{prediction[0][0]}")
     elif today == False and year != "" and month != "" and day != "":
-        print(f"{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction[0][0]}")
+        print(f"{name} {type} Adj.Close price prediction ({day}/{month}/{year}): {currency}{prediction[0][0]}")
     elif today == True and year != "" and month != "" and day != "":
-        print(f"\n{name} {type} Adj.Close price prediction ({day}/{month}/{year}): ${prediction[0][0]}")
+        print(f"\n{name} {type} Adj.Close price prediction ({day}/{month}/{year}): {currency}{prediction[0][0]}")
     else:
-        print(f"\n{name} {type} Adj.Close price prediction for {tomorrow}: ${prediction[0][0]}")
+        print(f"\n{name} {type} Adj.Close price prediction for {tomorrow}: {currency}{prediction[0][0]}")
 
     return prediction
