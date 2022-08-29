@@ -77,6 +77,13 @@ class _df_ops(ABC):
         pass
 
 class df_analyses(_df_ops, dunders):
+    """Class with all dataframe analysis utils.
+
+    Inherited classes:
+        * `_df_ops` (class): Abstract class holding all the df utils.
+        * `dunders` (class): Custom dunder methods class.
+    """
+
     def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
         super().__init__()
