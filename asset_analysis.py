@@ -26,6 +26,10 @@ PLT: Final[bool] = parse_constants['PLT']
 PREDICTION_DAYS: Final[int] = parse_constants['PREDICTION_DAYS']
 DEFAULT_ASSET: Final[str] = parse_constants['DEFAULT_ASSET']
 DEFAULT_ASSET_TYPE: Final[str] = parse_constants['DEFAULT_ASSET_TYPE']
+CURRENCIES: Final[dict] = { 'USD': '$',
+                            'EUR': '€',
+                            'JPY': '¥',
+                            'GBP': '£'}
 
 def args_parser(msg) -> argparse.Namespace:
     """Custom argument parser.
@@ -182,6 +186,8 @@ class analyzer_launcher(dunders):
         db_subdir = self.__db_subdir()
         fin_asset = data(start = self.date)
         asset_l = self.asset.split()
+        asset_n, asset_curr = asset_l[0].split('-', 1)  # Asset name and currency.
+        asset_curr_symbol: str = ''.join([val for key, val in CURRENCIES.items() if asset_curr in key])
         db_output_fl = os.path.join(db_subdir, self.big_db)
 
         if os.path.isfile(db_output_fl):
@@ -202,7 +208,8 @@ class analyzer_launcher(dunders):
         asset_class = financial_assets(pred_days = self.pred_days, asset_type = self.asset_type, plot = self.plt)
         asset_all_data, asset_next, asset_volatility = asset_class.predictor(x = asset_dates, x_train = asset_x_train, 
                                                                             y_train = asset_y_train, asset_scaler = asset_scaler,
-                                                                            tick = asset_l[0], query_asset = asset_df)
+                                                                            tick = asset_l[0], query_asset = asset_df,
+                                                                            asset_currency_symbol = asset_curr_symbol)
 
         prediction_db = f"Prediction_Assessment_{self.asset}.db"
         prediction_assessment(df = asset_all_data, db = prediction_db, asset = asset_l[0])
@@ -215,7 +222,7 @@ class analyzer_launcher(dunders):
         from dashboard.app import dashboard_launch
         dashboard_launch(db = db_pred_new_fl, table = asset_l_q, fin_asset = self.asset,
                         asset_type = self.asset_type, nxt_day = asset_next,
-                        volatility = asset_volatility, port = self.port)
+                        volatility = asset_volatility, asset_currency = asset_curr_symbol, port = self.port)
 
         return True
 
