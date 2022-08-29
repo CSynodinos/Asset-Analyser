@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any, Final
 from lib.db_utils import SQLite_Query
 from lib.fin_asset import prediction_comparison
 import dash
@@ -11,9 +11,11 @@ from threading import Timer
 
 ##http://localhost:8050
 
-def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (Literal['a downwards trend',
-                                                                                        'an upwards trend',
-                                                                                        'no change'] | None):
+TREND_DESCRIPTIONS: Final[dict] = { 'upward': 'an upwards trend',
+                                    'downward': 'a downwards trend',
+                                    'none': 'no change'}
+
+def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (str | None):
     """Compare two asset prices to find the trend.
 
     Args:
@@ -32,11 +34,11 @@ def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (
     next_day = prediction_comparison(value = next_day_price)
     difference: float | int = previous_date == next_day
     if difference > 0:
-        return 'a downwards trend'
+        return TREND_DESCRIPTIONS["downward"]
     elif difference < 0:
-        return 'an upwards trend'
+        return TREND_DESCRIPTIONS["upward"]
     elif difference == 0:
-        return 'no change'
+        return TREND_DESCRIPTIONS["none"]
 
 def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: int | float,
                     volatility: str, currency: str) -> dash.Dash:
