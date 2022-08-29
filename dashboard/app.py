@@ -11,7 +11,7 @@ from threading import Timer
 ##http://localhost:8050
 
 def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: int | float,
-                    volatility: str) -> dash.Dash:
+                    volatility: str, currency: str) -> dash.Dash:
 
     """Create a one graph dashboard using dash.
 
@@ -123,7 +123,7 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                     html.Span(
                         children=dcc.Markdown("_**Description**_: The prediction for the price of the " 
                                             f"asset on the next day (Previous date: {df['Dates'].iloc[-1]}) "
-                                            f"is: **${next_day}**. The mean volatility of "
+                                            f"is: **{currency}{next_day}**. The mean volatility of "
                                             f"the asset is **{volatility}**%.", className = "legend-title")
                     ),
                     html.Span(
@@ -138,7 +138,7 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
     return app
 
 def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str, 
-                nxt_day: float | int, volatility: str, port: int) -> Any:
+                nxt_day: float | int, volatility: str, asset_currency: str, port: int) -> Any:
 
     """Launch a dash dashboard.
 
@@ -157,6 +157,6 @@ def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str,
 
     df = SQLite_Query(database = db, table = table)[0]
     app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
-                        volatility = volatility)
+                        volatility = volatility, currency = asset_currency)
     Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
     return app.run(port = port, debug = False)
