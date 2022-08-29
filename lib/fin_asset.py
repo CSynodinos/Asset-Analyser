@@ -41,7 +41,7 @@ class financial_assets(dunders):
         return pd.DataFrame({cols[0]: d, cols[1]: real, cols[2]: pred})
 
     def predictor(self, x: list, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
-                tick: str, query_asset: pd.DataFrame, any_p: bool = False,
+                tick: str, query_asset: pd.DataFrame, asset_currency_symbol: str, any_p: bool = False,
                 volat_p: bool = False, drop = 0.2) -> tuple[pd.DataFrame, float, str]:
 
         """Financial asset predictor.
@@ -53,6 +53,7 @@ class financial_assets(dunders):
             * `asset_scaler` (MinMaxScaler): Feature scaler array containing numbers scaled to dataset range.
             * `tick` (str): Asset name to download data for.
             * `query_asset` (pd.DataFrame): Asset pandas dataframe.
+            * `asset_currency_symbol` (str): Currency symbol of asset.
             * `volat_p` (bool, default = False): Plot the volatility log graph.
             * `drop` (int | float): Model Dropout. Default is 0.2.
 
@@ -91,8 +92,9 @@ class financial_assets(dunders):
 
         # Predict next day
         next_day = next_day_prediction(input = model_inputs, name = tick, 
-                                        type = self.asset_type, prediction_days = self.pred_days, 
-                                        model = asset_model, scaler = asset_scaler)
+                                        type = self.asset_type, prediction_days = self.pred_days,
+                                        currency = asset_currency_symbol, model = asset_model, 
+                                        scaler = asset_scaler)
 
         # Volatility
         asset_copy = query_asset.copy()   # Copy of dataframe to add a new column for volatility.
