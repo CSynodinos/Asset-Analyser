@@ -11,12 +11,12 @@ class data(dunders):
     """Access data through the Yahoo API and store them in an SQLite local database.
     """
 
-    def __init__(self, start: datetime) -> None:
+    def __init__(self, start: datetime, model_name) -> None:
         self.start = start
+        self.model_name = model_name
         super().__init__()
 
-    @staticmethod
-    def __data_fetch(db: str, type: str, currency: list, begin: str, stop: str) -> bool:
+    def __data_fetch(self, db: str, type: str, currency: list, begin: str, stop: str) -> bool:
         """Get data from Yahoo.
 
         Args:
@@ -54,9 +54,11 @@ class data(dunders):
                 str_check = any(tables in str_to_replace for tables in i)
 
                 if str_check == True:  # Checks if the "-" character exists. If yes, then it gets replaced with "_".
-                    crypto_table = i.replace("-", "_")
-                    df.to_sql(crypto_table, con = engine, if_exists = 'replace', index = True)
+                    table = i.replace("-", "_")
+                    table = table + f'_{self.model_name}'
+                    df.to_sql(table, con = engine, if_exists = 'replace', index = True)
                 else:
+                    table = i + f'_{self.model_name}'
                     df.to_sql(i, con = engine, if_exists = 'replace', index = True)
                 print(f'{i} {type} data saved!\n')
 
