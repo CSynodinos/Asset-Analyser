@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Any, Final
-from lib.db_utils import SQLite_Query
 from lib.fin_asset import prediction_comparison
 import dash
 from dash import dcc, html
@@ -41,7 +40,7 @@ def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (
         return TREND_DESCRIPTIONS["none"]
 
 def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: int | float,
-                    volatility: str, currency: str) -> dash.Dash:
+                    volatility: str, currency: str, model_name: str) -> dash.Dash:
 
     """Create a one graph dashboard using dash.
 
@@ -69,18 +68,17 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
         children = [
             html.Div(
                 children = [
-                    html.P(children="📈", className = "header-emoji"),
+                    html.P(children = "📈", className = "header-emoji"),
                     html.H1(
                         children="Market Analytics", className = "header-title"
                     ),
-                    html.P(
-                        children = f"Analyze {asset_type} prices using a Recursive Neural Network. "
-                        f"Predict the price of the {asset_type} for the next day from the specified date.",
-                        className="header-description",
+                    html.Span(children = dcc.Markdown(f"Analyze {asset_type} prices using a **{model_name}**. "
+                            f"Predict the price of the {asset_type} for the next day from the specified date.",
+                            className = "header-description")
                     ),
                     html.P(
                         children = f"Made by Christos Synodinos",
-                        className="header-author",
+                        className = "header-author",
                     ),
                 ],
                 className = "header",
@@ -171,7 +169,8 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
     return app
 
 def dashboard_launch(df: pd.DataFrame, fin_asset: str, asset_type: str, 
-                nxt_day: float | int, volatility: str, asset_currency: str, port: int) -> Any:
+                nxt_day: float | int, volatility: str, asset_currency: str,
+                port: int, model: str) -> Any:
 
     """Launch a dash dashboard.
 
@@ -188,6 +187,6 @@ def dashboard_launch(df: pd.DataFrame, fin_asset: str, asset_type: str,
     """
 
     app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
-                        volatility = volatility, currency = asset_currency)
+                        volatility = volatility, currency = asset_currency, model_name = model)
     Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
     return app.run(port = port, debug = False)
