@@ -5,6 +5,7 @@ constants:
     PREDICTION_DAYS: 60
     DEFAULT_ASSET: 'BTC-USD'
     DEFAULT_ASSET_TYPE: 'Cryptocurrency'
+    DEFAULT_MODEL: 'RNN'
 help_messages:
     LAUNCHER_HELP_MESSAGE: > 
 
