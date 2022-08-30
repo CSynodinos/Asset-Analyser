@@ -15,6 +15,7 @@ from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 import pandas as pd
 from keras.layers import Dense, Dropout, LSTM
+from lib.utils import dunders
 
 def preprocessing(data: pd.DataFrame, prediction_days: int) -> tuple[np.ndarray, np.ndarray, MinMaxScaler]:
     """Data preprocessing for training the model.
@@ -63,40 +64,47 @@ def test_preprocessing(prediction_days: int, inputs: np.ndarray) -> np.ndarray:
 
     return x_test
 
-def RNN_model(x: np.ndarray, y: np.ndarray, units: int, closing_value: int, 
-            optimize: str, dropout: int | float, loss_function: str, 
-            epoch: int, batch: int) -> Sequential:
+class models(dunders):
+    """Class containing all the AI/ML models of the application.
 
-    """Build and train a Long Short-Term Memory Reccurent Neural Network (`LSTM-RNN`) 
-    using the `Keras Sequential API`.
-
-    Args:
-        * `x` (np.ndarray): Training set x.
-        * `y` (np.ndarray): Training set y.
-        * `units` (int): Dimensionality of the output space.
-        * `closing_value` (int): Number of prediction days i.e. if it is equal to 1 then just the next day will be predicted.
-        * `optimize` (str): Optimization algorithm.
-        * `dropout` (int | float): BaseRandomLayer.
-        * `loss_function` (str): The loss function for error prediction.
-        * `epoch` (int): Number of epochs to train.
-        * `batch` (int): Batch size of the model.
-
-    Returns:
-        `Sequential`: The Sequential layers as a class.
+    Inherits from:
+        dunders (class): Class with custom dunders.
     """
 
-    model = Sequential()
-    model.add(LSTM(units = units, return_sequences = True, input_shape = (x.shape[1], 1)))
-    model.add(Dropout(dropout))
-    model.add(LSTM(units = units, return_sequences = True))
-    model.add(Dropout(dropout))
-    model.add(LSTM(units = units))
-    model.add(Dropout(dropout))
-    model.add(Dense(units = closing_value)) # Predict a closing value. 1 is the next closing value.
-    model.compile(optimizer = optimize, loss = loss_function)
-    model.fit(x, y, epochs = epoch, batch_size = batch, verbose = 0)
+    def LSTM_RNN(x: np.ndarray, y: np.ndarray, units: int, closing_value: int, 
+                optimize: str, dropout: int | float, loss_function: str, 
+                epoch: int, batch: int) -> Sequential:
 
-    return model
+        """Build and train a Long Short-Term Memory Reccurent Neural Network (`LSTM-RNN`) 
+        using the `Keras Sequential API`.
+
+        Args:
+            * `x` (np.ndarray): Training set x.
+            * `y` (np.ndarray): Training set y.
+            * `units` (int): Dimensionality of the output space.
+            * `closing_value` (int): Number of prediction days i.e. if it is equal to 1 then just the next day will be predicted.
+            * `optimize` (str): Optimization algorithm.
+            * `dropout` (int | float): BaseRandomLayer.
+            * `loss_function` (str): The loss function for error prediction.
+            * `epoch` (int): Number of epochs to train.
+            * `batch` (int): Batch size of the model.
+
+        Returns:
+            `Sequential`: The Sequential layers as a class.
+        """
+
+        model = Sequential()
+        model.add(LSTM(units = units, return_sequences = True, input_shape = (x.shape[1], 1)))
+        model.add(Dropout(dropout))
+        model.add(LSTM(units = units, return_sequences = True))
+        model.add(Dropout(dropout))
+        model.add(LSTM(units = units))
+        model.add(Dropout(dropout))
+        model.add(Dense(units = closing_value)) # Predict a closing value. 1 is the next closing value.
+        model.compile(optimizer = optimize, loss = loss_function)
+        model.fit(x, y, epochs = epoch, batch_size = batch, verbose = 0)
+
+        return model
 
 def plot_data(x_values: list, name: str, dtype: str, actual: np.ndarray,
             predicted: np.ndarray, colour_actual: str, colour_predicted: str,

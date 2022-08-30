@@ -4,6 +4,7 @@ from __future__ import annotations
 import sqlite3
 import pandas as pd
 from lib.exceptions import EntryNotFoundError
+from lib.utils import dunders
 
 def db_conn(db: str) -> sqlite3.Connection:
     """Connect to SQLite3 database.
@@ -80,30 +81,45 @@ def get_column(db: str, table: str, col_n: str) -> list:
             data.append(i)
     return data
 
-def table_parser(df: pd.DataFrame, dbname: str, asset_n: str) -> bool:
-    """Send data from dataframe to a database.
+class table_utils(dunders):
+    def __init__(self, dbname: str, asset_n: str) -> None:
+        self.dbname = dbname
+        self.asset_n = asset_n
+        super().__init__()
 
-    Args:
-        * `df` (pd.Dataframe): Dataframe with the data.
-        * `dbname` (str): Database name (full or relative path).
-        * `asset_n` (str): Asset name as it is stored in the database table name.
+    def table_parser(self, df: pd.DataFrame) -> bool:
+        """Send data from dataframe to a database.
 
-    Returns:
-        `boolean`: True when operation finishes successfully.
-    """
+        Args:
+            * `df` (pd.Dataframe): Dataframe with the data.
+            * `dbname` (str): Database name (full or relative path).
+            * `asset_n` (str): Asset name as it is stored in the database table name.
 
-    engine = db_conn(db = dbname)
-    cursor = db_curr(engine = engine)
-    df['Date'] = pd.to_datetime(df['Date']).dt.date
-    cursor.execute("SELECT COUNT(name) FROM sqlite_master WHERE type='table' AND name='%s'" %asset_n)
-    if cursor.fetchone()[0] == 1:
-        df.to_sql(asset_n, con = engine, if_exists = 'replace', index = True)
+        Returns:
+            `boolean`: True when operation finishes successfully.
+        """
+
+        engine = db_conn(db = self.dbname)
+        cursor = db_curr(engine = engine)
+        df['Date'] = pd.to_datetime(df['Date']).dt.date
+        cursor.execute("SELECT COUNT(name) FROM sqlite_master WHERE type='table' AND name='%s'" %self.asset_n)
+        if cursor.fetchone()[0] == 1:
+            df.to_sql(self.asset_n, con = engine, if_exists = 'replace', index = True)
+            cursor.close()
+        else:
+            # might be a useless operation, while have to assess.
+            df.to_sql(self.asset_n, con = engine, if_exists = 'replace', index = True)
+            cursor.close()
+
+        return True
+
+    ## Potential depracation.
+    def table_renamer(self, rename: str) -> bool:
+        engine = db_conn(db = self.dbname)
+        cursor = db_curr(engine = engine)
+        cursor.execute("ALTER TABLE '%s' RENAME TO '%s'" %(self.asset_n, rename))
         cursor.close()
-    else:
-        df.to_sql(asset_n, con = engine, if_exists = 'replace', index = True)
-        cursor.close()
-
-    return True
+        return True
 
 def get_entry(db: str, d: str, table: str) -> tuple:
     """Get row from database, specified by the data column.

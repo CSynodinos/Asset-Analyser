@@ -26,6 +26,7 @@ PLT: Final[bool] = parse_constants['PLT']
 PREDICTION_DAYS: Final[int] = parse_constants['PREDICTION_DAYS']
 DEFAULT_ASSET: Final[str] = parse_constants['DEFAULT_ASSET']
 DEFAULT_ASSET_TYPE: Final[str] = parse_constants['DEFAULT_ASSET_TYPE']
+DEFAULT_MODEL: Final[str] = parse_constants['DEFAULT_MODEL']
 CURRENCIES: Final[dict] = { 'USD': '$',
                             'EUR': '€',
                             'JPY': '¥',
@@ -50,6 +51,7 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-tdy", help = "Optional argument: End date for data calls is current date. If False, add custom date with -y -m -d parameters. Defaults: True.")
     parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050.")
     parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False.")
+    parser.add_argument("-model", help = f"Optional argument: Choose ML model for analysis. Defaults to {DEFAULT_MODEL}.")
     parser.add_argument("-test",  action = 'store_true', help = f"Optional argument: Runs a test profile. Uses {DEFAULT_ASSET} as an example.")
     parser.add_argument("-end_y", help = "Optional argument: Year of end date for data calls. Only use when -tdy is set to False.")
     parser.add_argument("-end_m", help = "Optional argument: Month of end date for data calls. Only use when -tdy is set to False.")
@@ -120,7 +122,7 @@ class analyzer_launcher(dunders):
     def __init__(self, asset_type: str, asset: str, big_db: str | None,
                 date: None | dt.datetime, today: bool, year: str | None, 
                 month: str | None, day: str | None, pred_days: int,
-                port: int, plt: bool) -> None:
+                port: int, plt: bool, model: str) -> None:
 
         self.date = date
         # will always be datetime if interpreter reaches this point because self.date input will be checked by _dt_format().
@@ -165,6 +167,7 @@ class analyzer_launcher(dunders):
         self.plt = plt
         self.plt = bool_parser(var = self.plt)
         self.plt = _defaults(var = self.plt, default = PLT)
+        self.model = model
 
     @classmethod
     def __db_subdir(cls):
@@ -183,7 +186,7 @@ class analyzer_launcher(dunders):
         """
 
         db_subdir = self.__db_subdir()
-        fin_asset = data(start = self.date)
+        fin_asset = data(start = self.date, model_name = self.model)
         asset_l = self.asset.split()
         asset_n, asset_curr = asset_l[0].split('-', 1)  # Asset name and currency.
         asset_curr_symbol: str = ''.join([val for key, val in CURRENCIES.items() if asset_curr in key])
@@ -202,15 +205,17 @@ class analyzer_launcher(dunders):
             shutil.move(db_output, db_output_fl)
 
         asset_l_q = asset_l[0].replace("-", "_")
+        asset_l_q = asset_l_q + f'_{self.model}'
         asset_df, asset_dates = SQLite_Query(database = db_output_fl, table = asset_l_q)
         asset_x_train, asset_y_train, asset_scaler = preprocessing(asset_df, self.pred_days)
         asset_class = financial_assets(pred_days = self.pred_days, asset_type = self.asset_type, plot = self.plt)
-        asset_real_pred, asset_next, asset_volatility = asset_class.predictor(x = asset_dates, x_train = asset_x_train, 
+        asset_real_pred, asset_next, asset_volatility = asset_class.predictor(model = self.model, x = asset_dates, x_train = asset_x_train, 
                                                                             y_train = asset_y_train, asset_scaler = asset_scaler,
                                                                             tick = asset_l[0], query_asset = asset_df,
                                                                             asset_currency_symbol = asset_curr_symbol)
 
-        all_data = prediction_assessment(df_all = asset_df, df_pred_real = asset_real_pred, db = db_output_fl, asset = asset_l[0])
+        all_data = prediction_assessment(df_all = asset_df, df_pred_real = asset_real_pred, db = db_output_fl,
+                                        asset = asset_l[0], model_name = self.model)
 
         dashboard_data = all_data.drop(all_data.columns[[0, 1, 3, 4, 5, 6, 8]], axis = 1)
         
@@ -218,7 +223,8 @@ class analyzer_launcher(dunders):
         from dashboard.app import dashboard_launch
         dashboard_launch(df = dashboard_data, fin_asset = self.asset,
                         asset_type = self.asset_type, nxt_day = asset_next,
-                        volatility = asset_volatility, asset_currency = asset_curr_symbol, port = self.port)
+                        volatility = asset_volatility, asset_currency = asset_curr_symbol,
+                        port = self.port, model = self.model)
 
         return True
 
@@ -267,7 +273,7 @@ def main():
     if test_profile:     # Launch default profile.
         analyzer_launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, date = None, 
                         today = True, year = None, month = None, day = None, pred_days = 60,
-                        port = None, plt = False).analyze()
+                        port = None, plt = False, model = DEFAULT_MODEL).analyze()
 
     else:
         ast: str = arguments.get('ast')
@@ -280,6 +286,7 @@ def main():
         p: str = str(arguments.get('p'))
         d: str | None = arguments.get('d')
         plt: bool = bool_parser(arguments.get('plt'))
+        get_model: str | None = arguments.get('model')
         end_year: str | None = arguments.get('y')
         end_month: str | None = arguments.get('m')
         end_day: str | None = arguments.get('d')
@@ -306,6 +313,10 @@ def main():
             end_year = None
             end_month = None
             end_day = None
+
+        ## Will need to add tuple for model support.
+        if get_model == None or get_model == 'None':
+            get_model: str = 'RNN'
 
         def _var_n(var_n: str, var: Any) -> tuple:
             """Generate tuple containing the name and value of a variable.
@@ -343,7 +354,7 @@ def main():
 
         analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d,
                         today = tdy, year = end_year, month = end_month, day = end_day,
-                        pred_days = pd, port = p, plt = plt).analyze()
+                        pred_days = pd, port = p, plt = plt, model = get_model).analyze()
 
 if __name__ == "__main__":
     main()
