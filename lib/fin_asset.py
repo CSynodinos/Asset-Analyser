@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from sklearn.preprocessing import MinMaxScaler
 from dataclasses import dataclass
-from lib.model_methods import RNN_model, test_preprocessing, plot_data, next_day_prediction, plot_volatility
+from lib.model_methods import models, test_preprocessing, plot_data, next_day_prediction, plot_volatility
 import yfinance as yf
 import datetime as dt
 import pandas as pd
@@ -39,8 +39,9 @@ class financial_assets(dunders):
         cols = ['Dates', 'Real_Values', 'Predicted_Values']
         return pd.DataFrame({cols[0]: d, cols[1]: real, cols[2]: pred})
 
-    def predictor(self, x: list, x_train: np.ndarray, y_train: np.ndarray, asset_scaler: MinMaxScaler,
-                tick: str, query_asset: pd.DataFrame, asset_currency_symbol: str, any_p: bool = False,
+    def predictor(self, model: str, x: list, x_train: np.ndarray, y_train: np.ndarray,
+                asset_scaler: MinMaxScaler, tick: str, query_asset: pd.DataFrame, 
+                asset_currency_symbol: str, any_p: bool = False,
                 volat_p: bool = False, drop = 0.2) -> tuple[pd.DataFrame, float, str]:
 
         """Financial asset predictor.
@@ -58,14 +59,15 @@ class financial_assets(dunders):
 
         Returns:
         `tuple[pd.DataFrame, float, str]`: All data output DataFrame, the prediction for the 
-        next day and the mean percentage volatility as a string.
+        next day, the mean percentage volatility as a string.
         """
 
         # Training starts.
         print('Training the model...\n')
-        asset_model = RNN_model(x = x_train, y = y_train, units = 50, closing_value = 1,
-                                optimize = 'adam', dropout = drop, loss_function = 'mean_squared_error', 
-                                epoch = 25, batch = 32)
+        if model == 'RNN':
+            asset_model = models.LSTM_RNN(x = x_train, y = y_train, units = 50, closing_value = 1,
+                                    optimize = 'adam', dropout = drop, loss_function = 'mean_squared_error', 
+                                    epoch = 25, batch = 32)
 
         # Test data.
         test_start = dt.datetime(2019, 11, 1)
@@ -109,7 +111,7 @@ class financial_assets(dunders):
 
         return all_data, next_day[0][0], volat
 
-def prediction_assessment(df_all: pd.DataFrame, df_pred_real: pd.DataFrame, db: str, asset: str) -> pd.DataFrame:
+def prediction_assessment(df_all: pd.DataFrame, df_pred_real: pd.DataFrame, db: str, asset: str, model_name: str) -> pd.DataFrame:
     """Wrapper for table_parser().
 
     Args:
@@ -123,7 +125,7 @@ def prediction_assessment(df_all: pd.DataFrame, df_pred_real: pd.DataFrame, db: 
     """
 
     from lib.df_utils import df_analyses
-    from lib.db_utils import table_parser, SQLite_Query
+    from lib.db_utils import table_utils, SQLite_Query
 
     all_data_df = df_analyses(df = df_pred_real).assessment_df_parser()
     all_data_df = all_data_df.drop(all_data_df.columns[[0, 1]], axis = 1)
@@ -134,8 +136,10 @@ def prediction_assessment(df_all: pd.DataFrame, df_pred_real: pd.DataFrame, db: 
     if " " in asset:
         asset = asset.replace(' ', "")
 
-    table_parser(df = merged_df, dbname = db, asset_n = asset)
-    return SQLite_Query(database = db, table = asset)[0]
+    new_table_name = f'{asset}_{model_name}'
+    table_instance = table_utils(dbname = db, asset_n = new_table_name)
+    table_instance.table_parser(df = merged_df)
+    return SQLite_Query(database = db, table = new_table_name)[0]
 
 @dataclass
 class prediction_comparison:
