@@ -28,7 +28,7 @@ def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (
     """
 
     # Convert the strings to floats for comparison.
-    df_value_pre = float(df.loc[df['Dates'] == value_pre, 'Real_Values'].iloc[0])   # Real_Values will need to change on a db merge.
+    df_value_pre = float(df.loc[df['Date'] == value_pre, 'Predicted_Values'].iloc[0])   # Predicted_Values will need to change on a db merge.
     next_day_price = float(next_day_price)
     previous_date = prediction_comparison(value = df_value_pre) 
     next_day = prediction_comparison(value = next_day_price)
@@ -105,19 +105,19 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                             figure = {
                                 "data": [
                                     {
-                                        "x": df.iloc[:, 1],
-                                        "y": df.iloc[:, 2],
+                                        "x": df.loc[:, 'Date'],
+                                        "y": df.loc[:, 'Adj_Close'],
                                         "type": "lines",
                                         "line": dict(color = 'green'),
-                                        "name": f"{df.columns[2]}",
+                                        "name": f"{'Actual Values'}",
                                         "hovertemplate": "$%{y:.2f}"
                                                         "<extra></extra>",
                                         },
                                     {
-                                        "x": df.iloc[:, 1],
-                                        "y": df.iloc[:, 3],
+                                        "x": df.loc[:, 'Date'],
+                                        "y": df.loc[:, 'Predicted_Values'],
                                         "type": "lines",
-                                        "name": f"{df.columns[3]}",
+                                        "name": f"{'Predicted Values'}",
                                         "line": dict(color = 'magenta'),
                                         "hovertemplate": "$%{y:.2f}"
                                                         "<extra></extra>",
@@ -152,10 +152,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                 children = [
                     html.Span(
                         children=dcc.Markdown("_**Description**_: The prediction for the price of the " 
-                                            f"asset on the next day (Previous date: {df['Dates'].iloc[-1]}) "
+                                            f"asset on the next day (Previous date: {df['Date'].iloc[-1]}) "
                                             f"is: **{currency}{next_day}**. The mean volatility of "
                                             f"the asset is **{volatility}**%. Comparing the price prediction with the value of the asset "
-                                            f"on the previous day, **{__compare_prices(df = df, value_pre = df['Dates'].iloc[-1], next_day_price = next_day)}** " 
+                                            f"on the previous day, **{__compare_prices(df = df, value_pre = df['Date'].iloc[-1], next_day_price = next_day)}** " 
                                             "can be observed between the two days.",
                                             className = "legend-title")
                     ),
@@ -170,14 +170,13 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
     )
     return app
 
-def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str, 
+def dashboard_launch(df: pd.DataFrame, fin_asset: str, asset_type: str, 
                 nxt_day: float | int, volatility: str, asset_currency: str, port: int) -> Any:
 
     """Launch a dash dashboard.
 
     Args:
-        * `db` (str): Name of database.
-        * `table` (str): Table with asset data.
+        * `df` (pd.Dataframe): Dataframe with all data.
         * `fin_asset` (str): Name of asset.
         * `asset_type` (str): Type of asset e.g. crypto, stock.
         * `nxt_day` (float | int): Next day price prediction.
@@ -188,7 +187,6 @@ def dashboard_launch(db: str, table: str, fin_asset: str, asset_type: str,
         Launches an instance of the app.
     """
 
-    df = SQLite_Query(database = db, table = table)[0]
     app = __dashboard_create(df = df, asset = fin_asset, asset_type = asset_type, next_day = nxt_day,
                         volatility = volatility, currency = asset_currency)
     Timer(1, webbrowser.open_new, args = (f"http://localhost:{port}",)).start()
