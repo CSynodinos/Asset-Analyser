@@ -4,7 +4,6 @@ from __future__ import annotations
 from sklearn.preprocessing import MinMaxScaler
 from dataclasses import dataclass
 from lib.model_methods import RNN_model, test_preprocessing, plot_data, next_day_prediction, plot_volatility
-from inspect import getfullargspec
 import yfinance as yf
 import datetime as dt
 import pandas as pd
@@ -110,22 +109,33 @@ class financial_assets(dunders):
 
         return all_data, next_day[0][0], volat
 
-def prediction_assessment(df: pd.DataFrame, db: str, asset: str) -> bool:
+def prediction_assessment(df_all: pd.DataFrame, df_pred_real: pd.DataFrame, db: str, asset: str) -> pd.DataFrame:
     """Wrapper for table_parser().
 
     Args:
-        * `df` (pd.DataFrame): Dataframe input for df_analyses class.
+        * `df_all` (pd.DataFrame): Dataframe input with all data.
+        * `df_pred_real` (pd.DataFrame): Dataframe with real and predicted values.
         * `db` (str): Database for table_parser().
         * `asset` (str): Asset name.
 
     Returns:
-        bool: True when operation finishes successfully.
+        pd.DataFrame: Queries the updated table in the database and get all values as a pandas DataFrame.
     """
-    from lib.df_utils import df_analyses
-    from lib.db_utils import table_parser
 
-    all_data_df = df_analyses(df = df).assessment_df_parser()
-    return table_parser(df = all_data_df, dbname = db, asset_n = asset)
+    from lib.df_utils import df_analyses
+    from lib.db_utils import table_parser, SQLite_Query
+
+    all_data_df = df_analyses(df = df_pred_real).assessment_df_parser()
+    all_data_df = all_data_df.drop(all_data_df.columns[[0, 1]], axis = 1)
+    merged_df = df_all.join(all_data_df)    # Combines original df with prediction operations df.
+
+    if "-" in asset:
+        asset = asset.replace('-', "_")
+    if " " in asset:
+        asset = asset.replace(' ', "")
+
+    table_parser(df = merged_df, dbname = db, asset_n = asset)
+    return SQLite_Query(database = db, table = asset)[0]
 
 @dataclass
 class prediction_comparison:
