@@ -187,7 +187,7 @@ class analyzer_launcher(dunders):
         asset_l = self.asset.split()
         asset_n, asset_curr = asset_l[0].split('-', 1)  # Asset name and currency.
         asset_curr_symbol: str = ''.join([val for key, val in CURRENCIES.items() if asset_curr in key])
-        db_output_fl = os.path.join(db_subdir, self.big_db)
+        db_output_fl: str = os.path.join(db_subdir, self.big_db)
 
         if os.path.isfile(db_output_fl):
             fin_asset.asset_data(database = db_output_fl, asset_type = self.asset_type, asset_list = asset_l,
@@ -202,24 +202,21 @@ class analyzer_launcher(dunders):
             shutil.move(db_output, db_output_fl)
 
         asset_l_q = asset_l[0].replace("-", "_")
-        asset_df, asset_dates = SQLite_Query(db_output_fl, asset_l_q)
+        asset_df, asset_dates = SQLite_Query(database = db_output_fl, table = asset_l_q)
         asset_x_train, asset_y_train, asset_scaler = preprocessing(asset_df, self.pred_days)
         asset_class = financial_assets(pred_days = self.pred_days, asset_type = self.asset_type, plot = self.plt)
-        asset_all_data, asset_next, asset_volatility = asset_class.predictor(x = asset_dates, x_train = asset_x_train, 
+        asset_real_pred, asset_next, asset_volatility = asset_class.predictor(x = asset_dates, x_train = asset_x_train, 
                                                                             y_train = asset_y_train, asset_scaler = asset_scaler,
                                                                             tick = asset_l[0], query_asset = asset_df,
                                                                             asset_currency_symbol = asset_curr_symbol)
 
-        prediction_db = f"Prediction_Assessment_{self.asset}.db"
-        prediction_assessment(df = asset_all_data, db = prediction_db, asset = asset_l[0])
-        db_pred_new_fl = os.path.join(db_subdir, prediction_db)
+        all_data = prediction_assessment(df_all = asset_df, df_pred_real = asset_real_pred, db = db_output_fl, asset = asset_l[0])
 
-        # Move prediction database output to Databases subdirectory.
-        shutil.move(prediction_db, db_pred_new_fl)
-
+        dashboard_data = all_data.drop(all_data.columns[[0, 1, 3, 4, 5, 6, 8]], axis = 1)
+        
         # Import dashboard_launch and launch app.
         from dashboard.app import dashboard_launch
-        dashboard_launch(db = db_pred_new_fl, table = asset_l_q, fin_asset = self.asset,
+        dashboard_launch(df = dashboard_data, fin_asset = self.asset,
                         asset_type = self.asset_type, nxt_day = asset_next,
                         volatility = asset_volatility, asset_currency = asset_curr_symbol, port = self.port)
 
