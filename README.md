@@ -18,6 +18,8 @@ Download the repository in your system and run installer.py
 >>> installer.py -env [venv or conda] # Default is venv.
 ```
 
+This version of the application support both tensorflow and tensorflow-gpu. The installer can only install tensorflow at the moment. If you require tensorflow-gpu, you will need to uninstall tensorflow and follow Nvidia's instructions on the full tensorflow-gpu installation for Windows/Linux.
+
 *Note*: To see all the options available in the application:
 
 ```bash
@@ -130,8 +132,6 @@ The graph itself:
     9. -end_d: Day of end date for data calls. Only use when -tdy is set to False.
 
 # Work-In-Progress Features
-
-:small_red_triangle: All database queries to be conducted in a single database.
 
 :small_red_triangle: Addition of more AI/ML options. Currently working on adding a **Convoluted NN** as an option.
 
