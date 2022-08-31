@@ -34,10 +34,12 @@ DEFAULT_DROPOUT: Final[float] = parse_constants['DEFAULT_DROPOUT']
 DEFAULT_OPTIMIZER: Final[str] =  parse_constants['DEFAULT_OPTIMIZER']
 DEFAULT_UNITS: Final[int] = parse_constants['DEFAULT_UNITS']
 DEFAULT_CLOSING: Final[int] = parse_constants['DEFAULT_CLOSING']
+
 CURRENCIES: Final[dict] = { 'USD': '$',
                             'EUR': '€',
                             'JPY': '¥',
                             'GBP': '£'}
+
 ASSET_TYPES: Final[tuple] = ('Cryptocurrency', 'cryptocurrency', 'crypto',
                         'Crypto', 'stock', 'Stock')
 
