@@ -1,5 +1,5 @@
 <h1 align="center"; style='font-size:200%'>
-<ins><strong>Market Analyser</strong><ins>
+<ins><strong>Asset Analyser</strong><ins>
 </h1>
 
 *A Python application for the analysis and prediction of market assets, including Cryptocurrencies and Stocks.*
@@ -13,9 +13,13 @@ This application is able to analyse any asset data and make predictions on the p
 ## Installation
 Download the repository in your system and run installer.py
 ```bash
->>> curl https://raw.githubusercontent.com/CSynodinos/Market-Analyser
+>>> curl https://raw.githubusercontent.com/CSynodinos/Asset-Analyser
 
->>> installer.py -env [venv or conda] # Default is venv.
+For Windows:
+>>> python .\lib\installer.py -env [venv or conda] # Default is venv.
+
+For Linux/Mac:
+>>> python lib/installer.py -env [venv or conda] # Default is venv
 ```
 
 This version of the application supports both tensorflow and tensorflow-gpu. The installer can install tensorflow-gpu by using the -gpu flag. However, you will need to follow Nvidia's instructions for the CUDA toolkit and CUDA Deep Neural Network library installations for Windows/Linux. Otherwise, tensorflow-gpu will not work!
@@ -23,7 +27,11 @@ This version of the application supports both tensorflow and tensorflow-gpu. The
 *Note*: To see all the options available in the application:
 
 ```bash
->>> installer.py -h
+For Windows:
+>>> python .\lib\installer.py -h
+
+For Linux/Mac:
+>>> python lib/installer.py -h
 ```
 
 ## Example
