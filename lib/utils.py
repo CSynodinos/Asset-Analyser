@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import yaml, os
+import os
 from inspect import getfullargspec
 
 def yml_parser(f: str) -> dict:
@@ -14,6 +14,7 @@ def yml_parser(f: str) -> dict:
         dict: Contents of yml.
     """
 
+    import yaml
     with open(f, 'r') as fl_stream:
         try:
             return dict(yaml.safe_load(fl_stream))
