@@ -27,6 +27,13 @@ PREDICTION_DAYS: Final[int] = parse_constants['PREDICTION_DAYS']
 DEFAULT_ASSET: Final[str] = parse_constants['DEFAULT_ASSET']
 DEFAULT_ASSET_TYPE: Final[str] = parse_constants['DEFAULT_ASSET_TYPE']
 DEFAULT_MODEL: Final[str] = parse_constants['DEFAULT_MODEL']
+DEFAULT_LOSS: Final[str] = parse_constants['DEFAULT_LOSS']
+DEFAULT_EPOCH: Final[int] = parse_constants['DEFAULT_EPOCH']
+DEFAULT_BATCH: Final[int] = parse_constants['DEFAULT_BATCH']
+DEFAULT_DROPOUT: Final[float] = parse_constants['DEFAULT_DROPOUT']
+DEFAULT_OPTIMIZER: Final[str] =  parse_constants['DEFAULT_OPTIMIZER']
+DEFAULT_UNITS: Final[int] = parse_constants['DEFAULT_UNITS']
+DEFAULT_CLOSING: Final[int] = parse_constants['DEFAULT_CLOSING']
 CURRENCIES: Final[dict] = { 'USD': '$',
                             'EUR': '€',
                             'JPY': '¥',
@@ -52,6 +59,13 @@ def args_parser(msg) -> argparse.Namespace:
     parser.add_argument("-p", help = "Optional argument: Port for localhost containing the dashboard. Defaults to 8050.")
     parser.add_argument("-plt", help = "Optional argument: Display seaborn plots. Useful for jupyter notebooks. Defaults to False.")
     parser.add_argument("-model", help = f"Optional argument: Choose ML model for analysis. Defaults to {DEFAULT_MODEL}.")
+    parser.add_argument("-loss", help = f"Optional argument: Loss function of model. Defaults to {DEFAULT_LOSS}.")
+    parser.add_argument("-epoch", help = f"Optional argument: Training epochs. Defaults to {DEFAULT_EPOCH}.")
+    parser.add_argument("-batch", help = f"Optional argument: Model batch size. Defaults to {DEFAULT_BATCH}.")
+    parser.add_argument("-dropout", help = f"Optional argument: BaseRandomLayer for LSTM-RNN. Defaults to {DEFAULT_DROPOUT}.")
+    parser.add_argument("-optimizer", help = f"Optional argument: Optimization algorithm. Defaults to {DEFAULT_OPTIMIZER}.")
+    parser.add_argument("-units", help = f"Optional argument: Dimensionality of the output space. Defaults to {DEFAULT_UNITS}.")
+    parser.add_argument("-closing", help = f"Optional argument: Closing value of the model. Defaults to {DEFAULT_CLOSING}.")
     parser.add_argument("-test",  action = 'store_true', help = f"Optional argument: Runs a test profile. Uses {DEFAULT_ASSET} as an example.")
     parser.add_argument("-end_y", help = "Optional argument: Year of end date for data calls. Only use when -tdy is set to False.")
     parser.add_argument("-end_m", help = "Optional argument: Month of end date for data calls. Only use when -tdy is set to False.")
@@ -122,7 +136,9 @@ class analyzer_launcher(dunders):
     def __init__(self, asset_type: str, asset: str, big_db: str | None,
                 date: None | dt.datetime, today: bool, year: str | None, 
                 month: str | None, day: str | None, pred_days: int,
-                port: int, plt: bool, model: str) -> None:
+                port: int, plt: bool, model: str, drop: float | None, optimizer: str | None,
+                loss: str | None, epoch: int | None, batch: int | None, dimensionality: int | None, 
+                closing: int | None) -> None:
 
         self.date = date
         # will always be datetime if interpreter reaches this point because self.date input will be checked by _dt_format().
@@ -168,6 +184,23 @@ class analyzer_launcher(dunders):
         self.plt = bool_parser(var = self.plt)
         self.plt = _defaults(var = self.plt, default = PLT)
         self.model = model
+        self.model = _defaults(var = model, default = DEFAULT_MODEL)
+
+        # Init of model optimisation parameters
+        self.drop = drop
+        self.drop = _defaults(var = drop, default = DEFAULT_DROPOUT)
+        self.optimizer = optimizer
+        self.optimizer = _defaults(var = optimizer, default = DEFAULT_OPTIMIZER)
+        self.loss = loss
+        self.loss = _defaults(var = loss, default = DEFAULT_LOSS)
+        self.epoch = epoch
+        self.epoch = _defaults(var = epoch, default = DEFAULT_EPOCH)
+        self.batch = batch
+        self.batch = _defaults(var = batch, default = DEFAULT_BATCH)
+        self.dimensionality = dimensionality
+        self.dimensionality = _defaults(var = dimensionality, default = DEFAULT_UNITS)
+        self.closing = closing
+        self.closing = _defaults(var = closing, default = DEFAULT_CLOSING)
 
     @classmethod
     def __db_subdir(cls):
@@ -212,7 +245,11 @@ class analyzer_launcher(dunders):
         asset_real_pred, asset_next, asset_volatility = asset_class.predictor(model = self.model, x = asset_dates, x_train = asset_x_train, 
                                                                             y_train = asset_y_train, asset_scaler = asset_scaler,
                                                                             tick = asset_l[0], query_asset = asset_df,
-                                                                            asset_currency_symbol = asset_curr_symbol)
+                                                                            asset_currency_symbol = asset_curr_symbol,
+                                                                            drop = self.drop, optimizer = self.optimizer,
+                                                                            loss = self.loss, epoch = self.epoch,
+                                                                            batch = self.batch, dimensionality = self.dimensionality, 
+                                                                            closing = self.closing)
 
         all_data = prediction_assessment(df_all = asset_df, df_pred_real = asset_real_pred, db = db_output_fl,
                                         asset = asset_l[0], model_name = self.model)
@@ -271,9 +308,12 @@ def main():
     test_profile: bool = bool_parser(arguments.get('test'))
 
     if test_profile:     # Launch default profile.
-        analyzer_launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, date = None, 
-                        today = True, year = None, month = None, day = None, pred_days = 60,
-                        port = None, plt = False, model = DEFAULT_MODEL).analyze()
+        analyzer_launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, 
+                        date = None, today = True, year = None, month = None, day = None, 
+                        pred_days = 60, port = None, plt = False, model = DEFAULT_MODEL, 
+                        drop = DEFAULT_DROPOUT, optimizer = DEFAULT_OPTIMIZER, loss = DEFAULT_LOSS,
+                        epoch = DEFAULT_EPOCH, batch = DEFAULT_BATCH, dimensionality = DEFAULT_UNITS,
+                        closing = DEFAULT_CLOSING).analyze()
 
     else:
         ast: str = arguments.get('ast')
@@ -290,6 +330,13 @@ def main():
         end_year: str | None = arguments.get('y')
         end_month: str | None = arguments.get('m')
         end_day: str | None = arguments.get('d')
+        get_drop: float | None = arguments.get('dropout')
+        get_optimizer: str | None = arguments.get('optimizer')
+        get_loss: str | None = arguments.get('loss')
+        get_epoch: int | None = arguments.get('epoch')
+        get_batch: int | None = arguments.get('batch')
+        get_dimensionality: int | None = arguments.get('units')
+        get_closing: int | None = arguments.get('closing')
 
         if tdy == None or tdy == 'None':
             tdy = True
@@ -313,10 +360,6 @@ def main():
             end_year = None
             end_month = None
             end_day = None
-
-        ## Will need to add tuple for model support.
-        if get_model == None or get_model == 'None':
-            get_model: str = 'RNN'
 
         def _var_n(var_n: str, var: Any) -> tuple:
             """Generate tuple containing the name and value of a variable.
@@ -354,7 +397,9 @@ def main():
 
         analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d,
                         today = tdy, year = end_year, month = end_month, day = end_day,
-                        pred_days = pd, port = p, plt = plt, model = get_model).analyze()
+                        pred_days = pd, port = p, plt = plt, model = get_model, drop = get_drop, optimizer = get_optimizer,
+                        loss = get_loss, epoch = get_epoch, batch = get_batch, dimensionality = get_dimensionality,
+                        closing = get_closing).analyze()
 
 if __name__ == "__main__":
     main()
