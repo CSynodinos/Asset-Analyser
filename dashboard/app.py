@@ -55,6 +55,7 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
         Dash: Instance of the dash web application.
     """
 
+    specified_date = df['Date'].iloc[-1]
     external_stylesheets = [
         {
             "href": "https://fonts.googleapis.com/css2?"
@@ -70,10 +71,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                 children = [
                     html.P(children = "📈", className = "header-emoji"),
                     html.H1(
-                        children="Market Analytics", className = "header-title"
+                        children = f"{asset} Analytics", className = "header-title"
                     ),
                     html.Span(children = dcc.Markdown(f"Analyze {asset_type} prices using a **{model_name}**. "
-                            f"Predict the price of the {asset_type} for the next day from the specified date.",
+                            f"Predict the price of the {asset_type} for the next day from the specified date ({specified_date}).",
                             className = "header-description")
                     ),
                     html.P(
@@ -150,10 +151,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                 children = [
                     html.Span(
                         children=dcc.Markdown("_**Description**_: The prediction for the price of the " 
-                                            f"asset on the next day (Previous date: {df['Date'].iloc[-1]}) "
+                                            f"asset on the next day (Previous date: {specified_date}) "
                                             f"is: **{currency}{next_day}**. The mean volatility of "
                                             f"the asset is **{volatility}**%. Comparing the price prediction with the value of the asset "
-                                            f"on the previous day, **{__compare_prices(df = df, value_pre = df['Date'].iloc[-1], next_day_price = next_day)}** " 
+                                            f"on the previous day, **{__compare_prices(df = df, value_pre = specified_date, next_day_price = next_day)}** " 
                                             "can be observed between the two days.",
                                             className = "legend-title")
                     ),
