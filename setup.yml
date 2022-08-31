@@ -6,6 +6,13 @@ constants:
     DEFAULT_ASSET: 'BTC-USD'
     DEFAULT_ASSET_TYPE: 'Cryptocurrency'
     DEFAULT_MODEL: 'RNN'
+    DEFAULT_LOSS: 'mean_squared_error'
+    DEFAULT_EPOCH: 25
+    DEFAULT_BATCH: 32
+    DEFAULT_DROPOUT: 0.2
+    DEFAULT_OPTIMIZER: 'adam'
+    DEFAULT_UNITS: 50
+    DEFAULT_CLOSING: 1
 help_messages:
     LAUNCHER_HELP_MESSAGE: > 
 
