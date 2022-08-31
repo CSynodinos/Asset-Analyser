@@ -41,7 +41,7 @@ CURRENCIES: Final[dict] = { 'USD': '$',
 ASSET_TYPES: Final[tuple] = ('Cryptocurrency', 'cryptocurrency', 'crypto',
                         'Crypto', 'stock', 'Stock')
 
-def args_parser(msg) -> argparse.Namespace:
+def args_parser(msg: str) -> argparse.Namespace:
     """Custom argument parser.
     Args:
         * `msg` (str): Description help message.
