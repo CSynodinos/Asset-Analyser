@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from lib.utils import terminal_str_formatter
+from utils import terminal_str_formatter
 # Get terminal width, center and bold the title.
 print('\n')
-print(terminal_str_formatter(_str_ = 'Market Analysis Dependancy Installer'))
+print(terminal_str_formatter(_str_ = 'Asset Analyser Dependancy Installer'))
 print('\n')
 
 import os, argparse
@@ -14,7 +14,7 @@ run(['pip', 'install', 'pyyaml'], shell = True, stdout = DEVNULL, stderr = DEVNU
 
 from typing import Literal, Final
 from sys import platform
-from lib.utils import dunders, yml_parser
+from utils import dunders, yml_parser
 
 
 if platform == "linux" or platform == "linux2" or platform == "darwin":
