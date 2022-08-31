@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+from lib.utils import terminal_str_formatter
+# Get terminal width, center and bold the title.
+print('\n')
+print(terminal_str_formatter(_str_ = 'Market Analysis Dependancy Installer'))
+print('\n')
+
 import os, argparse
 import urllib.request
-from subprocess import run
-run(['pip', 'install', f'pyyaml'], shell = True)    # install pyyaml here.
+from subprocess import run, DEVNULL
+run(['pip', 'install', 'pyyaml'], shell = True, stdout = DEVNULL, stderr = DEVNULL)    # install pyyaml here.
 
 from typing import Literal, Final
 from sys import platform
-from lib.utils import dunders, yml_parser, terminal_str_formatter
+from lib.utils import dunders, yml_parser
 
 
 if platform == "linux" or platform == "linux2" or platform == "darwin":
@@ -174,10 +180,6 @@ class callers(dunders):
             return 0
 
 def main():
-    # Get terminal width, center and bold the title.
-    print('\n')
-    print(terminal_str_formatter(_str_ = 'Market Analysis Dependancy Installer'))
-    print('\n')
 
     args = args_p(msg = HELP)
     internet_connect()
