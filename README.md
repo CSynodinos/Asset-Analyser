@@ -18,7 +18,7 @@ Download the repository in your system and run installer.py
 >>> installer.py -env [venv or conda] # Default is venv.
 ```
 
-This version of the application supports both tensorflow and tensorflow-gpu. The installer can only install tensorflow at the moment. If you require tensorflow-gpu, you will need to uninstall tensorflow and follow Nvidia's instructions on the full tensorflow-gpu installation for Windows/Linux.
+This version of the application supports both tensorflow and tensorflow-gpu. The installer can install tensorflow-gpu by using the -gpu flag. However, you will need to follow Nvidia's instructions for the CUDA toolkit and CUDA Deep Neural Network library installations for Windows/Linux. Otherwise, tensorflow-gpu will not work!
 
 *Note*: To see all the options available in the application:
 
