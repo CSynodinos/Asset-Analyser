@@ -41,8 +41,10 @@ class financial_assets(dunders):
 
     def predictor(self, model: str, x: list, x_train: np.ndarray, y_train: np.ndarray,
                 asset_scaler: MinMaxScaler, tick: str, query_asset: pd.DataFrame, 
-                asset_currency_symbol: str, any_p: bool = False,
-                volat_p: bool = False, drop = 0.2) -> tuple[pd.DataFrame, float, str]:
+                asset_currency_symbol: str, drop: float, optimizer: str,
+                loss: str, epoch: int, batch: int, dimensionality: int, 
+                closing: int, any_p: bool = False,
+                volat_p: bool = False) -> tuple[pd.DataFrame, float, str]:
 
         """Financial asset predictor.
 
@@ -65,9 +67,9 @@ class financial_assets(dunders):
         # Training starts.
         print('Training the model...\n')
         if model == 'RNN':
-            asset_model = models.LSTM_RNN(x = x_train, y = y_train, units = 50, closing_value = 1,
-                                    optimize = 'adam', dropout = drop, loss_function = 'mean_squared_error', 
-                                    epoch = 25, batch = 32)
+            asset_model = models.LSTM_RNN(x = x_train, y = y_train, units = dimensionality, closing_value = closing,
+                                    optimize = optimizer, dropout = drop, loss_function = loss, 
+                                    epoch = epoch, batch = batch)
 
         # Test data.
         test_start = dt.datetime(2019, 11, 1)
