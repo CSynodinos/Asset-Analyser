@@ -56,6 +56,7 @@ def args_p(msg) -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(description = msg, formatter_class = argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-env", help = "Python environment. Supports venv and conda.")
+    parser.add_argument("-gpu",  action = 'store_true', help = f"Optional argument: Installs tensorflow-gpu instead of tensorflow.")
     return parser.parse_args()
 
 def requirements() -> bool:
@@ -75,11 +76,13 @@ class installer_launcher(dunders):
     Args:
         * `package` (str): Package to install. Can either be a requirements file or the name of the package.
         * `f` (bool): True if package file exists, False if not. Checking occurs by requirements() outside of the class.
+        * `gpu` (bool): Tensorflow-gpu flag. If called it will install tensorflow-gpu instead of tensorflow.
     """
 
-    def __init__(self, package: str, f: bool) -> None:
+    def __init__(self, package: str, f: bool, gpu: bool) -> None:
         self.package = package
         self.f = f
+        self.gpu = gpu
         super().__init__()
 
     def pip_install(self) -> int:
@@ -88,6 +91,11 @@ class installer_launcher(dunders):
         Returns:
             `int`: Returns 0 on success from subprocess.run()
         """
+
+        if self.gpu:
+            run(['pip', 'install', 'tensorflow-gpu'], shell = True, env = ENV)
+
+        print('tensorflow-gpu installation complete.')
 
         if self.f:
             return run(['pip', 'install', '-r', f'{self.package}'], shell = True, env = ENV)
@@ -112,11 +120,13 @@ class callers(dunders):
     """Class for pip and conda callers.
 
     Args:
-        * `req` (bool): requirements.txt boolean argument. Get passed after requirements() has been called. 
+        * `req` (bool): requirements.txt boolean argument. Get passed after requirements() has been called.
+        * `gpu` (bool): Tensorflow-gpu flag. If called it will pass as an argument to installer_launcher. 
     """
 
-    def __init__(self, req: bool) -> None:
+    def __init__(self, req: bool, gpu: bool) -> None:
         self.req = req
+        self.gpu = gpu
         super().__init__()
 
     def pip_caller(self, pack: str | list) -> int:
@@ -130,11 +140,11 @@ class callers(dunders):
         """
 
         if self.req:
-            return installer_launcher(package = pack, f = True).pip_install()
+            return installer_launcher(package = pack, f = True, gpu = self.gpu).pip_install()
         else:
             if isinstance(pack, list):
                 for i in pack:
-                    installer_launcher(package = i, f = False).pip_install()
+                    installer_launcher(package = i, f = False, gpu = self.gpu).pip_install()
             else:
                 raise TypeError("If requirements.txt doesn't exist, use a list with each dependancy as a string.")
 
@@ -149,13 +159,14 @@ class callers(dunders):
         Returns:
             `int`: 0 from subprocess.run()
         """
+
         if self.req:
-            return installer_launcher(package = pack, f = True).conda_install(state = 0)
+            return installer_launcher(package = pack, f = True, gpu = self.gpu).conda_install(state = 0)
         else:
             if isinstance(pack, list):
                 counter = 0
                 for i in pack:
-                    installer_launcher(package = i, f = False).conda_install(state = counter)
+                    installer_launcher(package = i, f = False, gpu = self.gpu).conda_install(state = counter)
                     counter += 1
             else:
                 raise TypeError("If requirements.txt doesn't exist, use a list with each dependancy as a string.")
@@ -174,6 +185,7 @@ def main():
 
     arguments = vars(args)
     env = arguments.get('env')
+    gpu_flag = arguments.get('gpu')
     reqs = requirements()
 
     if reqs:
@@ -183,7 +195,7 @@ def main():
             'scikit_learn', 'seaborn', 'yfinance', 'tensorflow', 'pyyaml']
 
     print('Installing dependencies...\n')
-    call = callers(req = reqs)
+    call = callers(req = reqs, gpu = gpu_flag)
     if env:
         if env == 'venv':   # do pip install here.
             call.pip_caller(pack = dep)
