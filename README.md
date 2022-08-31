@@ -31,7 +31,7 @@ For Windows:
 >>> python .\lib\installer.py -h
 
 For Linux/Mac:
->>> python lib/installer.py -h
+>>> python3 lib/installer.py -h
 ```
 
 ## Example
