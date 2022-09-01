@@ -69,7 +69,7 @@ class line_plotter(dunders):
                 return picked
 
     def colour_exclusion(self, dictionary: dict, exclusion_lst: list) -> str:
-        """Exclude colours that can create clutter on the graph. 
+        """Exlusion algorithm to exclude colours that can create clutter on the graph. 
 
         Args:
             * `dictionary` (dict): Colour exclusion pairs.
