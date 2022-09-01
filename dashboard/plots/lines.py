@@ -3,9 +3,14 @@ from __future__ import annotations
 import pandas as pd
 from lib.utils import dunders
 from secrets import choice
+from typing import List, Dict
 
 
 colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'violet']
+
+exclude_colours = {'yellow': 'orange',
+                'magenta': 'violet',
+                'yellow': 'green'}
 
 y_dict = {'Adj_Close': 'Actual_Values',
         'Predicted_Values': 'Predicted_Values'}
@@ -30,22 +35,64 @@ class line_plotter(dunders):
         }
 
     @staticmethod
-    def reject_sample(lst: list, exception: str) -> str:
+    def _reject_sample(lst: list, exception: str) -> str:   # Used to exclude orange when yellow is picked (vice/versa).
+        """Reject a random list sample based on exception and return 
+        a new random sample from the list.
+
+        Args:
+            * `lst` (list): List to pick element from.
+            * `exception` (str): Element to exclude.
+
+        Returns:
+            `str`: New random sample excluding the exception.
+        """
+
         while True:
             picked = choice(lst)
             if picked != exception:
                 return picked
 
-    def plot_generator(self):
+    def colour_exclusion(self, dictionary: dict, exclusion_lst: list) -> str:
+        """Exclude colours that can create clutter on the graph. 
+
+        Args:
+            * `dictionary` (dict): Colour exclusion pairs.
+            * `exclusion_lst` (list): Colours that were previously picked. 
+
+        Returns:
+            `str`: New colour sample that is not an exclusion pair.
+        """
+
+        if len(exclusion_lst) == 0:     # Only when the first dictionary containing the plot line information is generated.
+            return 0
+
+        for key, value in dictionary.items():   # Only after the first dictionary containing the plot line information is generated.
+            for i in exclusion_lst:
+                if i == key:
+                    result = self._reject_sample(lst = colours, exception = value)
+                elif i == value:
+                    result = self._reject_sample(lst = colours, exception = key)
+                else:
+                    result = 0
+                    continue
+        return result
+
+    def plot_generator(self) -> List[Dict[str, str]]:
+        """Dictionary generator containing plot information for Dash.
+
+        Returns:
+            `List[Dict[str, str]]`: List of dictionaries were each dictionary is a line in the Dash plot.
+        """
+
         out_list = []
         colour_checks = []
         for key, value in self.all_y.items():
             colour = choice(colours)
             if len(colour_checks) == 0:
                 colour_checks.append(colour)
-            colour_match = 'yellow'
-            if colour_match in colour_checks:
-                colour = self.reject_sample(lst = colours, exception = 'orange')
+            check_bad_colours = self.colour_exclusion(dictionary = exclude_colours, exclusion_lst = colour_checks)
+            if not check_bad_colours == 0:
+                colour = check_bad_colours
 
             out_dict = self._plot_lines(df = self.df, x = self.x_name, y = key,
                             line_colour = colour, name = value)
