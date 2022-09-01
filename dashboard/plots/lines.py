@@ -16,6 +16,9 @@ y_dict = {'Adj_Close': 'Actual_Values',
         'Predicted_Values': 'Predicted_Values'}
 
 class line_plotter(dunders):
+    """Plotter class that plots lines for Dash line plots.
+    """
+
     def __init__(self, df: pd.DataFrame,  x_name: str, all_y: dict) -> None:
         self.df = df
         self.x_name = x_name
@@ -24,6 +27,19 @@ class line_plotter(dunders):
 
     @staticmethod
     def _plot_lines(df: pd.DataFrame, x: str, y: str, line_colour: str, name: str) -> dict:
+        """Dictionary template for lines of Dash plot.
+
+        Args:
+            * `df` (pd.DataFrame): DataFrame containing the data. 
+            * `x` (str): `x-axis` name for pd.DataFrame.loc property to access.
+            * `y` (str): `y-axis` name for pd.DataFrame.loc property to access.
+            * `line_colour` (str): Colour of the line to plot.
+            * `name` (str): Name of the line in legend.
+
+        Returns:
+            dict: Dictionary containing all the line information for Dash.
+        """
+
         return {
         "x": df.loc[:, x],
         "y": df.loc[:, y],
