@@ -7,6 +7,7 @@ from dash import dcc, html
 import pandas as pd
 import webbrowser
 from threading import Timer
+from dashboard.plots.lines import line_plotter
 
 ##http://localhost:8050
 
@@ -38,6 +39,9 @@ def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (
         return TREND_DESCRIPTIONS["upward"]
     elif difference == 0:
         return TREND_DESCRIPTIONS["none"]
+
+y_dict = {'Adj_Close': 'Actual_Values',
+        'Predicted_Values': 'Predicted_Values'}
 
 def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: int | float,
                     volatility: str, currency: str, model_name: str) -> dash.Dash:
@@ -102,26 +106,7 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                                     }
                                 ),
                             figure = {
-                                "data": [
-                                    {
-                                        "x": df.loc[:, 'Date'],
-                                        "y": df.loc[:, 'Adj_Close'],
-                                        "type": "lines",
-                                        "line": dict(color = 'green'),
-                                        "name": f"{'Actual Values'}",
-                                        "hovertemplate": "$%{y:.2f}"
-                                                        "<extra></extra>",
-                                        },
-                                    {
-                                        "x": df.loc[:, 'Date'],
-                                        "y": df.loc[:, 'Predicted_Values'],
-                                        "type": "lines",
-                                        "name": f"{'Predicted Values'}",
-                                        "line": dict(color = 'magenta'),
-                                        "hovertemplate": "$%{y:.2f}"
-                                                        "<extra></extra>",
-                                        },
-                                    ],
+                                "data": line_plotter(df = df, x_name = 'Date', all_y = y_dict).plot_generator(),
                                 "layout": {
                                     "title": {
                                         "text": f"{asset} {asset_type} Price Prediction",
