@@ -73,6 +73,7 @@ class line_plotter(dunders):
         """Exlusion algorithm to exclude colours that can create clutter on the graph. 
 
         Args:
+            * `current_colour` (str): Current colour instance.
             * `dictionary` (dict): Colour exclusion pairs.
             * `exclusion_lst` (list): Colours that were previously picked. 
 
