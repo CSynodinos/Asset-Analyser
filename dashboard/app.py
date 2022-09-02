@@ -93,18 +93,15 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                     html.Div(
                         children = dcc.Graph(
                             id = "price-chart",
-                            config = dict({ 'displayModeBar': True,
-                                        'scrollZoom': True,
-                                        'modeBarButtonsToAdd':['drawline',
+                            config = {'displayModeBar': True,
+                                    'scrollZoom': True,
+                                    'modeBarButtonsToAdd':['drawline',
                                         'drawopenpath',
-                                        'scrollZoom',
                                         'drawclosedpath',
                                         'drawcircle',
                                         'drawrect',
-                                        'eraseshape'
-                                        ]
-                                    }
-                                ),
+                                        'eraseshape']
+                                    },
                             figure = {
                                 "data": line_plotter(df = df, x_name = 'Date', all_y = y_dict).plot_generator(),
                                 "layout": {
@@ -135,10 +132,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
             html.Div(
                 children = [
                     html.Span(
-                        children=dcc.Markdown("_**Description**_: The prediction for the price of the " 
+                        children = dcc.Markdown("_**Description**_: The prediction for the price of the " 
                                             f"asset on the next day (Previous date: {specified_date}) "
                                             f"is: **{currency}{next_day}**. The mean volatility of "
-                                            f"the asset is **{volatility}**%. Comparing the price prediction with the value of the asset "
+                                            f"the asset is **{str(round(float(volatility), 3))}**%. Comparing the price prediction with the value of the asset "
                                             f"on the previous day, **{__compare_prices(df = df, value_pre = specified_date, next_day_price = next_day)}** " 
                                             "can be observed between the two days.",
                                             className = "legend-title")
@@ -152,6 +149,7 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
             ])
         ]
     )
+
     return app
 
 def dashboard_launch(df: pd.DataFrame, fin_asset: str, asset_type: str, 
