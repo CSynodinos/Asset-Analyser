@@ -6,11 +6,12 @@ from secrets import choice
 from typing import List, Dict
 
 
-colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'violet']
+colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'violet', 'white']
 
 exclude_colours = {'yellow': 'orange',
                 'magenta': 'violet',
-                'yellow': 'green'}
+                'green': 'yellow',
+                'blue': 'magenta'}
 
 y_dict = {'Adj_Close': 'Actual_Values',
         'Predicted_Values': 'Predicted_Values'}
@@ -68,7 +69,7 @@ class line_plotter(dunders):
             if picked != exception:
                 return picked
 
-    def colour_exclusion(self, dictionary: dict, exclusion_lst: list) -> str:
+    def colour_exclusion(self, current_colour: str, dictionary: dict, exclusion_lst: list) -> str:
         """Exlusion algorithm to exclude colours that can create clutter on the graph. 
 
         Args:
@@ -83,6 +84,11 @@ class line_plotter(dunders):
             return 0
 
         for key, value in dictionary.items():   # Only after the first dictionary containing the plot line information is generated.
+            if key == current_colour:
+                continue 
+            if value == current_colour:
+                continue
+
             for i in exclusion_lst:
                 if i == key:
                     result = self._reject_sample(lst = colours, exception = value)
@@ -106,7 +112,11 @@ class line_plotter(dunders):
             colour = choice(colours)
             if len(colour_checks) == 0:
                 colour_checks.append(colour)
-            check_bad_colours = self.colour_exclusion(dictionary = exclude_colours, exclusion_lst = colour_checks)
+
+            check_bad_colours = self.colour_exclusion(current_colour = colour,
+                                                    dictionary = exclude_colours,
+                                                    exclusion_lst = colour_checks)
+
             if not check_bad_colours == 0:
                 colour = check_bad_colours
 
