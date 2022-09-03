@@ -143,5 +143,6 @@ The graph itself:
 
 :small_red_triangle: Addition of more AI/ML options. Currently working on adding a **Convoluted NN** as an option.
 
-:small_red_triangle: Postgres4 integration.
+:small_red_triangle: Postgres4 integration. Parallel queries on SQLite3 are very tricky to pull off due to the database's limited capabilities.
+Postgres4 could be a very good alternative around this issue. For now, SQLite3 is capable of handling the queries.
 
