@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from __future__ import annotations
 
 import pandas as pd
@@ -11,7 +12,9 @@ colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'violet', 'whi
 exclude_colours = {'yellow': 'orange',
                 'magenta': 'violet',
                 'green': 'yellow',
-                'blue': 'magenta'}
+                'blue': 'magenta',
+                'white': 'yellow',
+                'red': 'magenta'}
 
 y_dict = {'Adj_Close': 'Actual_Values',
         'Predicted_Values': 'Predicted_Values'}
@@ -52,13 +55,13 @@ class line_plotter(dunders):
         }
 
     @staticmethod
-    def _reject_sample(lst: list, exception: str) -> str:   # Used to exclude orange when yellow is picked (vice/versa).
+    def _reject_sample(lst: list, exception: list) -> str:   # Used to exclude orange when yellow is picked (vice/versa).
         """Reject a random list sample based on exception and return 
         a new random sample from the list.
 
         Args:
             * `lst` (list): List to pick element from.
-            * `exception` (str): Element to exclude.
+            * `exception` (list): Elements to exclude.
 
         Returns:
             `str`: New random sample excluding the exception.
@@ -66,7 +69,7 @@ class line_plotter(dunders):
 
         while True:
             picked = choice(lst)
-            if picked != exception:
+            if picked not in exception:
                 return picked
 
     def colour_exclusion(self, current_colour: str, dictionary: dict, exclusion_lst: list) -> str:
@@ -85,19 +88,13 @@ class line_plotter(dunders):
             return 0
 
         for key, value in dictionary.items():   # Only after the first dictionary containing the plot line information is generated.
-            if key == current_colour:
-                continue 
-            if value == current_colour:
-                continue
-
             for i in exclusion_lst:
                 if i == key:
-                    result = self._reject_sample(lst = colours, exception = value)
+                    result = self._reject_sample(lst = colours, exception = [current_colour, i, value])
                 elif i == value:
-                    result = self._reject_sample(lst = colours, exception = key)
+                    result = self._reject_sample(lst = colours, exception = [current_colour, i, key])
                 else:
                     result = 0
-                    continue
         return result
 
     def plot_generator(self) -> List[Dict[str, str]]:
@@ -113,15 +110,21 @@ class line_plotter(dunders):
             colour = choice(colours)
             if len(colour_checks) == 0:
                 colour_checks.append(colour)
-
-            check_bad_colours = self.colour_exclusion(current_colour = colour,
-                                                    dictionary = exclude_colours,
-                                                    exclusion_lst = colour_checks)
-
-            if not check_bad_colours == 0:
-                colour = check_bad_colours
-
-            out_dict = self._plot_lines(df = self.df, x = self.x_name, y = key,
+                out_dict = self._plot_lines(df = self.df, x = self.x_name, y = key,
                             line_colour = colour, name = value)
-            out_list.append(out_dict)
+                out_list.append(out_dict)
+                continue
+            else:
+                check_bad_colours = self.colour_exclusion(current_colour = colour,
+                                                        dictionary = exclude_colours,
+                                                        exclusion_lst = colour_checks)
+
+                if not check_bad_colours == 0:
+                    colour = check_bad_colours
+
+                out_dict = self._plot_lines(df = self.df, x = self.x_name, y = key,
+                                line_colour = colour, name = value)
+                out_list.append(out_dict)
+                continue
+
         return out_list
