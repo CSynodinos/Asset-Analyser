@@ -30,7 +30,7 @@ class line_plotter(dunders):
         super().__init__()
 
     @staticmethod
-    def _plot_lines(df: pd.DataFrame, x: str, y: str, line_colour: str, name: str) -> dict:
+    def _line_dict_generator(df: pd.DataFrame, x: str, y: str, line_colour: str, name: str) -> dict:
         """Dictionary template for lines of Dash plot.
 
         Args:
@@ -110,7 +110,7 @@ class line_plotter(dunders):
             colour = choice(colours)
             if len(colour_checks) == 0:
                 colour_checks.append(colour)
-                out_dict = self._plot_lines(df = self.df, x = self.x_name, y = key,
+                out_dict = self._line_dict_generator(df = self.df, x = self.x_name, y = key,
                             line_colour = colour, name = value)
                 out_list.append(out_dict)
                 continue
@@ -122,7 +122,7 @@ class line_plotter(dunders):
                 if not check_bad_colours == 0:
                     colour = check_bad_colours
 
-                out_dict = self._plot_lines(df = self.df, x = self.x_name, y = key,
+                out_dict = self._line_dict_generator(df = self.df, x = self.x_name, y = key,
                                 line_colour = colour, name = value)
                 out_list.append(out_dict)
                 continue
