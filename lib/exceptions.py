@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+from lib.utils import dunders
+
 ## Custom Exceptions
 
-class DateError(Exception):
+class DateError(Exception, dunders):
     """Custom exception class raised when the date is not selected."""
 
     __module__ = 'builtins'
@@ -13,6 +15,7 @@ class DateError(Exception):
             self.errmessage = args[0]
         else:
             self.errmessage = None
+        super().__init__()
 
     def __repr__(self) -> str:
         if self.errmessage:
@@ -20,7 +23,7 @@ class DateError(Exception):
         else:
             return 'DateError has been raised'
 
-class EntryNotFoundError(Exception):
+class EntryNotFoundError(Exception, dunders):
     """Custom exception class raised when a database entry is not found."""
 
     __module__ = 'builtins'
@@ -30,6 +33,7 @@ class EntryNotFoundError(Exception):
             self.errmessage = args[0]
         else:
             self.errmessage = None
+        super().__init__()
 
     def __repr__(self) -> str:
         if self.errmessage:
@@ -37,7 +41,7 @@ class EntryNotFoundError(Exception):
         else:
             return 'EntryNotFoundError has been raised'
 
-class BadPortError(Exception):
+class BadPortError(Exception, dunders):
     """Custom exception class raised when local host port is invalid."""
 
     __module__ = 'builtins'
@@ -47,6 +51,7 @@ class BadPortError(Exception):
             self.errmessage = args[0]
         else:
             self.errmessage = None
+        super().__init__()
 
     def __repr__(self) -> str:
         if self.errmessage:
@@ -54,7 +59,7 @@ class BadPortError(Exception):
         else:
             return 'BadPortError has been raised'
 
-class AssetTypeError(Exception):
+class AssetTypeError(Exception, dunders):
     """Custom exception class raised when asset type is invalid."""
 
     __module__ = 'builtins'
@@ -64,6 +69,7 @@ class AssetTypeError(Exception):
             self.errmessage = args[0]
         else:
             self.errmessage = None
+        super().__init__()
 
     def __repr__(self) -> str:
         if self.errmessage:
@@ -71,7 +77,7 @@ class AssetTypeError(Exception):
         else:
             return 'AssetTypeError has been raised'
 
-class PredictionDaysError(Exception):
+class PredictionDaysError(Exception, dunders):
     """Custom exception class raised when prediction days are invalid."""
 
     __module__ = 'builtins'
@@ -81,6 +87,7 @@ class PredictionDaysError(Exception):
             self.errmessage = args[0]
         else:
             self.errmessage = None
+        super().__init__()
 
     def __repr__(self) -> str:
         if self.errmessage:
@@ -88,7 +95,7 @@ class PredictionDaysError(Exception):
         else:
             return 'PredictionDaysError has been raised'
 
-class NoParameterError(Exception):
+class NoParameterError(Exception, dunders):
     """Custom exception class raised when no command line input is set."""
 
     __module__ = 'builtins'
@@ -98,6 +105,7 @@ class NoParameterError(Exception):
             self.errmessage = args[0]
         else:
             self.errmessage = None
+        super().__init__()
 
     def __repr__(self) -> str:
         if self.errmessage:
