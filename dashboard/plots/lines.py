@@ -7,10 +7,9 @@ from secrets import choice
 from typing import List, Dict
 
 
-colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'violet', 'white']
+colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'white']
 
 exclude_colours = {'yellow': 'orange',
-                'magenta': 'violet',
                 'green': 'yellow',
                 'blue': 'magenta',
                 'white': 'yellow',
