@@ -15,7 +15,12 @@ TREND_DESCRIPTIONS: Final[dict] = { 'upward': 'an upwards trend',
                                     'downward': 'a downwards trend',
                                     'none': 'no change'}
 
-def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (str | None):
+def get_first_key_value(dictionary: dict):
+    for key, value in dictionary.items():
+        return key, value
+    raise IndexError
+
+def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str):
     """Compare two asset prices to find the trend.
 
     Args:
@@ -32,13 +37,14 @@ def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str) -> (
     next_day_price = float(next_day_price)
     previous_date = prediction_comparison(value = df_value_pre) 
     next_day = prediction_comparison(value = next_day_price)
+    percent_diff = str((abs(next_day_price - df_value_pre) / df_value_pre) * 100.0)
     difference: float | int = previous_date == next_day
     if difference > 0:
-        return TREND_DESCRIPTIONS["downward"]
+        return {TREND_DESCRIPTIONS["downward"]: percent_diff}, df_value_pre
     elif difference < 0:
-        return TREND_DESCRIPTIONS["upward"]
+        return {TREND_DESCRIPTIONS["downward"]: percent_diff}, df_value_pre
     elif difference == 0:
-        return TREND_DESCRIPTIONS["none"]
+        return {TREND_DESCRIPTIONS["none"]: percent_diff}, df_value_pre
 
 y_dict = {'Adj_Close': 'Actual_Values',
         'Predicted_Values': 'Predicted_Values'}
@@ -60,6 +66,10 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
     """
 
     specified_date = df['Date'].iloc[-1]
+    COMPARISON_INSTANCE = __compare_prices(df = df, value_pre = specified_date, next_day_price = next_day)
+    trend_diff = get_first_key_value(COMPARISON_INSTANCE[0])
+    TREND, DIFFERENCE = trend_diff[0], trend_diff[1]
+    TODAYS_VAL = COMPARISON_INSTANCE[1]
     external_stylesheets = [
         {
             "href": "https://fonts.googleapis.com/css2?"
@@ -133,11 +143,11 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                 children = [
                     html.Span(
                         children = dcc.Markdown("_**Description**_: The prediction for the price of the " 
-                                            f"asset on the next day (Previous date: {specified_date}) "
+                                            f"asset on the next day (Previous date: {specified_date} with Adj Close of {TODAYS_VAL}) "
                                             f"is: **{currency}{next_day}**. The mean volatility of "
                                             f"the asset is **{str(round(float(volatility), 3))}**%. Comparing the price prediction with the value of the asset "
-                                            f"on the previous day, **{__compare_prices(df = df, value_pre = specified_date, next_day_price = next_day)}** " 
-                                            "can be observed between the two days.",
+                                            f"on the previous day, **{TREND}** " 
+                                            f"can be observed between the two days, with a percent difference of **{DIFFERENCE}%**.",
                                             className = "legend-title")
                     ),
                     html.Span(
