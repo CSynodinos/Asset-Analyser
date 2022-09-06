@@ -68,7 +68,7 @@ class data(dunders):
         return True
 
     def asset_data(self, database: str, asset_type: str, asset_list: list, today = True, 
-                year = None, month = None, day = None) -> bool:
+                year: str = None, month: str = None, day: str = None) -> bool:
         """Get asset data and append them into an SQLite database.
 
         Args:
@@ -76,6 +76,9 @@ class data(dunders):
             * `asset_type` (str): Asset type e.g. stock.
             * `asset_list` (list): List of assets.
             * `today` (bool): Select today's date.
+            * `year` (str): Select year. Defaults to None.
+            * `month` (str): Select month. Defaults to None.
+            * `day` (str): Select day. Defaults to None.
 
         Raises:
             `DateError`: When data is incorrectly selected.
