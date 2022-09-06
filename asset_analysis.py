@@ -114,7 +114,7 @@ def _defaults(var: Any, default: object) -> object | Any:
     else:
         return var
 
-class analyzer_launcher(dunders):
+class launcher(dunders):
     """Launcher class wrapping all program utilities and running the analysis.
 
     Args:
@@ -126,6 +126,14 @@ class analyzer_launcher(dunders):
         * `pred_days` (int): Days used for training the model.
         * `port` (int): Local host port for the dashboard.
         * `plt` (bool): If True, show the matplotlib plots.
+        * `model` (str): AI/ML model to use.
+        * `drop` (float | None): BaseRandomLayer.
+        * `optimizer` (str | None): Optimization algorithm.
+        * `loss` (str | None): The loss function for error prediction.
+        * `epoch` (int | None): Number of epochs to train.
+        * `batch` (int | None): Batch size of the model.
+        * `dimensionality` (int | None): Dimensionality of the output space.
+        * `closing` (int | None):  Number of prediction days i.e. if it is equal to 1 then just the next day will be predicted.
 
     Raises:
         * `AssetTypeError`: Invalid asset type.
@@ -310,7 +318,7 @@ def main():
     test_profile: bool = bool_parser(arguments.get('test'))
 
     if test_profile:     # Launch default profile.
-        analyzer_launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, 
+        launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, 
                         date = None, today = True, year = None, month = None, day = None, 
                         pred_days = 60, port = None, plt = False, model = DEFAULT_MODEL, 
                         drop = DEFAULT_DROPOUT, optimizer = DEFAULT_OPTIMIZER, loss = DEFAULT_LOSS,
@@ -397,7 +405,7 @@ def main():
         _dt_format(date = d)
         _dt_format(date = tdy)
 
-        analyzer_launcher(asset_type = tp, asset = ast, big_db = db, date = d,
+        launcher(asset_type = tp, asset = ast, big_db = db, date = d,
                         today = tdy, year = end_year, month = end_month, day = end_day,
                         pred_days = pd, port = p, plt = plt, model = get_model, drop = get_drop, optimizer = get_optimizer,
                         loss = get_loss, epoch = get_epoch, batch = get_batch, dimensionality = get_dimensionality,
