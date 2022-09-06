@@ -7,16 +7,14 @@ from secrets import choice
 from typing import List, Dict
 
 
-colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'white']
+colours = ['magenta', 'green', 'blue', 'yellow', 'red', 'orange', 'white', 'cyan']
 
 exclude_colours = {'yellow': 'orange',
                 'green': 'yellow',
                 'blue': 'magenta',
                 'white': 'yellow',
-                'red': 'magenta'}
-
-y_dict = {'Adj_Close': 'Actual_Values',
-        'Predicted_Values': 'Predicted_Values'}
+                'red': 'magenta',
+                'cyan': 'blue'}
 
 class line_plotter(dunders):
     """Plotter class that plots lines for Dash line plots.
