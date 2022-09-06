@@ -15,10 +15,21 @@ TREND_DESCRIPTIONS: Final[dict] = { 'upward': 'an upwards trend',
                                     'downward': 'a downwards trend',
                                     'none': 'no change'}
 
-def get_first_key_value(dictionary: dict):
+def get_first_key_value(dictionary: dict) -> tuple[str, str]:
+    """Get the first key value pair in a dictionary.
+
+    Args:
+        * `dictionary` (dict): Input dictionary.
+
+    Raises:
+        `IndexError`: When dictionary is empty or corrupt.
+
+    Returns:
+        `tuple[str, str]`: Key, Value pair.
+    """
     for key, value in dictionary.items():
         return key, value
-    raise IndexError
+    raise IndexError('Dictionary is empty. Check database for the absence of the specified last date entry.')
 
 def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str):
     """Compare two asset prices to find the trend.
@@ -29,7 +40,7 @@ def __compare_prices(df: pd.DataFrame, value_pre: str, next_day_price: str):
         * `next_day_price` (str): Predicted price of the asset for the next day.
 
     Returns:
-        str: Description of results as text.
+        `str`: Description of results as text.
     """
 
     # Convert the strings to floats for comparison.
