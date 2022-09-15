@@ -11,7 +11,7 @@ class data(dunders):
     """Access data through the Yahoo API and store them in an SQLite local database.
     """
 
-    def __init__(self, start: datetime, model_name) -> None:
+    def __init__(self, start: datetime, model_name: str) -> None:
         self.start = start
         self.model_name = model_name
         super().__init__()
