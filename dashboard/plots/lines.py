@@ -110,7 +110,6 @@ class line_plotter(dunders):
                 out_dict = self._line_dict_generator(df = self.df, x = self.x_name, y = key,
                             line_colour = colour, name = value)
                 out_list.append(out_dict)
-                continue
             else:
                 check_bad_colours = self.colour_exclusion(current_colour = colour,
                                                         dictionary = exclude_colours,
@@ -122,6 +121,5 @@ class line_plotter(dunders):
                 out_dict = self._line_dict_generator(df = self.df, x = self.x_name, y = key,
                                 line_colour = colour, name = value)
                 out_list.append(out_dict)
-                continue
 
         return out_list
