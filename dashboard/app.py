@@ -79,7 +79,14 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
     specified_date = df['Date'].iloc[-1]
     COMPARISON_INSTANCE = __compare_prices(df = df, value_pre = specified_date, next_day_price = next_day)
     trend_diff = get_first_key_value(COMPARISON_INSTANCE[0])
-    TREND, DIFFERENCE = trend_diff[0], trend_diff[1]
+    TREND, diff = trend_diff[0], trend_diff[1]
+    diff = abs(float(diff))
+    if TREND == TREND_DESCRIPTIONS["upward"]:
+        DIFFERENCE = f'+{diff}'
+    elif TREND == TREND_DESCRIPTIONS["downward"]:
+        DIFFERENCE = f'-{diff}'
+    elif TREND == TREND_DESCRIPTIONS["none"]:
+        DIFFERENCE = '0'
     TODAYS_VAL = COMPARISON_INSTANCE[1]
     external_stylesheets = [
         {
@@ -154,7 +161,7 @@ def __dashboard_create(df: pd.DataFrame, asset: str, asset_type: str, next_day: 
                 children = [
                     html.Span(
                         children = dcc.Markdown("_**Description**_: The prediction for the price of the " 
-                                            f"asset on the next day (Previous date: {specified_date} with Adj Close of {TODAYS_VAL}) "
+                                            f"asset on the next day (Previous date: {specified_date} with Adj Close of {currency}{TODAYS_VAL}) "
                                             f"is: **{currency}{next_day}**. The mean volatility of "
                                             f"the asset is **{str(round(float(volatility), 3))}**%. Comparing the price prediction with the value of the asset "
                                             f"on the previous day, **{TREND}** " 
