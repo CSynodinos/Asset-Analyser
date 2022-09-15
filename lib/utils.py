@@ -11,7 +11,7 @@ def yml_parser(f: str) -> dict:
         * `f` (str): .yml file.
 
     Returns:
-        dict: Contents of yml.
+        `dict`: Contents of yml.
     """
 
     import yaml
@@ -52,7 +52,7 @@ class dunders:
         Args:
             * `only_added` (bool, optional): Choose whether to display only the specified attributes. Defaults to False.
         Returns:
-            list: List of attributes.
+            `list`: List of attributes.
         """
 
         all_att = list(cls.__dict__.keys())
