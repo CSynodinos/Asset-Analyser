@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-"""Wrapper script for all modules and functionalities of the market analysis software.
+"""Launcher module.
 """
 
 import os, shutil, re
