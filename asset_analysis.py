@@ -114,7 +114,7 @@ def _defaults(var: Any, default: object) -> object | Any:
     else:
         return var
 
-class launcher(dunders):
+class Launcher(dunders):
     """Launcher class wrapping all program utilities and running the analysis.
 
     Args:
@@ -308,17 +308,12 @@ def _dt_format(date: str | None):
             return None
 
 def main():
-    # Get terminal width, center and bold the title.
-    print('\n')
-    print(terminal_str_formatter(_str_ = TITLE))
-    print('\n')
-
     args = args_parser(msg = HELP_MESSAGE)
     arguments = vars(args)
     test_profile: bool = bool_parser(arguments.get('test'))
 
     if test_profile:     # Launch default profile.
-        launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, 
+        Launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, 
                         date = None, today = True, year = None, month = None, day = None, 
                         pred_days = 60, port = None, plt = False, model = DEFAULT_MODEL, 
                         drop = DEFAULT_DROPOUT, optimizer = DEFAULT_OPTIMIZER, loss = DEFAULT_LOSS,
@@ -379,7 +374,7 @@ def main():
                 * `var` (Any): Variable value.
 
             Returns:
-                tuple: The resulting tuple.
+                `tuple`: The resulting tuple.
             """
 
             if var == None:
@@ -405,7 +400,12 @@ def main():
         _dt_format(date = d)
         _dt_format(date = tdy)
 
-        launcher(asset_type = tp, asset = ast, big_db = db, date = d,
+        # Get terminal width, center and bold the title.
+        print('\n')
+        print(terminal_str_formatter(_str_ = TITLE))
+        print('\n')
+
+        Launcher(asset_type = tp, asset = ast, big_db = db, date = d,
                         today = tdy, year = end_year, month = end_month, day = end_day,
                         pred_days = pd, port = p, plt = plt, model = get_model, drop = get_drop, optimizer = get_optimizer,
                         loss = get_loss, epoch = get_epoch, batch = get_batch, dimensionality = get_dimensionality,
