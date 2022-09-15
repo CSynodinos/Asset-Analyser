@@ -313,6 +313,12 @@ def main():
     test_profile: bool = bool_parser(arguments.get('test'))
 
     if test_profile:     # Launch default profile.
+
+        # Get terminal width, center and bold the title.
+        print('\n')
+        print(terminal_str_formatter(_str_ = TITLE))
+        print('\n')
+
         Launcher(asset_type = DEFAULT_ASSET_TYPE, asset = DEFAULT_ASSET, big_db = None, 
                         date = None, today = True, year = None, month = None, day = None, 
                         pred_days = 60, port = None, plt = False, model = DEFAULT_MODEL, 
