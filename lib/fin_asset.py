@@ -9,6 +9,10 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 from lib.utils import dunders
+from itertools import cycle
+from threading import Thread
+from time import sleep
+import sys
 
 class financial_assets(dunders):
     """Financial asset class for price predictions.
@@ -64,12 +68,39 @@ class financial_assets(dunders):
         next day, the mean percentage volatility as a string.
         """
 
+        training_complete = False
+
+        def _training_tracking(message: str) -> None:
+            """Track model training progress and print a progress 
+            animation to the terminal.
+
+            Args:
+                * `message` (str): Training tracking message.
+            """
+
+            for c in cycle(['|', '/', '-', '\\']):
+                if training_complete:
+                    break
+                sys.stdout.write(f'\r{message} ' + c + " ")
+                sys.stdout.flush()
+                sleep(0.1)
+
+            LINE_UP = '\033[1A'
+            LINE_CLEAR = '\x1b[2K'
+            print(LINE_UP, end = LINE_CLEAR)
+            sys.stdout.write('\rTraining Complete!     ')
+
         # Training starts.
-        print('Training the model...\n')
         if model == 'RNN':
+            training_message = 'Training the LSTM-RNN model'
+            training_track_thread = Thread(target = _training_tracking, kwargs = {'message':training_message})
+            training_track_thread.start()
             asset_model = models.LSTM_RNN(x = x_train, y = y_train, units = dimensionality, closing_value = closing,
                                     optimize = optimizer, dropout = drop, loss_function = loss, 
                                     epoch = epoch, batch = batch)
+
+        sleep(0.1)
+        training_complete = True
 
         # Test data.
         test_start = dt.datetime(2019, 11, 1)
@@ -123,7 +154,7 @@ def prediction_assessment(df_all: pd.DataFrame, df_pred_real: pd.DataFrame, db: 
         * `asset` (str): Asset name.
 
     Returns:
-        pd.DataFrame: Queries the updated table in the database and get all values as a pandas DataFrame.
+        `pd.DataFrame`: Queries the updated table in the database and get all values as a pandas DataFrame.
     """
 
     from lib.df_utils import df_analyses
