@@ -50,8 +50,6 @@ For Linux/Mac:
 
     Cryptocurrency Database has been successfully updated!
 
-    Training the model...
-
     [*********************100%***********************]  1 of 1 completed
     1/1 [==============================] - 1s 910ms/step
     BTC-USD Cryptocurrency Adj.Close price prediction for 2022-08-23: $23380.16
