@@ -68,12 +68,19 @@ class models(dunders):
     """Class containing all the AI/ML models of the application.
 
     Inherits from:
-        dunders (class): Class with custom dunders.
+        * `dunders` (class): Class with custom dunders.
     """
 
-    def LSTM_RNN(x: np.ndarray, y: np.ndarray, units: int, closing_value: int, 
-                optimize: str, dropout: int | float, loss_function: str, 
-                epoch: int, batch: int) -> Sequential:
+    def __init__(self, dropout: int | float, loss_function: str, 
+                epoch: int, batch: int) -> None:
+        self.dropout = dropout
+        self.loss_function = loss_function
+        self.epoch = epoch
+        self.batch = batch
+        super().__init__()
+
+    def LSTM_RNN(self, x: np.ndarray, y: np.ndarray, units: int, closing_value: int, 
+                optimize: str) -> Sequential:
 
         """Build and train a Long Short-Term Memory Reccurent Neural Network (`LSTM-RNN`) 
         using the `Keras Sequential API`.
@@ -95,14 +102,14 @@ class models(dunders):
 
         model = Sequential()
         model.add(LSTM(units = units, return_sequences = True, input_shape = (x.shape[1], 1)))
-        model.add(Dropout(dropout))
+        model.add(Dropout(self.dropout))
         model.add(LSTM(units = units, return_sequences = True))
-        model.add(Dropout(dropout))
+        model.add(Dropout(self.dropout))
         model.add(LSTM(units = units))
-        model.add(Dropout(dropout))
+        model.add(Dropout(self.dropout))
         model.add(Dense(units = closing_value)) # Predict a closing value. 1 is the next closing value.
-        model.compile(optimizer = optimize, loss = loss_function)
-        model.fit(x, y, epochs = epoch, batch_size = batch, verbose = 0)
+        model.compile(optimizer = optimize, loss = self.loss_function)
+        model.fit(x, y, epochs = self.epoch, batch_size = self.batch, verbose = 0)
 
         return model
 
