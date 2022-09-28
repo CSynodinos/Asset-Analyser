@@ -91,13 +91,15 @@ class financial_assets(dunders):
             sys.stdout.write('\rTraining Complete!     ')
 
         # Training starts.
+        training_message = 'Training the LSTM-RNN model'
+        training_track_thread = Thread(target = _training_tracking, kwargs = {'message':training_message})
+        training_track_thread.start()
+
+        models_instance = models(dropout = drop, loss_function = loss, epoch = epoch, batch = batch)
+
         if model == 'RNN':
-            training_message = 'Training the LSTM-RNN model'
-            training_track_thread = Thread(target = _training_tracking, kwargs = {'message':training_message})
-            training_track_thread.start()
-            asset_model = models.LSTM_RNN(x = x_train, y = y_train, units = dimensionality, closing_value = closing,
-                                    optimize = optimizer, dropout = drop, loss_function = loss, 
-                                    epoch = epoch, batch = batch)
+            asset_model = models_instance.LSTM_RNN(x = x_train, y = y_train, units = dimensionality, closing_value = closing,
+                                    optimize = optimizer)
 
         sleep(0.1)
         training_complete = True
