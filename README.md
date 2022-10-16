@@ -11,15 +11,15 @@
 This application is able to analyse any asset data and make predictions on the price of such asset for the next day from the specified date. Predictions are made through the use of ML. Currently, the application supports only 1 model, the Long Short-Term Memory Recurrent Neural Network (LSTM-RNN). Future expansions will include more ML model options. The resulting analysis can either be displayed in a dashboard or in a jupyter notebook using matplotlib. The default behaviour is displaying the dashboard in a localhost instance, which is created using the Dash and Flask frameworks. All the data is stored in sqlite3 databases in the Databases subdirectory.
 
 ## Installation
-Download the repository in your system and run installer.py
+Download the repository in your system and install the dependencies.
 ```bash
 >>> curl https://raw.githubusercontent.com/CSynodinos/Asset-Analyser
 
 For Windows:
->>> python .\lib\installer.py -env [venv or conda] # Default is venv.
+>>> python -m pip install -r requirements.txt
 
 For Linux/Mac:
->>> python lib/installer.py -env [venv or conda] # Default is venv
+>>> python3 -m pip install -r requirements.txt
 ```
 
 This version of the application supports both tensorflow and tensorflow-gpu. The installer can install tensorflow-gpu by using the -gpu flag. However, you will need to follow Nvidia's instructions for the CUDA toolkit and CUDA Deep Neural Network library installations for Windows/Linux. Otherwise, tensorflow-gpu will not work!
