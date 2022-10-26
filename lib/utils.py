@@ -15,11 +15,21 @@ def yml_parser(f: str) -> dict:
     """
 
     import yaml
-    with open(f, 'r') as fl_stream:
+    with open(f, 'rb') as fl_stream:
         try:
             return dict(yaml.safe_load(fl_stream))
         except yaml.YAMLError as exc:
             print(exc)
+
+# Boilerplate
+def toml_parser():
+    pass
+
+def ini_parser():
+    pass
+
+def json_parser():
+    pass
 
 def terminal_str_formatter(_str_: str) -> str:
     """Bold and centre a string for the terminal. 
