@@ -87,6 +87,7 @@ class financial_assets(dunders):
 
             LINE_UP = '\033[1A'
             LINE_CLEAR = '\x1b[2K'
+            print(LINE_CLEAR)
             print(LINE_UP, end = LINE_CLEAR)
             sys.stdout.write('\rTraining Complete!     ')
 
