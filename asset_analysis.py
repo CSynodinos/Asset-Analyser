@@ -4,9 +4,12 @@ from __future__ import annotations
 """Launcher module.
 """
 
-import os, shutil, re
+print('\033[?25l', end = "")    # Hide terminal cursor
+print('\nInitiating the pipeline, please wait...', end = '\r')
+
+import os, shutil, re, argparse
+from sys import stdout
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-import argparse
 from lib.data import data
 from lib.exceptions import AssetTypeError, PredictionDaysError, BadPortError, NoParameterError, DateError
 from lib.model_methods import preprocessing
@@ -15,6 +18,8 @@ from lib.db_utils import SQLite_Query
 import datetime as dt
 from typing import Any, Final
 from lib.utils import dunders, yml_parser, terminal_str_formatter
+
+stdout.write('\x1b[2K') # erase line.
 
 parse = yml_parser(f = 'setup.yml')
 HELP_MESSAGE: Final[str] = parse['help_messages']['LAUNCHER_HELP_MESSAGE']
@@ -146,8 +151,9 @@ class Launcher(dunders):
     def __init__(self, asset_type: str, asset: str, big_db: str | None,
                 date: None | dt.datetime, today: bool, year: str | None, 
                 month: str | None, day: str | None, pred_days: int,
-                port: int, plt: bool, model: str, drop: float | None, optimizer: str | None,
-                loss: str | None, epoch: int | None, batch: int | None, dimensionality: int | None, 
+                port: int, plt: bool, model: str, drop: float | None, 
+                optimizer: str | None, loss: str | None, epoch: int | None,
+                batch: int | None, dimensionality: int | None,
                 closing: int | None) -> None:
 
         self.date = date
@@ -265,7 +271,9 @@ class Launcher(dunders):
                                         asset = asset_l[0], model_name = self.model)
 
         dashboard_data = all_data.drop(all_data.columns[[0, 1, 3, 4, 5, 6, 8]], axis = 1)
-        
+
+        print('\033[?25h', end = "")    # Display terminal cursor again just before dash initiates.
+
         # Import dashboard_launch and launch app.
         from dashboard.app import dashboard_launch
         dashboard_launch(df = dashboard_data, fin_asset = self.asset,
@@ -412,10 +420,10 @@ def main():
         print('\n')
 
         Launcher(asset_type = tp, asset = ast, big_db = db, date = d,
-                        today = tdy, year = end_year, month = end_month, day = end_day,
-                        pred_days = pd, port = p, plt = plt, model = get_model, drop = get_drop, optimizer = get_optimizer,
-                        loss = get_loss, epoch = get_epoch, batch = get_batch, dimensionality = get_dimensionality,
-                        closing = get_closing).analyze()
+                    today = tdy, year = end_year, month = end_month, day = end_day,
+                    pred_days = pd, port = p, plt = plt, model = get_model, drop = get_drop, optimizer = get_optimizer,
+                    loss = get_loss, epoch = get_epoch, batch = get_batch, dimensionality = get_dimensionality,
+                    closing = get_closing).analyze()
 
 if __name__ == "__main__":
     main()
