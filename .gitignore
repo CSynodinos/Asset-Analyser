@@ -4,5 +4,5 @@ __pycache__
 *.db
 .vscode
 env
-venv
+venv*
 test.py
